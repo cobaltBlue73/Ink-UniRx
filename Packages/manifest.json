@@ -45,6 +45,21 @@
     "com.unity.modules.video": "1.0.0",
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
-    "com.unity.modules.xr": "1.0.0"
-  }
+    "com.unity.modules.xr": "1.0.0",
+    "com.inklestudios.ink-unity-integration": "1.0.2",
+    "com.neuecc.unirx": "7.1.0",
+    "com.cysharp.unitask": "2.2.5"
+  },
+  "scopedRegistries": [
+    {
+      "name": "package.openupm.com",
+      "url": "https://package.openupm.com",
+      "scopes": [
+        "com.cysharp.unitask",
+        "com.inklestudios.ink-unity-integration",
+        "com.neuecc.unirx",
+        "com.openupm"
+      ]
+    }
+  ]
 }
