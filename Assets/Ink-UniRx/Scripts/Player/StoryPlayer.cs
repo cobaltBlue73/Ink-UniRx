@@ -141,12 +141,16 @@ namespace InkUniRx
             InitStory();
             
             _whenStoryBegins.OnNext(Unit.Default);
-            await RunStoryTransitionsAsync(_beginStoryTransitions);
+            await RunStoryTransitionsAsync(ct => 
+                _beginStoryTransitions.Select(t => 
+                    t.RunBeginStoryTransitionAsync(ct)));
             
             do
             {
                 _whenPathBegins.OnNext(Unit.Default);
-                await RunStoryTransitionsAsync(_beginPathTransitions);
+                await RunStoryTransitionsAsync(ct => 
+                    _beginPathTransitions.Select(t => 
+                        t.RunBeginPathTransitionAsync(ct)));
                 
                 do
                 {
@@ -154,7 +158,9 @@ namespace InkUniRx
                         _story.ContinueMaximally() : 
                         _story.Continue();
 
-                    await RunStoryTransitionsAsync(_newLineTransitions);
+                    await RunStoryTransitionsAsync(ct => 
+                        _newLineTransitions.Select(t => 
+                            t.RunNewLineTransitionAsync(ct)));
                     
                     if(!_story.canContinue) continue;
                     
@@ -163,7 +169,9 @@ namespace InkUniRx
                 } while (_story.canContinue);
                 
                 _whenPathEnds.OnNext(Unit.Default);
-                await RunStoryTransitionsAsync(_endPathTransitions);
+                await RunStoryTransitionsAsync(ct => 
+                    _endPathTransitions.Select(t => 
+                        t.RunEndPathTransitionAsync(ct)));
 
                 if (!_story.HasChoices()) continue;
 
@@ -187,12 +195,11 @@ namespace InkUniRx
             _story.OnMakeChoiceAsObservable().Subscribe(_whenChoiceSelected).AddTo(_storyDisposables);
         }
      
-        private async UniTask RunStoryTransitionsAsync<T>(IEnumerable<T> transitions) where T: IStoryTransition
+        private async UniTask RunStoryTransitionsAsync(Func<CancellationToken, IEnumerable<UniTask>> onTransition)
         {
             using (_curTransitionCts = new CancellationTokenSource())
             {
-                await UniTask.WhenAll(transitions.Select(st=> 
-                    st.RunStoryTransitionAsync(_curTransitionCts.Token)));
+                await UniTask.WhenAll(onTransition(_curTransitionCts.Token));
             }
             _curTransitionCts = null;
         }

@@ -4,16 +4,23 @@ using Utility.General;
 
 namespace InkUniRx
 {
-    public interface IStoryTransition : IPriority
+    public interface IBeginStoryTransition
     {
-        UniTask RunStoryTransitionAsync(CancellationToken ct);
+        UniTask RunBeginStoryTransitionAsync(CancellationToken ct);
     }
-    
-    public interface IBeginStoryTransition : IStoryTransition { }
 
-    public interface IBeginPathTransition : IStoryTransition { }
-    
-    public interface IEndPathTransition : IStoryTransition { }
-    
-    public interface INewLineTransition : IStoryTransition { }
+    public interface IBeginPathTransition
+    {
+        UniTask RunBeginPathTransitionAsync(CancellationToken ct);
+    }
+
+    public interface IEndPathTransition
+    {
+        UniTask RunEndPathTransitionAsync(CancellationToken ct);
+    }
+
+    public interface INewLineTransition
+    {
+        UniTask RunNewLineTransitionAsync(CancellationToken ct);
+    }
 }
