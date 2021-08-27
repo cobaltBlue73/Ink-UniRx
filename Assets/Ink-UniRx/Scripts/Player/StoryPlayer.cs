@@ -18,14 +18,14 @@ namespace InkUniRx
         
         #region Inspector
         
+        [SerializeField] private StoryPlayerSettings settings;
         [SerializeField] private StoryVM storyVM;
-
+        
         #endregion
 
         #region Properties
         
         public StoryVM StoryVM => storyVM;
-        public StoryPlayerSettings Settings => _settings ??= StoryPlayerSettings.Instance;
         
         public IObservable<Unit> WhenStoryBegins => _whenStoryBegins.AsObservable();
         public IObservable<Unit> WhenStoryEnds => _whenStoryEnds.AsObservable();
@@ -39,11 +39,11 @@ namespace InkUniRx
         #region Member Variables
 
         private Story _story;
-        private StoryPlayerSettings _settings;
         private bool _continueMaximally;
         private bool _autoContinue;
+        private float _autoContinueDelay;
         
-        private readonly ReactiveCommand _continueCommand = new ReactiveCommand();
+        private readonly ReactiveCommand _continueCmd = new ReactiveCommand();
         
         private readonly Subject<Unit> _whenStoryBegins = new  Subject<Unit>();
         private readonly Subject<Unit> _whenStoryEnds = new  Subject<Unit>();
@@ -59,17 +59,19 @@ namespace InkUniRx
         private readonly CompositeDisposable _storyDisposables = new CompositeDisposable();
 
         private CancellationTokenSource _curTransitionCts;
-        
+
+        private Func<string> _continue;
+
         #endregion
         
         #region Unity Callbacks
 
         private void Awake()
         {
-            if(storyVM) InitTeller();
-            Settings.AutoContinue.SetAndSubscribe(ref _autoContinue, 
-                val => _autoContinue = val)
-                .AddTo(this);
+            InitSettings();
+            InitPlayer();
+            _storyDisposables.AddTo(this);
+            _continueCmd.AddTo(this);
         }
 
         private void OnDestroy()
@@ -86,9 +88,8 @@ namespace InkUniRx
             CleanUpSubject(_whenPathEnds);
             CleanUpSubject(_whenNewLine);
             CleanUpSubject(_whenChoiceSelected);
-            _continueCommand.Dispose();
-            _storyDisposables.Clear();
             ClearTransitions();
+            _storyDisposables.Clear();
             _curTransitionCts?.Dispose();
         }
 
@@ -99,25 +100,28 @@ namespace InkUniRx
         public void SetStoryVM(StoryVM storyVM)
         {
             this.storyVM = storyVM;
-            InitTeller();
+            InitPlayer();
         }
 
         [ContextMenu(nameof(BeginStory))]
         public void BeginStory() => RunStoryAsync().Forget();
 
-        [ContextMenu(nameof(ContinueStory))]
-        public void ContinueStory()
+        [ContextMenu(nameof(ContinueNext))]
+        public void ContinueNext()
         {
-            CancelTransitions();
-            _continueCommand.Execute();
+            SkipTransitions();
+            _continueCmd.Execute();
         }
-        
+
         public void SelectChoice(int choiceIndex)
         {
-            CancelTransitions();
+            SkipTransitions();
             _story?.ChooseChoiceIndex(choiceIndex);
         }
-        
+
+        [ContextMenu(nameof(SkipTransitions))]
+        public void SkipTransitions() => _curTransitionCts?.Cancel();
+
         public void SubmitBeginStoryTransition(IBeginStoryTransition transition) => 
             _beginStoryTransitions.Add(transition);
         
@@ -141,27 +145,18 @@ namespace InkUniRx
             InitStory();
             
             _whenStoryBegins.OnNext(Unit.Default);
-            await RunStoryTransitionsAsync(ct => 
-                _beginStoryTransitions.Select(t => 
-                    t.RunBeginStoryTransitionAsync(ct)));
+            await PlayBeginStoryTransitionsAsync();
             
             do
             {
                 _whenPathBegins.OnNext(Unit.Default);
-                await RunStoryTransitionsAsync(ct => 
-                    _beginPathTransitions.Select(t => 
-                        t.RunBeginPathTransitionAsync(ct)));
+                await PlayBeginPathTransitionsAsync();
                 
                 do
                 {
-                    var _ = _continueMaximally ? 
-                        _story.ContinueMaximally() : 
-                        _story.Continue();
-
-                    await RunStoryTransitionsAsync(ct => 
-                        _newLineTransitions.Select(t => 
-                            t.RunNewLineTransitionAsync(ct)));
-                    
+                    _continue();
+                    await PlayNewLineTransitionsAsync();
+                     
                     if(!_story.canContinue) continue;
                     
                     await WaitForContinueAsync();
@@ -169,13 +164,11 @@ namespace InkUniRx
                 } while (_story.canContinue);
                 
                 _whenPathEnds.OnNext(Unit.Default);
-                await RunStoryTransitionsAsync(ct => 
-                    _endPathTransitions.Select(t => 
-                        t.RunEndPathTransitionAsync(ct)));
+                await PlayEndPathTransitionsAsync();
 
                 if (!_story.HasChoices()) continue;
 
-                await _whenChoiceSelected.ToUniTask(true);
+                await WaitForChoiceSelection();
 
             } while (_story.canContinue);
             
@@ -186,37 +179,77 @@ namespace InkUniRx
 
         #region Helpers
         
-        private void InitTeller()
+        private void InitPlayer()
         {
+            if(!storyVM) return;
+            
             _story = storyVM.Story;
-            _continueMaximally = Settings.ContinueMaximally;
+            if (_continueMaximally)
+                _continue = _story.ContinueMaximally;
+            else
+                _continue = _story.Continue;
+            
             _storyDisposables.Clear();
-            _story.OnContinueAsObservable().AsUnitObservable().Subscribe(_whenNewLine).AddTo(_storyDisposables);
+            _story.OnContinueAsObservable().Subscribe(_whenNewLine).AddTo(_storyDisposables);
             _story.OnMakeChoiceAsObservable().Subscribe(_whenChoiceSelected).AddTo(_storyDisposables);
         }
-     
-        private async UniTask RunStoryTransitionsAsync(Func<CancellationToken, IEnumerable<UniTask>> onTransition)
+
+        private void InitSettings()
         {
-            using (_curTransitionCts = new CancellationTokenSource())
-            {
-                await UniTask.WhenAll(onTransition(_curTransitionCts.Token));
-            }
+            if(!settings) return;
+
+            _continueMaximally = !settings.ContinueEachLine;
+            settings.AutoContinue.SetAndSubscribe(ref _autoContinue, 
+                val => _autoContinue = val).AddTo(this);
+            settings.AutoContinueDelay.SetAndSubscribe(ref _autoContinueDelay, 
+                val => _autoContinueDelay = val).AddTo(this);
+        }
+     
+        private async UniTask PlayStoryTransitionsAsync(Func<CancellationToken, IEnumerable<UniTask>> onTransition)
+        {
+            _curTransitionCts = new CancellationTokenSource();
+            await UniTask.WhenAll(onTransition(_curTransitionCts.Token));
+            _curTransitionCts.Dispose();
             _curTransitionCts = null;
         }
         
-        private IObservable<Unit> GetWhenNewLine()
-        {
-            return _story.OnContinueAsObservable();
-        }
-
-        private IObservable<Choice> GetWhenChoiceSelected()
-        {
-            return _story.OnMakeChoiceAsObservable();
-        }
+        private async UniTask PlayBeginStoryTransitionsAsync() =>
+            await PlayStoryTransitionsAsync(ct => 
+                _beginStoryTransitions.Select(t => 
+                    t.PlayBeginStoryTransitionAsync(ct)));
         
+        private async UniTask PlayBeginPathTransitionsAsync() =>
+            await PlayStoryTransitionsAsync(ct => 
+                _beginPathTransitions.Select(t => 
+                    t.PlayBeginPathTransitionAsync(ct)));
+        
+        private async UniTask PlayNewLineTransitionsAsync() =>
+            await PlayStoryTransitionsAsync(ct => 
+                _newLineTransitions.Select(t => 
+                    t.PlayNewLineTransitionAsync(ct)));
+        
+        private async UniTask PlayEndPathTransitionsAsync() => 
+            await PlayStoryTransitionsAsync(ct => 
+                _endPathTransitions.Select(t => 
+                    t.PlayEndPathTransitionAsync(ct)));
+
         private async UniTask WaitForContinueAsync()
         {
-            if (!_autoContinue) await _continueCommand;
+            if (!_autoContinue)
+            {
+                await _continueCmd.ToUniTask(true);
+                return;
+            }
+
+            await UniTask.WhenAny(
+                UniTask.Delay(TimeSpan.FromSeconds(_autoContinueDelay)),
+                _continueCmd.ToUniTask(true));
+            
+        }
+
+        private async UniTask WaitForChoiceSelection()
+        {
+            await _whenChoiceSelected.ToUniTask(true);
         }
 
         private void InitStory()
@@ -227,11 +260,6 @@ namespace InkUniRx
         private void CleanUpStory()
         {
           
-        }
-        
-        private void CancelTransitions()
-        {
-            _curTransitionCts?.Cancel();
         }
         
         void SortTransitions()

@@ -6,21 +6,21 @@ namespace InkUniRx
 {
     public interface IBeginStoryTransition
     {
-        UniTask RunBeginStoryTransitionAsync(CancellationToken ct);
+        UniTask PlayBeginStoryTransitionAsync(CancellationToken ct);
     }
 
     public interface IBeginPathTransition
     {
-        UniTask RunBeginPathTransitionAsync(CancellationToken ct);
+        UniTask PlayBeginPathTransitionAsync(CancellationToken ct);
     }
 
     public interface IEndPathTransition
     {
-        UniTask RunEndPathTransitionAsync(CancellationToken ct);
+        UniTask PlayEndPathTransitionAsync(CancellationToken ct);
     }
 
     public interface INewLineTransition
     {
-        UniTask RunNewLineTransitionAsync(CancellationToken ct);
+        UniTask PlayNewLineTransitionAsync(CancellationToken ct);
     }
 }
