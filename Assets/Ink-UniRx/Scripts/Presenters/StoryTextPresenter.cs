@@ -1,7 +1,6 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using DG.Tweening;
 using TMPro;
 using UniRx;
 using UnityEngine;
@@ -27,32 +26,24 @@ namespace InkUniRx
             StoryTextPresenterSettings.AnimationStyleType.None;
 
         private float _animationSpd;
-        private Ease _ease = Ease.Linear;
+        private string _targetText;
 
         #endregion
-        
+       
+
         #region Unity Callbacks
 
         private void Awake()
         {
             _animationStyle = settings.AnimationStyle;
-            _ease = settings.Easing;
             settings.TextAnimationSpeed.SetAndSubscribe(ref _animationSpd,
                 val => _animationSpd = val).AddTo(this);
         }
 
         private void Start()
         {
-            player.WhenNewLine.Subscribe(_ => OnNewLine())
-                .AddTo(this);
+            player.WhenNewLine.Subscribe(_ => OnNewLine()).AddTo(this);
             player.SubmitNewLineTransition(this);
-            
-            if (continueButton)
-            {
-                continueButton.OnClickAsObservable()
-                    .Subscribe(_ => player.ContinueNext())
-                    .AddTo(this);
-            }
         } 
 
         #endregion
@@ -66,39 +57,17 @@ namespace InkUniRx
             {
                 text.text = player.StoryVM.Story.currentText;
             }
-
-            if (continueButton)
-            {
-                continueButton.gameObject.SetActive(player.StoryVM.Story.canContinue);
-            }
         }
         
         private async UniTask AnimateTextByLetterAsync(CancellationToken ct)
         {
-            var tweener = text.DOText(player.StoryVM.Story.currentText, _animationSpd)
-                .SetEase(_ease).SetSpeedBased().SetRecyclable();
-
-            var isCancelled = await tweener.WithCancellation(ct)
-                .SuppressCancellationThrow();
-
-            if(isCancelled) tweener.Complete();
+            var targetChars = player.StoryVM.Story.currentText.ToCharArray();
+            var i = 0; 
         }
         
         private async UniTask AnimateTextByWordAsync(CancellationToken ct)
         {
-            var words = player.StoryVM.Story.currentText.Split(' ');
-            var i = 0;
-            var tweener = DOTween.To(()=> i, next => {
-                    i = next;
-                    text.text = string.Concat(text.text, 
-                        string.Concat(words[i], ' '));
-                }, words.Length, _animationSpd)
-                .SetEase(_ease).SetSpeedBased().SetRecyclable();
-
-            var isCancelled = await tweener.WithCancellation(ct)
-                .SuppressCancellationThrow();
-
-            if(isCancelled) tweener.Complete();
+            
         }
         
         #endregion
