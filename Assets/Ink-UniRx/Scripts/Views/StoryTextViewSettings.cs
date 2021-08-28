@@ -6,8 +6,8 @@ using Utility.UniRx;
 
 namespace InkUniRx
 {
-    [CreateAssetMenu(fileName = nameof(StoryPlayerSettings), menuName = "Ink-UniRx/StoryTextPresenter Settings", order = 0)]
-    public class StoryTextPresenterSettings : ScriptableObject
+    [CreateAssetMenu(fileName = nameof(StoryTextViewSettings), menuName = "Ink-UniRx/Settings/StoryTextView", order = 0)]
+    public class StoryTextViewSettings : ScriptableObject
     {
         #region Internal
 
@@ -22,8 +22,9 @@ namespace InkUniRx
         
         #region Inpsector
 
+        [SerializeField] private bool trim = true;
         [SerializeField] private AnimationStyleType animationStyle;
-        [SerializeField] private Ease easing = Ease.InOutExpo;
+        [SerializeField] private Ease easing = Ease.OutQuint;
         [SerializeField, Min(0)] private float textAnimationSpeed;
 
         #endregion
@@ -38,6 +39,8 @@ namespace InkUniRx
         public AnimationStyleType AnimationStyle => animationStyle;
 
         public Ease Easing => easing;
+
+        public bool Trim => trim;
 
         #endregion
 

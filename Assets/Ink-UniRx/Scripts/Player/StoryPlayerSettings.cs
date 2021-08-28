@@ -5,7 +5,7 @@ using Utility.UniRx;
 
 namespace InkUniRx
 {
-    [CreateAssetMenu(fileName = nameof(StoryPlayerSettings), menuName = "Ink-UniRx/StoryPlayer Settings", order = 0)]
+    [CreateAssetMenu(fileName = nameof(StoryPlayerSettings), menuName = "Ink-UniRx/Settings/StoryPlayer", order = 0)]
     public class StoryPlayerSettings : ScriptableObject
     {
         #region Inspector
