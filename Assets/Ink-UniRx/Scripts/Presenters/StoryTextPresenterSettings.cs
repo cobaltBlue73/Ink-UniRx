@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using UniRx;
 using UnityEngine;
 using Utility.UniRx;
@@ -22,6 +23,7 @@ namespace InkUniRx
         #region Inpsector
 
         [SerializeField] private AnimationStyleType animationStyle;
+        [SerializeField] private Ease easing = Ease.InOutExpo;
         [SerializeField, Min(0)] private float textAnimationSpeed;
 
         #endregion
@@ -34,6 +36,8 @@ namespace InkUniRx
         private CompositeDisposable Disposables => _disposables ??= new CompositeDisposable();
 
         public AnimationStyleType AnimationStyle => animationStyle;
+
+        public Ease Easing => easing;
 
         #endregion
 
