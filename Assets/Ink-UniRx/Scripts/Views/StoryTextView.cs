@@ -33,6 +33,12 @@ namespace InkUniRx
         
         #region Unity Callbacks
 
+        private void OnValidate()
+        {
+            if (!text)
+                text = GetComponent<TextMeshProUGUI>();
+        }
+
         private void Awake()
         {
             _animationStyle = settings.AnimationStyle;
