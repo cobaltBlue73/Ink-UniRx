@@ -5,58 +5,52 @@ namespace Utility.DoTweenPro
 {
     public static class TextMeshProExtensions
     {
-        public static Tweener DOTextPerCharacter(this TextMeshPro text, string to, float duration)
+        public static Tweener DOTextPerCharacter(this TMP_Text text, float duration)
         {
+            text.ForceMeshUpdate();
+            var target = text.textInfo.characterCount;
             text.maxVisibleCharacters = 0;
-            text.text = to;
-            return DOTween.To(() => text.maxVisibleCharacters, 
+            return DOTween.To(() => text.maxVisibleCharacters,
                 val => text.maxVisibleCharacters = val,
-                text.textInfo.characterCount, duration);
+                target, duration);
         }
         
-        public static Tweener DOTextPerWord(this TextMeshPro text, string to, float duration)
+        public static Tweener DOTextPerWord(this TMP_Text text, float duration)
         {
+            text.ForceMeshUpdate();
+            var target = text.textInfo.wordCount;
             text.maxVisibleWords = 0;
-            text.text = to;
-            return DOTween.To(() => text.maxVisibleWords, 
+            return DOTween.To(() => text.maxVisibleWords,
                 val => text.maxVisibleWords = val,
-                text.textInfo.wordCount, duration);
+                target, duration);
         }
         
-        public static Tweener DOTextPerLine(this TextMeshPro text, string to, float duration)
+        public static Tweener DOTextPerLine(this TMP_Text text, float duration)
         {
+            text.ForceMeshUpdate();
+            var target = text.textInfo.lineCount;
             text.maxVisibleLines = 0;
-            text.text = to;
-            return DOTween.To(() => text.maxVisibleLines, 
+            return DOTween.To(() => text.maxVisibleLines,
                 val => text.maxVisibleLines = val,
-                text.textInfo.lineCount, duration);
+                target, duration);
         }
         
-        public static Tweener DOTextPerCharacter(this TextMeshProUGUI text, string to, float duration)
+        public static Tweener DOTextPerCharacter(this TMP_Text text, string to, float duration)
         {
-            text.maxVisibleCharacters = 0;
             text.text = to;
-            return DOTween.To(() => text.maxVisibleCharacters, 
-                val => text.maxVisibleCharacters = val,
-                text.textInfo.characterCount, duration);
+            return text.DOTextPerCharacter(duration);
         }
         
-        public static Tweener DOTextPerWord(this TextMeshProUGUI text, string to, float duration)
+        public static Tweener DOTextPerWord(this TMP_Text text, string to, float duration)
         {
-            text.maxVisibleWords = 0;
             text.text = to;
-            return DOTween.To(() => text.maxVisibleWords, 
-                val => text.maxVisibleWords = val,
-                text.textInfo.wordCount, duration);
+            return text.DOTextPerWord(duration);
         }
         
-        public static Tweener DOTextPerLine(this TextMeshProUGUI text, string to, float duration)
+        public static Tweener DOTextPerLine(this TMP_Text text, string to, float duration)
         {
-            text.maxVisibleLines = 0;
             text.text = to;
-            return DOTween.To(() => text.maxVisibleLines, 
-                val => text.maxVisibleLines = val,
-                text.textInfo.lineCount, duration);
+            return text.DOTextPerLine(duration);
         }
     }
 }
