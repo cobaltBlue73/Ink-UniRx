@@ -29,16 +29,16 @@ namespace Utility.DOTweenPro
         public static Sequence DOFadeWord(this DOTweenTMPAnimator animator, int wordIndex, float endValue, float duration, Ease ease = Ease.OutQuad, bool from = false) => 
             GetWordSeq(animator, wordIndex, ease, @from,i=> animator.DOFadeChar(i, endValue, duration));
 
-        public static Sequence DOColorWord(this DOTweenTMPAnimator animator, int wordIndex, Color endValue, float duration,  Ease ease = Ease.OutQuad, bool from = false) => 
+        public static Sequence DOColorWord(this DOTweenTMPAnimator animator, int wordIndex, Color endValue, float duration, Ease ease = Ease.OutQuad, bool from = false) => 
             GetWordSeq(animator, wordIndex, ease, @from,i=> animator.DOColorChar(i, endValue, duration));
 
-        public static Sequence DOOffsetWord(this DOTweenTMPAnimator animator, int wordIndex, Vector3 endValue, float duration,  Ease ease = Ease.OutQuad, bool from = false) => 
+        public static Sequence DOOffsetWord(this DOTweenTMPAnimator animator, int wordIndex, Vector3 endValue, float duration, Ease ease = Ease.OutQuad, bool from = false) => 
             GetWordSeq(animator, wordIndex, ease, @from,i=> animator.DOOffsetChar(i, endValue, duration));
 
         public static Sequence DORotateWord(this DOTweenTMPAnimator animator, int wordIndex, Vector3 endValue, float duration, Ease ease = Ease.OutQuad, bool from = false, RotateMode mode = RotateMode.Fast) => 
             GetWordSeq(animator, wordIndex, ease, @from,i=> animator.DORotateChar(i, endValue, duration, mode));
 
-        public static Sequence DOScaleWord(this DOTweenTMPAnimator animator, int wordIndex, float endValue, float duration,  Ease ease = Ease.OutQuad, bool from = false) => 
+        public static Sequence DOScaleWord(this DOTweenTMPAnimator animator, int wordIndex, float endValue, float duration, Ease ease = Ease.OutQuad, bool from = false) => 
             GetWordSeq(animator, wordIndex, ease, @from,i=> animator.DOScaleChar(i, endValue, duration));
 
         public static Sequence DOPunchWordOffset(this DOTweenTMPAnimator animator, int wordIndex, Vector3 punch, float duration, Ease ease = Ease.OutQuad, bool from = false, int vibrato = 10, float elasticity = 1f) => 
@@ -80,19 +80,19 @@ namespace Utility.DOTweenPro
             return seq;
         }
         
-        public static Sequence DOFadeLine(this DOTweenTMPAnimator animator, int lineIndex, float endValue, float duration,  Ease ease = Ease.OutQuad, bool from = false) => 
+        public static Sequence DOFadeLine(this DOTweenTMPAnimator animator, int lineIndex, float endValue, float duration, Ease ease = Ease.OutQuad, bool from = false) => 
             GetLineSeq(animator, lineIndex, ease, @from, i=> animator.DOFadeChar(i, endValue, duration));
 
-        public static Sequence DOColorLine(this DOTweenTMPAnimator animator, int lineIndex, Color endValue, float duration,  Ease ease = Ease.OutQuad, bool from = false) => 
+        public static Sequence DOColorLine(this DOTweenTMPAnimator animator, int lineIndex, Color endValue, float duration, Ease ease = Ease.OutQuad, bool from = false) => 
             GetLineSeq(animator, lineIndex, ease, @from, i=> animator.DOColorChar(i, endValue, duration));
 
-        public static Sequence DOOffsetLine(this DOTweenTMPAnimator animator, int lineIndex, Vector3 endValue, float duration,  Ease ease = Ease.OutQuad, bool from = false) => 
+        public static Sequence DOOffsetLine(this DOTweenTMPAnimator animator, int lineIndex, Vector3 endValue, float duration, Ease ease = Ease.OutQuad, bool from = false) => 
             GetLineSeq(animator, lineIndex, ease, @from, i=> animator.DOOffsetChar(i, endValue, duration));
 
         public static Sequence DORotateLine(this DOTweenTMPAnimator animator, int lineIndex, Vector3 endValue, float duration, Ease ease = Ease.OutQuad, bool from = false, RotateMode mode = RotateMode.Fast) => 
             GetLineSeq(animator, lineIndex, ease, @from, i=> animator.DORotateChar(i, endValue, duration, mode));
 
-        public static Sequence DOScaleLine(this DOTweenTMPAnimator animator, int lineIndex, float endValue, float duration,  Ease ease = Ease.OutQuad, bool from = false) => 
+        public static Sequence DOScaleLine(this DOTweenTMPAnimator animator, int lineIndex, float endValue, float duration, Ease ease = Ease.OutQuad, bool from = false) => 
             GetLineSeq(animator, lineIndex, ease, @from, i=> animator.DOScaleChar(i, endValue, duration));
 
         public static Sequence DOPunchLineOffset(this DOTweenTMPAnimator animator, int lineIndex, Vector3 punch, float duration, Ease ease = Ease.OutQuad, bool from = false, int vibrato = 10, float elasticity = 1f) => 
@@ -137,37 +137,37 @@ namespace Utility.DOTweenPro
             return seq;
         }
         
-        public static Sequence DOFadeCharacters(this DOTweenTMPAnimator animator, float endValue, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false) => 
+        public static Sequence DOFadeCharacters(this DOTweenTMPAnimator animator, float endValue, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0) => 
             GetCharactersSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOFadeChar(i, endValue, easeDuration));
 
-        public static Sequence DOColorCharacters(this DOTweenTMPAnimator animator, Color endValue, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false) => 
+        public static Sequence DOColorCharacters(this DOTweenTMPAnimator animator, Color endValue, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0) => 
             GetCharactersSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOColorChar(i, endValue, easeDuration));
 
         public static Sequence DOOffsetCharacters(this DOTweenTMPAnimator animator, Vector3 endValue, float easeDuration, float sequenceSpeed = 0,  Ease ease = Ease.OutQuad, bool from = false) => 
             GetCharactersSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOOffsetChar(i, endValue, easeDuration));
 
-        public static Sequence DORotateCharacters(this DOTweenTMPAnimator animator, Vector3 endValue, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false, RotateMode mode = RotateMode.Fast) => 
+        public static Sequence DORotateCharacters(this DOTweenTMPAnimator animator, Vector3 endValue, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0, RotateMode mode = RotateMode.Fast) => 
             GetCharactersSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DORotateChar(i, endValue, easeDuration, mode));
 
         public static Sequence DOScaleCharacters(this DOTweenTMPAnimator animator, float endValue, float easeDuration, float sequenceSpeed = 0,  Ease ease = Ease.OutQuad, bool from = false) => 
             GetCharactersSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOScaleChar(i, endValue, easeDuration));
 
-        public static Sequence DOPunchCharactersOffset(this DOTweenTMPAnimator animator, Vector3 punch, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false, int vibrato = 10, float elasticity = 1f) => 
+        public static Sequence DOPunchCharactersOffset(this DOTweenTMPAnimator animator, Vector3 punch, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0, int vibrato = 10, float elasticity = 1f) => 
             GetCharactersSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOPunchCharOffset(i, punch, easeDuration, vibrato, elasticity));
 
-        public static Sequence DOPunchCharactersRotation(this DOTweenTMPAnimator animator, Vector3 punch, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false, int vibrato = 10, float elasticity = 1f) => 
+        public static Sequence DOPunchCharactersRotation(this DOTweenTMPAnimator animator, Vector3 punch, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0, int vibrato = 10, float elasticity = 1f) => 
             GetCharactersSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOPunchCharRotation(i, punch, easeDuration, vibrato, elasticity));
 
-        public static Sequence DOPunchCharactersScale(this DOTweenTMPAnimator animator, float punch, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false, int vibrato = 10, float elasticity = 1f) => 
+        public static Sequence DOPunchCharactersScale(this DOTweenTMPAnimator animator, float punch, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0, int vibrato = 10, float elasticity = 1f) => 
             GetCharactersSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOPunchCharScale(i, punch, easeDuration, vibrato, elasticity));
 
-        public static Sequence DOShakeCharactersOffset(this DOTweenTMPAnimator animator, Vector3 strength, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false, int vibrato = 10, float randomness = 90f, bool fadeOut = true) => 
+        public static Sequence DOShakeCharactersOffset(this DOTweenTMPAnimator animator, Vector3 strength, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0, int vibrato = 10, float randomness = 90f, bool fadeOut = true) => 
             GetCharactersSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOShakeCharOffset(i, easeDuration, strength, vibrato, randomness, fadeOut));
 
-        public static Sequence DOShakeCharactersRotation(this DOTweenTMPAnimator animator, Vector3 strength, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false, int vibrato = 10, float randomness = 90f, bool fadeOut = true) => 
+        public static Sequence DOShakeCharactersRotation(this DOTweenTMPAnimator animator, Vector3 strength, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0, int vibrato = 10, float randomness = 90f, bool fadeOut = true) => 
             GetCharactersSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOShakeCharRotation(i, easeDuration, strength, vibrato, randomness, fadeOut));
 
-        public static Sequence DOShakeCharactersScale(this DOTweenTMPAnimator animator, Vector3 strength, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false, int vibrato = 10, float randomness = 90f, bool fadeOut = true) => 
+        public static Sequence DOShakeCharactersScale(this DOTweenTMPAnimator animator, Vector3 strength, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0, int vibrato = 10, float randomness = 90f, bool fadeOut = true) => 
             GetCharactersSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOShakeCharScale(i, easeDuration, strength, vibrato, randomness, fadeOut));
 
         #endregion
@@ -209,37 +209,37 @@ namespace Utility.DOTweenPro
             return seq;
         }
         
-        public static Sequence DOFadeWords(this DOTweenTMPAnimator animator, float endValue, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false) => 
+        public static Sequence DOFadeWords(this DOTweenTMPAnimator animator, float endValue, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0) => 
             GetWordsSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOFadeChar(i, endValue, easeDuration));
 
-        public static Sequence DOColorWords(this DOTweenTMPAnimator animator, Color endValue, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false) => 
+        public static Sequence DOColorWords(this DOTweenTMPAnimator animator, Color endValue, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0) => 
             GetWordsSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOColorChar(i, endValue, easeDuration));
 
         public static Sequence DOOffsetWords(this DOTweenTMPAnimator animator, Vector3 endValue, float easeDuration, float sequenceSpeed = 0,  Ease ease = Ease.OutQuad, bool from = false) => 
             GetWordsSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOOffsetChar(i, endValue, easeDuration));
 
-        public static Sequence DORotateWords(this DOTweenTMPAnimator animator, Vector3 endValue, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false, RotateMode mode = RotateMode.Fast) => 
+        public static Sequence DORotateWords(this DOTweenTMPAnimator animator, Vector3 endValue, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0, RotateMode mode = RotateMode.Fast) => 
             GetWordsSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DORotateChar(i, endValue, easeDuration, mode));
 
         public static Sequence DOScaleWords(this DOTweenTMPAnimator animator, float endValue, float easeDuration, float sequenceSpeed = 0,  Ease ease = Ease.OutQuad, bool from = false) => 
             GetWordsSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOScaleChar(i, endValue, easeDuration));
 
-        public static Sequence DOPunchWordsOffset(this DOTweenTMPAnimator animator, Vector3 punch, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false, int vibrato = 10, float elasticity = 1f) => 
+        public static Sequence DOPunchWordsOffset(this DOTweenTMPAnimator animator, Vector3 punch, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0, int vibrato = 10, float elasticity = 1f) => 
             GetWordsSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOPunchCharOffset(i, punch, easeDuration, vibrato, elasticity));
 
-        public static Sequence DOPunchWordsRotation(this DOTweenTMPAnimator animator, Vector3 punch, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false, int vibrato = 10, float elasticity = 1f) => 
+        public static Sequence DOPunchWordsRotation(this DOTweenTMPAnimator animator, Vector3 punch, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0, int vibrato = 10, float elasticity = 1f) => 
             GetWordsSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOPunchCharRotation(i, punch, easeDuration, vibrato, elasticity));
 
-        public static Sequence DOPunchWordsScale(this DOTweenTMPAnimator animator, float punch, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false, int vibrato = 10, float elasticity = 1f) => 
+        public static Sequence DOPunchWordsScale(this DOTweenTMPAnimator animator, float punch, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0, int vibrato = 10, float elasticity = 1f) => 
             GetWordsSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOPunchCharScale(i, punch, easeDuration, vibrato, elasticity));
 
-        public static Sequence DOShakeWordsOffset(this DOTweenTMPAnimator animator, Vector3 strength, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false, int vibrato = 10, float randomness = 90f, bool fadeOut = true) => 
+        public static Sequence DOShakeWordsOffset(this DOTweenTMPAnimator animator, Vector3 strength, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0, int vibrato = 10, float randomness = 90f, bool fadeOut = true) => 
             GetWordsSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOShakeCharOffset(i, easeDuration, strength, vibrato, randomness, fadeOut));
 
-        public static Sequence DOShakeWordsRotation(this DOTweenTMPAnimator animator, Vector3 strength, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false, int vibrato = 10, float randomness = 90f, bool fadeOut = true) => 
+        public static Sequence DOShakeWordsRotation(this DOTweenTMPAnimator animator, Vector3 strength, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0, int vibrato = 10, float randomness = 90f, bool fadeOut = true) => 
             GetWordsSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOShakeCharRotation(i, easeDuration, strength, vibrato, randomness, fadeOut));
 
-        public static Sequence DOShakeWordsScale(this DOTweenTMPAnimator animator, Vector3 strength, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false, int vibrato = 10, float randomness = 90f, bool fadeOut = true) => 
+        public static Sequence DOShakeWordsScale(this DOTweenTMPAnimator animator, Vector3 strength, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0, int vibrato = 10, float randomness = 90f, bool fadeOut = true) => 
             GetWordsSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOShakeCharScale(i, easeDuration, strength, vibrato, randomness, fadeOut));
 
         #endregion
@@ -268,37 +268,37 @@ namespace Utility.DOTweenPro
             return seq;
         }
         
-        public static Sequence DOFadeLines(this DOTweenTMPAnimator animator, float endValue, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false) => 
+        public static Sequence DOFadeLines(this DOTweenTMPAnimator animator, float endValue, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0) => 
             GetLinesSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOFadeChar(i, endValue, easeDuration));
 
-        public static Sequence DOColorLines(this DOTweenTMPAnimator animator, Color endValue, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false) => 
+        public static Sequence DOColorLines(this DOTweenTMPAnimator animator, Color endValue, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0) => 
             GetLinesSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=>animator.DOColorChar(i, endValue, easeDuration));
 
         public static Sequence DOOffsetLines(this DOTweenTMPAnimator animator, Vector3 endValue, float easeDuration, float sequenceSpeed = 0,  Ease ease = Ease.OutQuad, bool from = false) => 
             GetLinesSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOOffsetChar(i, endValue, easeDuration));
 
-        public static Sequence DORotateLines(this DOTweenTMPAnimator animator, Vector3 endValue, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false, RotateMode mode = RotateMode.Fast) => 
+        public static Sequence DORotateLines(this DOTweenTMPAnimator animator, Vector3 endValue, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0, RotateMode mode = RotateMode.Fast) => 
             GetLinesSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DORotateChar(i, endValue, easeDuration, mode));
 
         public static Sequence DOScaleLines(this DOTweenTMPAnimator animator, float endValue, float easeDuration, float sequenceSpeed = 0,  Ease ease = Ease.OutQuad, bool from = false) => 
             GetLinesSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOScaleChar(i, endValue, easeDuration));
 
-        public static Sequence DOPunchLinesOffset(this DOTweenTMPAnimator animator, Vector3 punch, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false, int vibrato = 10, float elasticity = 1f) => 
+        public static Sequence DOPunchLinesOffset(this DOTweenTMPAnimator animator, Vector3 punch, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0, int vibrato = 10, float elasticity = 1f) => 
             GetLinesSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOPunchCharOffset(i, punch, easeDuration, vibrato, elasticity));
 
-        public static Sequence DOPunchLinesRotation(this DOTweenTMPAnimator animator, Vector3 punch, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false, int vibrato = 10, float elasticity = 1f) => 
+        public static Sequence DOPunchLinesRotation(this DOTweenTMPAnimator animator, Vector3 punch, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0, int vibrato = 10, float elasticity = 1f) => 
             GetLinesSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOPunchCharRotation(i, punch, easeDuration, vibrato, elasticity));
 
-        public static Sequence DOPunchLinesScale(this DOTweenTMPAnimator animator, float punch, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false, int vibrato = 10, float elasticity = 1f) => 
+        public static Sequence DOPunchLinesScale(this DOTweenTMPAnimator animator, float punch, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0, int vibrato = 10, float elasticity = 1f) => 
             GetLinesSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=>animator.DOPunchCharScale(i, punch, easeDuration, vibrato, elasticity));
 
-        public static Sequence DOShakeLinesOffset(this DOTweenTMPAnimator animator, Vector3 strength, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false, int vibrato = 10, float randomness = 90f, bool fadeOut = true) => 
+        public static Sequence DOShakeLinesOffset(this DOTweenTMPAnimator animator, Vector3 strength, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0, int vibrato = 10, float randomness = 90f, bool fadeOut = true) => 
             GetLinesSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=>animator.DOShakeCharOffset(i, easeDuration, strength, vibrato, randomness, fadeOut));
 
-        public static Sequence DOShakeLinesRotation(this DOTweenTMPAnimator animator, Vector3 strength, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false, int vibrato = 10, float randomness = 90f, bool fadeOut = true) => 
+        public static Sequence DOShakeLinesRotation(this DOTweenTMPAnimator animator, Vector3 strength, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0, int vibrato = 10, float randomness = 90f, bool fadeOut = true) => 
             GetLinesSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOShakeCharRotation(i, easeDuration, strength, vibrato, randomness, fadeOut));
 
-        public static Sequence DOShakeLinesScale(this DOTweenTMPAnimator animator, Vector3 strength, float easeDuration, float sequenceSpeed = 0, Ease ease = Ease.OutQuad, bool from = false, int vibrato = 10, float randomness = 90f, bool fadeOut = true) => 
+        public static Sequence DOShakeLinesScale(this DOTweenTMPAnimator animator, Vector3 strength, float easeDuration, Ease ease = Ease.OutQuad, bool from = false, float sequenceSpeed = 0, int vibrato = 10, float randomness = 90f, bool fadeOut = true) => 
             GetLinesSeq(animator, ease, @from, easeDuration, sequenceSpeed, i=> animator.DOShakeCharScale(i, easeDuration, strength, vibrato, randomness, fadeOut));
 
         #endregion
