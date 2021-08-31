@@ -5,7 +5,7 @@ namespace Utility.DoTweenPro
 {
     public static class TextMeshProExtensions
     {
-        public static Tweener DOTextPerCharacter(this TMP_Text text, float duration)
+        public static Tweener DOVisibleCharacters(this TMP_Text text, float duration)
         {
             text.ForceMeshUpdate();
             var target = text.textInfo.characterCount;
@@ -15,7 +15,7 @@ namespace Utility.DoTweenPro
                 target, duration);
         }
         
-        public static Tweener DOTextPerWord(this TMP_Text text, float duration)
+        public static Tweener DOVisibleWords(this TMP_Text text, float duration)
         {
             text.ForceMeshUpdate();
             var target = text.textInfo.wordCount;
@@ -25,7 +25,7 @@ namespace Utility.DoTweenPro
                 target, duration);
         }
         
-        public static Tweener DOTextPerLine(this TMP_Text text, float duration)
+        public static Tweener DOVisibleLines(this TMP_Text text, float duration)
         {
             text.ForceMeshUpdate();
             var target = text.textInfo.lineCount;
@@ -35,22 +35,22 @@ namespace Utility.DoTweenPro
                 target, duration);
         }
         
-        public static Tweener DOTextPerCharacter(this TMP_Text text, string to, float duration)
+        public static Tweener DOVisibleCharacters(this TMP_Text text, string newText, float duration)
         {
-            text.text = to;
-            return text.DOTextPerCharacter(duration);
+            text.text = newText;
+            return text.DOVisibleCharacters(duration);
         }
         
-        public static Tweener DOTextPerWord(this TMP_Text text, string to, float duration)
+        public static Tweener DOVisibleWords(this TMP_Text text, string newText, float duration)
         {
-            text.text = to;
-            return text.DOTextPerWord(duration);
+            text.text = newText;
+            return text.DOVisibleWords(duration);
         }
         
-        public static Tweener DOTextPerLine(this TMP_Text text, string to, float duration)
+        public static Tweener DOVisibleLines(this TMP_Text text, string newText, float duration)
         {
-            text.text = to;
-            return text.DOTextPerLine(duration);
+            text.text = newText;
+            return text.DOVisibleLines(duration);
         }
     }
 }
