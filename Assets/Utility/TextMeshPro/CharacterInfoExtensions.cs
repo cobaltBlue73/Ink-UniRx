@@ -2,7 +2,7 @@ using TMPro;
 
 namespace Utility.TextMeshPro
 {
-    public static class Extensions
+    public static class CharacterInfoExtensions
     {
         public static bool IsLetterOrDigit(this TMP_CharacterInfo info) => char.IsLetterOrDigit(info.character);
         
