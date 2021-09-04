@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: StoryPlayerSettings
   m_EditorClassIdentifier: 
   continueEachLine: 1
-  autoContinue: 0
-  autoContinueDelay: 0.6
+  autoContinue: 1
+  autoContinueDelay: 2.4

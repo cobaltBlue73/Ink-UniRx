@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Ink.Runtime;
+using Sirenix.OdinInspector;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Events;
@@ -18,12 +19,16 @@ namespace InkUniRx
         
         #region Inspector
         
-        [SerializeField] private StoryPlayerSettings settings;
+        [SerializeField] private bool continueMaximally;
+        [SerializeField] private bool autoContinue;
+        [SerializeField] private float autoContinueDelay;
         [SerializeField] private TextAsset storyTextAsset;
         
         #endregion
 
         #region Properties
+        
+        public Story Story => _story;
         
         public IObservable<Unit> WhenStoryBegins => _whenStoryBegins.AsObservable();
         public IObservable<Unit> WhenStoryEnds => _whenStoryEnds.AsObservable();
@@ -37,10 +42,7 @@ namespace InkUniRx
         #region Member Variables
 
         private Story _story;
-        private bool _continueMaximally;
-        private bool _autoContinue;
-        private float _autoContinueDelay;
-        
+
         private readonly ReactiveCommand _continueCmd = new ReactiveCommand();
         
         private readonly Subject<Unit> _whenStoryBegins = new  Subject<Unit>();
@@ -101,10 +103,10 @@ namespace InkUniRx
             InitPlayer();
         }
 
-        [ContextMenu(nameof(BeginStory))]
+        [Button(nameof(BeginStory))]
         public void BeginStory() => RunStoryAsync().Forget();
 
-        [ContextMenu(nameof(ContinueNext))]
+        [Button(nameof(ContinueNext))]
         public void ContinueNext()
         {
             SkipTransitions();
@@ -114,7 +116,7 @@ namespace InkUniRx
         public void SelectChoice(int choiceIndex)
         {
             SkipTransitions();
-            _story?.ChooseChoiceIndex(choiceIndex);
+            Story.ChooseChoiceIndex(choiceIndex);
         }
 
         [ContextMenu(nameof(SkipTransitions))]
@@ -138,7 +140,7 @@ namespace InkUniRx
         
         private async UniTaskVoid RunStoryAsync()
         {
-            if (_story == null || !_story.canContinue) return;
+            if (Story == null || !Story.canContinue) return;
             
             InitStory();
             
@@ -155,20 +157,20 @@ namespace InkUniRx
                     _continue();
                     await PlayNewLineTransitionsAsync();
                      
-                    if(!_story.canContinue) continue;
+                    if(!Story.canContinue) continue;
                     
                     await WaitForContinueAsync();
                     
-                } while (_story.canContinue);
+                } while (Story.canContinue);
                 
                 _whenPathEnds.OnNext(Unit.Default);
                 await PlayEndPathTransitionsAsync();
 
-                if (!_story.HasChoices()) continue;
+                if (!Story.HasChoices()) continue;
 
                 await WaitForChoiceSelection();
 
-            } while (_story.canContinue);
+            } while (Story.canContinue);
             
             _whenStoryEnds.OnNext(Unit.Default);
             
@@ -182,25 +184,19 @@ namespace InkUniRx
             if(!storyTextAsset) return;
 
             _story = new Story(storyTextAsset.text);
-            if (_continueMaximally)
-                _continue = _story.ContinueMaximally;
+            if (continueMaximally)
+                _continue = Story.ContinueMaximally;
             else
-                _continue = _story.Continue;
+                _continue = Story.Continue;
             
             _storyDisposables.Clear();
-            _story.OnContinueAsObservable().Subscribe(_whenNewLine).AddTo(_storyDisposables);
-            _story.OnMakeChoiceAsObservable().Subscribe(_whenChoiceSelected).AddTo(_storyDisposables);
+            Story.OnContinueAsObservable().Subscribe(_whenNewLine).AddTo(_storyDisposables);
+            Story.OnMakeChoiceAsObservable().Subscribe(_whenChoiceSelected).AddTo(_storyDisposables);
         }
 
         private void InitSettings()
         {
-            if(!settings) return;
-
-            _continueMaximally = !settings.ContinueEachLine;
-            settings.AutoContinue.SetAndSubscribe(ref _autoContinue, 
-                val => _autoContinue = val).AddTo(this);
-            settings.AutoContinueDelay.SetAndSubscribe(ref _autoContinueDelay, 
-                val => _autoContinueDelay = val).AddTo(this);
+            
         }
      
         private async UniTask PlayStoryTransitionsAsync(Func<CancellationToken, IEnumerable<UniTask>> onTransition)
@@ -233,21 +229,22 @@ namespace InkUniRx
 
         private async UniTask WaitForContinueAsync()
         {
-            if (!_autoContinue)
+            if (!autoContinue)
             {
                 await _continueCmd.ToUniTask(true);
                 return;
             }
 
             await UniTask.WhenAny(
-                UniTask.Delay(TimeSpan.FromSeconds(_autoContinueDelay)),
+                UniTask.Delay(TimeSpan.FromSeconds(autoContinueDelay)),
                 _continueCmd.ToUniTask(true));
             
         }
 
         private async UniTask WaitForChoiceSelection()
         {
-            await _whenChoiceSelected.ToUniTask(true);
+            await UniTask.WhenAll(_whenChoiceSelected.ToUniTask(true), 
+                UniTask.WaitUntil(()=> Story.canContinue));
         }
 
         private void InitStory()

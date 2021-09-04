@@ -2,6 +2,7 @@ using System;
 using Cysharp.Threading.Tasks;
 using Cysharp.Threading.Tasks.Triggers;
 using DG.Tweening;
+using Ink.Runtime;
 using Sirenix.OdinInspector;
 using TMPro;
 using UniRx;
@@ -18,41 +19,60 @@ namespace InkUniRx
         [SerializeField] private TextMeshProUGUI text;
         [SerializeField] private Button continueButton;
         [SerializeField] private StoryPlayer storyPlayer;
+        [SerializeField] private bool trim;
 
-        private Tweener _tweener;
-        private DOTweenTMPAnimator _tmpAnimator;
-        private async void Start()
+        private Story _story;
+        
+        private void Awake()
         {
-            continueButton.OnClickAsObservable().Subscribe(_ => ShowNextPage()).AddTo(this);
-            text.textInfo.OnPointerEnterWordAsObservable().Subscribe(info => Debug.LogFormat("Enter {0}", info.GetWord()));
-            text.textInfo.OnPointerExitWordAsObservable().Subscribe(info => Debug.LogFormat("Exit {0}", info.GetWord()));
-            text.textInfo.OnPointerClickedWordAsObservable().Subscribe(info => Debug.LogFormat("Clicked {0}", info.GetWord()));
-            await UniTask.WaitForEndOfFrame();
-            TweenNext();
+            text.overflowMode = TextOverflowModes.Page;
+            continueButton.OnClickAsObservable().Subscribe(_ => OnContinue()).AddTo(this);
+            storyPlayer.WhenStoryBegins.Subscribe(_ => OnStoryBegin());
+            storyPlayer.WhenNewLine.Subscribe(_=> OnNewLine()).AddTo(this);
+            storyPlayer.WhenPathBegins.Subscribe(_ => OnPathBegin()).AddTo(this);
+            storyPlayer.WhenPathEnds.Subscribe(_ => OnPathEnd()).AddTo(this);
+            text.textInfo.OnPointerClickedLinkAsObservable().Subscribe(OnLinkClicked).AddTo(this);
         }
 
-        private void ShowNextPage()
+        private void OnStoryBegin()
         {
-            if (_tweener != null && _tweener.IsPlaying())
+            _story = storyPlayer.Story;
+        }
+
+        private void OnNewLine()
+        {
+            text.text = trim? _story.currentText.Trim(): _story.currentText;
+        }
+
+        private void OnPathBegin()
+        {
+            continueButton.gameObject.SetActive(true);
+        }
+
+        private void OnPathEnd()
+        {
+            continueButton.gameObject.SetActive(false);
+            for (int i = 0; i < _story.currentChoices.Count; i++)
             {
-                _tweener.Complete();
-                _tweener = null;
+                var choice = _story.currentChoices[i];
+                text.text += $"\n<align=center><link={choice.index}>{choice.text}</link></align>";
+            }
+        }
+
+        private void OnLinkClicked(TMP_LinkInfo linkInfo)
+        {
+            var choiceIdx = int.Parse(linkInfo.GetLinkID());
+            storyPlayer.SelectChoice(choiceIdx);
+        }
+
+        private void OnContinue()
+        {
+            if (text.pageToDisplay < text.textInfo.pageCount)
+            {
+                ++text.pageToDisplay;
                 return;
             }
-            var curPageIdx = text.pageToDisplay - 1;
-            curPageIdx = (curPageIdx + 1) % text.textInfo.pageCount;
-            text.pageToDisplay = curPageIdx + 1;
-            
-            TweenNext();
-        }
-
-        private void TweenNext()
-        {
-            text.textInfo.GetFirstAndLastWordIndexOnPage(text.pageToDisplay - 1, out var firstWordIndex, out var lastWordIndex);
-            Debug.LogFormat("First {0}, Last {1}", firstWordIndex, lastWordIndex);
-            text.maxVisibleWords = firstWordIndex;
-            _tweener = text.DOVisibleWords(lastWordIndex + 1, 30f)
-                .SetEase(Ease.Linear).SetSpeedBased().SetRecyclable().OnKill(()=> _tweener = null);
+            storyPlayer.ContinueNext();
         }
         
     }

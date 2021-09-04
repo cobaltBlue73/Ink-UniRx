@@ -558,61 +558,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eu leo
-    ut lacus lacinia auctor. Nulla euismod maximus tempor. Ut non ullamcorper erat.
-    Phasellus pretium massa eu dui sodales fringilla. Donec imperdiet interdum dolor
-    ut interdum. Sed ipsum nulla, eleifend quis eros in, laoreet bibendum velit.
-    Proin lobortis odio elit, ac rhoncus erat pulvinar sed. Maecenas vitae nisi eget
-    lorem viverra dignissim vel vitae leo. Nunc pellentesque lorem ut velit rhoncus
-    egestas. Suspendisse potenti. Donec eget scelerisque orci. Sed sed nisl eu quam
-    suscipit malesuada.
-
-
-
-    <page>Suspendisse potenti. Morbi quis orci sit amet
-    dolor vestibulum sollicitudin congue non magna. Vestibulum ac urna egestas, varius
-    tellus id, rhoncus nibh. Vivamus euismod, tortor ac malesuada pharetra, dui magna
-    malesuada enim, eu sollicitudin sem nisl id nunc. Praesent scelerisque sem vitae
-    dolor pulvinar, sed accumsan augue sagittis. Phasellus ante elit, eleifend non
-    malesuada sit amet, rhoncus sed dui. Nam massa mi, volutpat eget justo non, tempus
-    blandit magna. Aliquam vitae odio odio. Integer ex lacus, efficitur et velit
-    nec, porta congue tellus. Etiam ultricies tellus quis dapibus eleifend. Morbi
-    semper dui sem, non consequat orci semper ut. Fusce pretium varius arcu ut porttitor.
-
-
-
-    <page>Vivamus
-    faucibus diam ex, a lobortis lorem pulvinar non. In volutpat urna elit, ac aliquam
-    nunc eleifend eget. Praesent aliquet augue vitae nulla vulputate aliquam. Fusce
-    a ultricies nulla. Phasellus commodo faucibus est, non malesuada sapien faucibus
-    non. Integer ac pulvinar felis. Fusce hendrerit diam eget leo convallis, nec
-    molestie arcu consectetur. Suspendisse condimentum lobortis lorem eget sagittis.
-    Aenean consectetur tempus dui, vitae egestas lorem ornare faucibus. Nunc vestibulum
-    enim vitae dictum luctus. Sed eget viverra lorem, id auctor eros.
-
-
-
-    <page>Vestibulum
-    sollicitudin eros vel ex lobortis, sed porta velit venenatis. Etiam quis scelerisque
-    leo, non luctus tellus. Proin vulputate et lacus sed feugiat. Suspendisse sollicitudin
-    lacus id ante accumsan vulputate. Integer volutpat dui sed metus rutrum, et iaculis
-    diam rhoncus. Aliquam ut facilisis risus, sed accumsan odio. Nunc eu ipsum lorem.
-    Vivamus urna lectus, efficitur eget semper sit amet, blandit vitae purus. Pellentesque
-    pharetra bibendum hendrerit. Phasellus eget lectus eget leo lacinia consectetur
-    non sit amet augue. Proin efficitur aliquam lacinia.
-
-
-
-    <page>Aenean rutrum
-    orci in lectus malesuada tempor. Sed vitae condimentum mauris, eu accumsan augue.
-    Nullam tempor imperdiet arcu, id blandit magna imperdiet sit amet. In convallis
-    molestie luctus. Praesent in elementum arcu. Pellentesque mattis dignissim erat,
-    quis convallis dolor sagittis sed. Quisque venenatis dapibus metus et commodo.
-    Vivamus maximus egestas dapibus. Vivamus convallis, ante quis viverra suscipit,
-    augue neque blandit leo, ac pulvinar dui ligula eu nisl. In tristique sem a volutpat
-    porttitor. Donec dictum, sapien quis malesuada vulputate, mi nisl congue est,
-    eu euismod dui leo ac velit. Proin et nisl egestas, ullamcorper sem et, fringilla
-    quam. Sed id risus nec libero pretium ultricies ut in neque.'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -639,12 +585,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 68.05
+  m_fontSize: 32
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_fontSizeMin: 16
+  m_fontSizeMax: 32
   m_fontStyle: 0
   m_HorizontalAlignment: 8
   m_VerticalAlignment: 256
@@ -746,6 +692,7 @@ MonoBehaviour:
   text: {fileID: 1169686829}
   continueButton: {fileID: 116233428}
   storyPlayer: {fileID: 1245477038}
+  trim: 0
 --- !u!114 &1245477035
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -822,8 +769,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12807978537f467a9dac6b2c57ebce22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  settings: {fileID: 11400000, guid: 52a5f4af1fd1fd84db790ded673e2990, type: 2}
-  storyTextAsset: {fileID: 4900000, guid: 9b0b7412dfad8924594f722294d4aa17, type: 3}
+  continueMaximally: 1
+  autoContinue: 1
+  autoContinueDelay: 3
+  storyTextAsset: {fileID: 4900000, guid: 16478c34f96aeba4789f4140ffdf0d27, type: 3}
 --- !u!1 &1259166127
 GameObject:
   m_ObjectHideFlags: 0
@@ -942,7 +891,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1809637074
 RectTransform:
   m_ObjectHideFlags: 0

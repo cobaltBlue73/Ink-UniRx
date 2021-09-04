@@ -1,11 +1,12 @@
 using System;
+using Sirenix.OdinInspector;
 using UniRx;
 using UnityEngine;
 using Utility.UniRx;
 
 namespace InkUniRx
 {
-    [CreateAssetMenu(fileName = nameof(StoryPlayerSettings), menuName = "Ink-UniRx/Settings/StoryPlayer", order = 0)]
+    [CreateAssetMenu(fileName = nameof(StoryPlayerSettings), menuName = "Ink-UniRx/Settings/StoryPlayer", order = 0), InlineEditor]
     public class StoryPlayerSettings : ScriptableObject
     {
         #region Inspector
