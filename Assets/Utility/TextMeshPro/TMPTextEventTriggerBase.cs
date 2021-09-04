@@ -1,4 +1,6 @@
 using TMPro;
+using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -7,7 +9,7 @@ using Utility.General;
 namespace Utility.TextMeshPro
 {
     [RequireComponent(typeof(TMP_Text)), DisallowMultipleComponent]
-    public abstract class TMPTextEventTriggerBase<T> : MonoBehaviour, IPointerClickHandler where T: struct
+    public abstract class TMPTextEventTriggerBase<T> : MonoBehaviour where T: struct
     {
         #region Inspector
 
@@ -61,9 +63,18 @@ namespace Utility.TextMeshPro
             {
                 Camera = Camera.main;
             }
+
+            this.LateUpdateAsObservable()
+                .Subscribe(ONLateUpdate)
+                .AddTo(this);
+
+            this.GetOrAddComponent<ObservableEventTrigger>()
+                .OnPointerClickAsObservable()
+                .Subscribe(ONPointerClick)
+                .AddTo(this);
         }
 
-        private void LateUpdate()
+        private void ONLateUpdate(Unit _)
         {
             if (!TMP_TextUtilities.IsIntersectingRectTransform(Text.rectTransform, Input.mousePosition, Camera))
             {
@@ -96,7 +107,7 @@ namespace Utility.TextMeshPro
 
         protected abstract T GetTextElementInfo(int index);
         
-        public void OnPointerClick(PointerEventData eventData)
+        private void ONPointerClick(PointerEventData eventData)
         {
             var elementIdx = FindIntersectingTextElement();
             
