@@ -19,13 +19,11 @@ namespace InkUniRx
         #region Inspector
         
         [SerializeField] private StoryPlayerSettings settings;
-        [SerializeField] private StoryVM storyVM;
+        [SerializeField] private TextAsset storyTextAsset;
         
         #endregion
 
         #region Properties
-        
-        public StoryVM StoryVM => storyVM;
         
         public IObservable<Unit> WhenStoryBegins => _whenStoryBegins.AsObservable();
         public IObservable<Unit> WhenStoryEnds => _whenStoryEnds.AsObservable();
@@ -97,9 +95,9 @@ namespace InkUniRx
 
         #region Public Methods
 
-        public void SetStoryVM(StoryVM storyVM)
+        public void SetStoryTexAsset(TextAsset storyAsset)
         {
-            this.storyVM = storyVM;
+            storyTextAsset = storyAsset;
             InitPlayer();
         }
 
@@ -181,9 +179,9 @@ namespace InkUniRx
         
         private void InitPlayer()
         {
-            if(!storyVM) return;
-            
-            _story = storyVM.Story;
+            if(!storyTextAsset) return;
+
+            _story = new Story(storyTextAsset.text);
             if (_continueMaximally)
                 _continue = _story.ContinueMaximally;
             else
