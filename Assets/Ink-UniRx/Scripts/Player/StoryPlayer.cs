@@ -59,9 +59,8 @@ namespace InkUniRx
         private readonly CompositeDisposable _storyDisposables = new CompositeDisposable();
 
         private CancellationTokenSource _curTransitionCts;
-
-        private Func<string> _continue;
-
+        private IStoryContinueOverride _storyContinueOverrideOverride;
+        
         #endregion
         
         #region Unity Callbacks
@@ -103,23 +102,29 @@ namespace InkUniRx
             InitPlayer();
         }
 
+        public void SetStoryContinueOverride(IStoryContinueOverride storyContinueOverride)
+        {
+            _storyContinueOverrideOverride = storyContinueOverride;
+        }
+
         [Button(nameof(BeginStory))]
         public void BeginStory() => RunStoryAsync().Forget();
-
-        [Button(nameof(ContinueNext))]
-        public void ContinueNext()
+        
+        
+        public void ContinueStory(bool skipTransitions = true)
         {
-            SkipTransitions();
+            if(skipTransitions) SkipTransitions();
+            
             _continueCmd.Execute();
         }
 
-        public void SelectChoice(int choiceIndex)
+        public void SelectChoice(int choiceIndex, bool skipTransitions = true)
         {
-            SkipTransitions();
+            if(skipTransitions) SkipTransitions();
+            
             Story.ChooseChoiceIndex(choiceIndex);
         }
-
-        [ContextMenu(nameof(SkipTransitions))]
+        
         public void SkipTransitions() => _curTransitionCts?.Cancel();
 
         public void SubmitBeginStoryTransition(IBeginStoryTransition transition) => 
@@ -154,7 +159,7 @@ namespace InkUniRx
                 
                 do
                 {
-                    _continue();
+                    ContinueNextLine();
                     await PlayNewLineTransitionsAsync();
                      
                     if(!Story.canContinue) continue;
@@ -184,10 +189,6 @@ namespace InkUniRx
             if(!storyTextAsset) return;
 
             _story = new Story(storyTextAsset.text);
-            if (continueMaximally)
-                _continue = Story.ContinueMaximally;
-            else
-                _continue = Story.Continue;
             
             _storyDisposables.Clear();
             Story.OnContinueAsObservable().Subscribe(_whenNewLine).AddTo(_storyDisposables);
@@ -201,9 +202,10 @@ namespace InkUniRx
      
         private async UniTask PlayStoryTransitionsAsync(Func<CancellationToken, IEnumerable<UniTask>> onTransition)
         {
-            _curTransitionCts = new CancellationTokenSource();
-            await UniTask.WhenAll(onTransition(_curTransitionCts.Token));
-            _curTransitionCts.Dispose();
+            using (_curTransitionCts = new CancellationTokenSource())
+            {
+                await UniTask.WhenAll(onTransition(_curTransitionCts.Token));
+            }
             _curTransitionCts = null;
         }
         
@@ -227,7 +229,27 @@ namespace InkUniRx
                 _endPathTransitions.Select(t => 
                     t.PlayEndPathTransitionAsync(ct)));
 
+        private void ContinueNextLine()
+        {
+            if (continueMaximally)
+                Story.ContinueMaximally();
+            else
+                Story.Continue();
+        }
+
         private async UniTask WaitForContinueAsync()
+        {
+            if (_storyContinueOverrideOverride != null)
+            {
+                await _storyContinueOverrideOverride
+                    .WaitForContinueAsync(DefaultWaitForContinueAsync);
+                return;
+            }
+
+            await DefaultWaitForContinueAsync();
+        }
+
+        private async UniTask DefaultWaitForContinueAsync()
         {
             if (!autoContinue)
             {
@@ -238,7 +260,6 @@ namespace InkUniRx
             await UniTask.WhenAny(
                 UniTask.Delay(TimeSpan.FromSeconds(autoContinueDelay)),
                 _continueCmd.ToUniTask(true));
-            
         }
 
         private async UniTask WaitForChoiceSelection()
