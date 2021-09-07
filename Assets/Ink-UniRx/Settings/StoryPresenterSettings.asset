@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   continueMaximally:
     value: 0
-  autoContinue: 1
-  autoContinueDelay: 1.5
+  autoContinue:
+    value: 1
+  autoContinueDelay:
+    value: 1.2
   textAnimationEasing: 1
-  textAnimationSpeed: 60
+  textAnimationSpeed:
+    value: 120

@@ -4,6 +4,7 @@ using Sirenix.OdinInspector;
 using UniRx;
 using UnityEngine;
 using Utility.UniRx;
+using ReactivePropertyExtensions = Utility.UniRx.ReactivePropertyExtensions;
 
 namespace InkUniRx
 {
@@ -17,13 +18,11 @@ namespace InkUniRx
         [SerializeField, FoldoutGroup("Story Continue Settings")] 
         private BoolReactiveProperty continueMaximally;
         
-        [SerializeField, FoldoutGroup("Story Continue Settings"), 
-         OnValueChanged(nameof(OnAutoContinueChanged))] 
-        private bool autoContinue;
+        [SerializeField, FoldoutGroup("Story Continue Settings")] 
+        private BoolReactiveProperty autoContinue;
         
-        [SerializeField, MinValue(0), FoldoutGroup("Story Continue Settings"), 
-         OnValueChanged(nameof(OnAutoContinueDelayChanged))] 
-        private float autoContinueDelay;
+        [SerializeField, FoldoutGroup("Story Continue Settings")] 
+        private FloatReactiveProperty autoContinueDelay;
 
         #endregion
 
@@ -33,26 +32,25 @@ namespace InkUniRx
          OnValueChanged(nameof(OnTextAnimationEasingChanged))] 
         private Ease textAnimationEasing = Ease.Linear;
         
-        [SerializeField, FoldoutGroup("Text Animation Settings"), 
-         OnValueChanged(nameof(OnTextAnimationSpeedChanged))] 
-        private float textAnimationSpeed;
+        [SerializeField, FoldoutGroup("Text Animation Settings")] 
+        private FloatReactiveProperty textAnimationSpeed;
 
         #endregion
         
         #endregion
 
         #region Properties
-        
+
         public IReactiveProperty<bool> AutoContinue => _autoContinue ??=
-            Helpers.GetBooleanPlayerPrefAsReactiveProperty(nameof(autoContinue), autoContinue, Disposables);
+            autoContinue.AsPlayerPrefReactiveProperty(nameof(autoContinue), Disposables);
 
         public IReactiveProperty<float> AutoContinueDelay => _autoContinueDelay ??=
-                Helpers.GetFloatPlayerPrefAsReactiveProperty(nameof(autoContinueDelay), autoContinueDelay, Disposables);
+                autoContinueDelay.AsPlayerPrefReactiveProperty(nameof(autoContinueDelay), Disposables);
         
         public IReactiveProperty<bool> ContinueMaximally => continueMaximally;
         
         public IReactiveProperty<float> TextAnimationSpeed => _textAnimationSpeed ??=
-            Helpers.GetFloatPlayerPrefAsReactiveProperty(nameof(textAnimationSpeed), textAnimationSpeed, Disposables);
+            textAnimationSpeed.AsPlayerPrefReactiveProperty(nameof(textAnimationSpeed), Disposables);
         
         public IReactiveProperty<Ease> TextAnimationEasing => 
             _textAnimationEasing ??= new ReactiveProperty<Ease>(textAnimationEasing);
@@ -63,23 +61,17 @@ namespace InkUniRx
 
         #region Member Variables
 
-        private ReactiveProperty<Ease> _textAnimationEasing;
-        private ReactiveProperty<bool> _autoContinue;
-        private ReactiveProperty<float> _autoContinueDelay;
-        private ReactiveProperty<float> _textAnimationSpeed;
+        private IReactiveProperty<Ease> _textAnimationEasing;
+        private IReactiveProperty<bool> _autoContinue;
+        private IReactiveProperty<float> _autoContinueDelay;
+        private IReactiveProperty<float> _textAnimationSpeed;
         private CompositeDisposable _disposables;
 
         #endregion
 
         #region OnValueChanged Callbacks
-
+        
         private void OnTextAnimationEasingChanged() => TextAnimationEasing.Value = textAnimationEasing;
-
-        private void OnAutoContinueChanged() => AutoContinue.Value = autoContinue;
-
-        private void OnAutoContinueDelayChanged() => AutoContinueDelay.Value = autoContinueDelay;
-
-        private void OnTextAnimationSpeedChanged() => TextAnimationSpeed.Value = textAnimationSpeed;
 
         #endregion
 
@@ -87,11 +79,18 @@ namespace InkUniRx
 
         private void OnValidate()
         {
-          
+            autoContinueDelay.Value = Mathf.Max(0, autoContinueDelay.Value);
+            textAnimationSpeed.Value = Mathf.Max(0, textAnimationSpeed.Value);
+        }
+
+        private void OnEnable()
+        {
+            
         }
 
         private void OnDisable()
         {
+            PlayerPrefs.Save();
             _disposables?.Clear();
         }
 
