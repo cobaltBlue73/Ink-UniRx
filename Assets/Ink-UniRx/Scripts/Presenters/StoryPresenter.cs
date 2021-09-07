@@ -38,7 +38,8 @@ namespace InkUniRx
         private IStoryEndingPresenter[] _storyEndingPresenters;
         private IStoryPathBeginningPresenter[] _storyPathBeginningPresenters;
         private IStoryPathEndingPresenter[] _storyPathEndingPresenters;
-        private IStoryTextPresenter[] _storyLinePresenters;
+        private IStoryTextPresenter[] _storyTextPresenters;
+        private IStoryChoicePresenter[] _storyChoicePresenters;
         
         private readonly CompositeDisposable _storyDisposables = new CompositeDisposable();
         private IObservable<Unit> _whenChoiceSelected;
@@ -54,7 +55,9 @@ namespace InkUniRx
             _storyEndingPresenters = GetComponentsInChildren<IStoryEndingPresenter>();
             _storyPathBeginningPresenters = GetComponentsInChildren<IStoryPathBeginningPresenter>();
             _storyPathEndingPresenters = GetComponentsInChildren<IStoryPathEndingPresenter>();
-            _storyLinePresenters = GetComponentsInChildren<IStoryTextPresenter>();
+            _storyTextPresenters = GetComponentsInChildren<IStoryTextPresenter>();
+            _storyChoicePresenters = GetComponentsInChildren<IStoryChoicePresenter>();
+            
             InitSettings();
             InitPlayer();
             _storyDisposables.AddTo(this);
@@ -85,18 +88,6 @@ namespace InkUniRx
         
         public void SkipTransitions() => _curTransitionCts?.Cancel();
 
-        /*public void SubmitBeginStoryTransition(IStoryBeginningPresenter beginningPresenter) => 
-            _storyBeginningPresenters.Add(beginningPresenter);
-        
-        public void SubmitBeginPathTransition(IStoryPathBeginningPresenter beginningPresenter) => 
-            _storyPathBeginningPresenters.Add(beginningPresenter);
-        
-        public void SubmitEndPathTransition(IStoryPathEndingPresenter endingPresenter) => 
-            _storyPathEndingPresenters.Add(endingPresenter);
-        
-        public void SubmitNewLineTransition(IStoryTextPresenter presenter) => 
-            _storyLinePresenters.Add(presenter);*/
-        
         #endregion
         
         #region Private Methods
@@ -116,7 +107,7 @@ namespace InkUniRx
                 do
                 {
                     ContinueNextLine();
-                    await OnShowStoryLineAsync();
+                    await OnShowStoryTextAsync();
 
                 } while (_story.canContinue);
                 
@@ -124,7 +115,7 @@ namespace InkUniRx
 
                 if (!_story.HasChoices()) continue;
 
-                await WaitForChoiceSelection();
+                await OnShowStoryChoiceAsync();
 
             } while (_story.canContinue);
 
@@ -182,10 +173,15 @@ namespace InkUniRx
                 _storyPathEndingPresenters.Select(t => 
                     t.OnShowPathEndingAsync(_story, ct)));
         
-        private async UniTask OnShowStoryLineAsync() =>
+        private async UniTask OnShowStoryTextAsync() =>
             await ShowStoryPresentersAsync(ct => 
-                _storyLinePresenters.Select(t => 
+                _storyTextPresenters.Select(t => 
                     t.OnShowStoryTextAsync(_story, ct)));
+        
+        private async UniTask OnShowStoryChoiceAsync() =>
+            await ShowStoryPresentersAsync(ct => 
+                _storyChoicePresenters.Select(t => 
+                    t.OnShowStoryChoiceAsync(_story, ct)));
         
         private void ContinueNextLine()
         {
@@ -195,38 +191,15 @@ namespace InkUniRx
                 _story.Continue();
         }
         
-        private async UniTask WaitForChoiceSelection()
-        {
-            await _whenChoiceSelected.ToUniTask(true);
-            // await UniTask.WhenAll(_whenChoiceSelected.ToUniTask(true), 
-            //     UniTask.WaitUntil(()=> _story.canContinue));
-        }
-
         private void InitStory()
         {
-           // SortTransitions();
+           
         }
 
         private void CleanUpStory()
         {
           
         }
-        
-        /*void SortTransitions()
-        {
-            _storyBeginningPresenters.Sort();
-            _storyPathBeginningPresenters.Sort();
-            _storyPathEndingPresenters.Sort();
-            _storyLinePresenters.Sort();
-        }
-        
-        void ClearTransitions()
-        {
-            _storyBeginningPresenters.Clear();
-            _storyPathBeginningPresenters.Clear();
-            _storyPathEndingPresenters.Clear();
-            _storyLinePresenters.Clear();
-        }*/
 
         #endregion
         

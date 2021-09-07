@@ -1,13 +1,10 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Cysharp.Threading.Tasks.Triggers;
 using DG.Tweening;
 using Ink.Runtime;
-using Sirenix.OdinInspector;
 using TMPro;
 using UniRx;
-using UniRx.Triggers;
 using UnityEngine;
 using UnityEngine.UI;
 using Utility.DoTweenPro;
@@ -16,7 +13,7 @@ using Utility.UniRx;
 
 namespace InkUniRx
 {
-    public class DialogBoxStoryPresenter : MonoBehaviour, IStoryPathBeginningPresenter, IStoryTextPresenter, IStoryPathEndingPresenter
+    public class DialogBoxStoryPresenter : MonoBehaviour, IStoryPathBeginningPresenter, IStoryTextPresenter, IStoryPathEndingPresenter, IStoryChoicePresenter
     {
         [SerializeField] private StoryPresenterSettings settings;
         [SerializeField] private TextMeshProUGUI text;
@@ -47,17 +44,6 @@ namespace InkUniRx
                     ease => _textAnimEase = ease);
             }
         }
-
-        private void OnPathEnd()
-        {
-           
-        }
-
-        /*private void OnLinkClicked(TMP_LinkInfo info)
-        {
-            var choiceIndex = int.Parse(info.GetLinkID());
-            _story?.ChooseChoiceIndex(choiceIndex);
-        }*/
 
         private async UniTask AnimateTextAsync(CancellationToken ct)
         {
@@ -109,12 +95,16 @@ namespace InkUniRx
             }
         }
 
-        public async UniTask OnShowPathEndingAsync(Story story, CancellationToken ct)
+        public UniTask OnShowPathEndingAsync(Story story, CancellationToken ct)
         {
             continueButton.gameObject.SetActive(false);
-            for (int i = 0; i < story.currentChoices.Count; i++)
+            return UniTask.CompletedTask;
+        }
+
+        public async UniTask OnShowStoryChoiceAsync(Story story, CancellationToken ct)
+        {
+            foreach (var choice in story.currentChoices)
             {
-                var choice = story.currentChoices[i];
                 text.text += $"\n<align=center><link={choice.index}>{choice.text}</link></align>";
             }
             text.ForceMeshUpdate();

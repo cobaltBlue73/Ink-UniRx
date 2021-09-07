@@ -82,12 +82,7 @@ namespace InkUniRx
             autoContinueDelay.Value = Mathf.Max(0, autoContinueDelay.Value);
             textAnimationSpeed.Value = Mathf.Max(0, textAnimationSpeed.Value);
         }
-
-        private void OnEnable()
-        {
-            
-        }
-
+        
         private void OnDisable()
         {
             PlayerPrefs.Save();
