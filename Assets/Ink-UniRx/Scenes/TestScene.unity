@@ -585,10 +585,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
-  m_fontSizeBase: 36
+  m_fontSize: 30
+  m_fontSizeBase: 30
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 16
   m_fontSizeMax: 32
   m_fontStyle: 0
@@ -689,9 +689,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 568fe217acc14b0e8206820065847adb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  settings: {fileID: 11400000, guid: 52a5f4af1fd1fd84db790ded673e2990, type: 2}
   text: {fileID: 1169686829}
   continueButton: {fileID: 116233428}
-  storyPlayer: {fileID: 1245477038}
   trim: 0
 --- !u!114 &1245477035
 MonoBehaviour:
@@ -769,9 +769,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12807978537f467a9dac6b2c57ebce22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  continueMaximally: 0
-  autoContinue: 1
-  autoContinueDelay: 1.5
+  settings: {fileID: 11400000, guid: 52a5f4af1fd1fd84db790ded673e2990, type: 2}
   storyTextAsset: {fileID: 4900000, guid: 16478c34f96aeba4789f4140ffdf0d27, type: 3}
 --- !u!1 &1259166127
 GameObject:

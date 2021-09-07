@@ -12,112 +12,115 @@ using UnityEngine;
 using UnityEngine.UI;
 using Utility.DoTweenPro;
 using Utility.TextMeshPro;
+using Utility.UniRx;
 
 namespace InkUniRx
 {
-    public class DialogBoxStoryPresenter : MonoBehaviour, INewLineTransition, IStoryContinueOverride
+    public class DialogBoxStoryPresenter : MonoBehaviour, IStoryPathBeginningPresenter, IStoryTextPresenter, IStoryPathEndingPresenter
     {
+        [SerializeField] private StoryPresenterSettings settings;
         [SerializeField] private TextMeshProUGUI text;
         [SerializeField] private Button continueButton;
-        [SerializeField] private StoryPlayer storyPlayer;
         [SerializeField] private bool trim;
-
-        private Story _story;
-        private CancellationTokenSource _animationCts;
         
+        private IObservable<TMP_LinkInfo> _whenLinkClicked;
+        private bool _autoContinue;
+        private float _autoContinueDelay;
+        private float _textAnimSpd;
+        private Ease _textAnimEase;
+
         private void Awake()
         {
             text.overflowMode = TextOverflowModes.Page;
-            storyPlayer.SetStoryContinueOverride(this);   
-            storyPlayer.SubmitNewLineTransition(this);
-            continueButton.OnClickAsObservable().Subscribe(_ => OnContinue()).AddTo(this);
-            storyPlayer.WhenStoryBegins.Subscribe(_ => OnStoryBegin()).AddTo(this);
-            storyPlayer.WhenNewLine.Subscribe(_=> OnNewLine()).AddTo(this);
-            storyPlayer.WhenPathBegins.Subscribe(_ => OnPathBegin()).AddTo(this);
-            storyPlayer.WhenPathEnds.Subscribe(_ => OnPathEnd()).AddTo(this);
-            text.textInfo.OnPointerClickedLinkAsObservable().Subscribe(OnLinkClicked).AddTo(this);
-        }
+            _whenLinkClicked = text.textInfo.OnPointerClickedLinkAsObservable();
 
-        private void OnDestroy()
-        {
-            _animationCts?.Dispose();
-        }
+            if (settings)
+            {
+                settings.AutoContinue.SetAndSubscribe(ref _autoContinue,
+                    val => _autoContinue = val).AddTo(this);
+                settings.AutoContinueDelay.SetAndSubscribe(ref _autoContinueDelay,
+                    val => _autoContinueDelay = val).AddTo(this);
 
-        private void OnStoryBegin()
-        {
-            _story = storyPlayer.Story;
-        }
-
-        private void OnNewLine()
-        {
-            Debug.Log(nameof(OnNewLine));
-            text.text = trim? _story.currentText.Trim(): _story.currentText;
-            text.pageToDisplay = 1;
-        }
-
-        private void OnPathBegin()
-        {
-            continueButton.gameObject.SetActive(true);
+                settings.TextAnimationSpeed.SetAndSubscribe(ref _textAnimSpd,
+                    val => _textAnimSpd = val).AddTo(this);
+                settings.TextAnimationEasing.SetAndSubscribe(ref _textAnimEase,
+                    ease => _textAnimEase = ease);
+            }
         }
 
         private void OnPathEnd()
         {
-            Debug.Log(nameof(OnPathEnd));
-            continueButton.gameObject.SetActive(false);
-            for (int i = 0; i < _story.currentChoices.Count; i++)
-            {
-                var choice = _story.currentChoices[i];
-                text.text += $"\n<align=center><link={choice.index}>{choice.text}</link></align>";
-            }
+           
         }
 
-        private void OnLinkClicked(TMP_LinkInfo info)
+        /*private void OnLinkClicked(TMP_LinkInfo info)
         {
             var choiceIndex = int.Parse(info.GetLinkID());
-            storyPlayer.SelectChoice(choiceIndex);
-        }
-
-        private void OnContinue()
-        {
-            _animationCts?.Cancel();
-            storyPlayer.ContinueStory();
-        }
+            _story?.ChooseChoiceIndex(choiceIndex);
+        }*/
 
         private async UniTask AnimateTextAsync(CancellationToken ct)
         {
-            // Debug.Log(nameof(AnimateTextAsync));
-            // var pageIdx = text.pageToDisplay - 1;
-            // var pageInfo = text.textInfo.pageInfo[pageIdx];
-            // Debug.LogFormat("Fist: {0}, Last: {1}", pageInfo.firstCharacterIndex, pageInfo.lastCharacterIndex);
-            // text.maxVisibleCharacters = pageInfo.firstCharacterIndex;
-            // var tween = text.DOVisibleCharacters(pageInfo.lastCharacterIndex + 1, 60f)
-            //     .SetSpeedBased().Pause();
-            // var canceled  = await tween.Play().WithCancellation(ct).SuppressCancellationThrow();
-            //
-            // if (canceled) tween.Complete();
-            await UniTask.WaitForEndOfFrame();
-        }
+            text.maxVisibleCharacters = text.textInfo.characterCount;
+            var pageInfo = text.textInfo.pageInfo[text.pageToDisplay - 1];
+            var from =  pageInfo.firstCharacterIndex;
+            var to = text.pageToDisplay >= text.textInfo.pageCount? 
+                text.textInfo.characterCount: pageInfo.lastCharacterIndex + 1;
 
-        public async UniTask PlayNewLineTransitionAsync(CancellationToken ct)
-        {
-            await AnimateTextAsync(ct);
+            text.maxVisibleCharacters = from;
+            var tween = text.DOVisibleCharacters(to, _textAnimSpd)
+                .SetEase(_textAnimEase).SetSpeedBased().SetRecyclable(); 
+            await tween.WithCancellation(ct).SuppressCancellationThrow();
+            
+            if (ct.IsCancellationRequested)
+            {
+                text.maxVisibleCharacters = text.textInfo.characterCount;
+            }
         }
         
-        public async UniTask WaitForContinueAsync(Func<UniTask> defaultWaitForContinue)
+        public UniTask OnShowPathBeginningAsync(Story story, CancellationToken ct)
         {
-            await defaultWaitForContinue();
-            
-            while (text.pageToDisplay < text.textInfo.pageCount)        
-            {
-                ++text.pageToDisplay;
-                using (_animationCts = new CancellationTokenSource())
-                {
-                    await AnimateTextAsync(_animationCts.Token);
-                }
-                _animationCts = null;
+            continueButton.gameObject.SetActive(true);
+            return UniTask.CompletedTask;
+        }
 
-                await defaultWaitForContinue();
+        public async UniTask OnShowStoryTextAsync(Story story, CancellationToken ct)
+        {
+            text.text = trim? story.currentText.Trim(): story.currentText;
+            text.ForceMeshUpdate();
+
+            for (int page = 1; page <= text.textInfo.pageCount && !ct.IsCancellationRequested; page++)
+            {
+                text.pageToDisplay = page;
+                await AnimateTextAsync(ct);
+                
+                if (!story.canContinue && text.pageToDisplay >= text.textInfo.pageCount) break;
+
+                if (!_autoContinue)
+                {
+                    await continueButton.OnClickAsync(ct);
+                    continue;
+                }
+
+                await UniTask.WhenAny(UniTask.Delay(TimeSpan.FromSeconds(_autoContinueDelay),
+                        false, PlayerLoopTiming.Update, ct),
+                    continueButton.OnClickAsync(ct));
+
             }
+        }
+
+        public async UniTask OnShowPathEndingAsync(Story story, CancellationToken ct)
+        {
+            continueButton.gameObject.SetActive(false);
+            for (int i = 0; i < story.currentChoices.Count; i++)
+            {
+                var choice = story.currentChoices[i];
+                text.text += $"\n<align=center><link={choice.index}>{choice.text}</link></align>";
+            }
+            text.ForceMeshUpdate();
+            text.maxVisibleCharacters = text.textInfo.characterCount;
+            var linkInfo = await _whenLinkClicked.ToUniTask(true);
+            story.ChooseChoiceIndex(int.Parse(linkInfo.GetLinkID()));
         }
     }
 }
