@@ -2,10 +2,10 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using Ink.Runtime;
 
-namespace InkUniRx
+namespace InkUniRx.Presenters.Interfaces
 {
     public interface IStoryPathEndingPresenter
     {
-        UniTask OnShowPathEndingAsync(Story story, CancellationToken ct);
+        UniTask OnShowStoryPathEndingAsync(Story story, CancellationToken ct);
     }
 }

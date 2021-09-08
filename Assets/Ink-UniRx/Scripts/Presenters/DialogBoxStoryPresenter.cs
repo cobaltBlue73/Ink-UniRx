@@ -3,6 +3,9 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Ink.Runtime;
+using InkUniRx.Presenters.Interfaces;
+using InkUniRx.Settings;
+using InkUniRx.ViewModels;
 using TMPro;
 using UniRx;
 using UnityEngine;
@@ -11,9 +14,9 @@ using Utility.DoTweenPro;
 using Utility.TextMeshPro;
 using Utility.UniRx;
 
-namespace InkUniRx
+namespace InkUniRx.Presenters
 {
-    public class DialogBoxStoryPresenter : MonoBehaviour, IStoryPathBeginningPresenter, IStoryTextPresenter, IStoryPathEndingPresenter, IStoryChoicePresenter
+    public class DialogBoxStoryPresenter : MonoBehaviour, IStoryPathBeginningPresenter, IStoryPathContentPresenter, IStoryPathEndingPresenter, IStoryPathChoicesPresenter
     {
         [SerializeField] private StoryPresenterSettings settings;
         [SerializeField] private TextMeshProUGUI text;
@@ -64,15 +67,15 @@ namespace InkUniRx
             }
         }
         
-        public UniTask OnShowPathBeginningAsync(Story story, CancellationToken ct)
+        public UniTask OnShowStoryPathBeginningAsync(Story story, CancellationToken ct)
         {
             continueButton.gameObject.SetActive(true);
             return UniTask.CompletedTask;
         }
 
-        public async UniTask OnShowStoryTextAsync(Story story, CancellationToken ct)
+        public async UniTask OnShowStoryPathContentAsync(StoryPathContent storyPathContent, CancellationToken ct)
         {
-            text.text = trim? story.currentText.Trim(): story.currentText;
+            text.text = trim? storyPathContent.Text.Trim(): storyPathContent.Text;
             text.ForceMeshUpdate();
 
             for (int page = 1; page <= text.textInfo.pageCount && !ct.IsCancellationRequested; page++)
@@ -80,7 +83,7 @@ namespace InkUniRx
                 text.pageToDisplay = page;
                 await AnimateTextAsync(ct);
                 
-                if (!story.canContinue && text.pageToDisplay >= text.textInfo.pageCount) break;
+                if (!storyPathContent.IsEnding && text.pageToDisplay >= text.textInfo.pageCount) break;
 
                 if (!_autoContinue)
                 {
@@ -95,22 +98,22 @@ namespace InkUniRx
             }
         }
 
-        public UniTask OnShowPathEndingAsync(Story story, CancellationToken ct)
+        public UniTask OnShowStoryPathEndingAsync(Story story, CancellationToken ct)
         {
             continueButton.gameObject.SetActive(false);
             return UniTask.CompletedTask;
         }
 
-        public async UniTask OnShowStoryChoiceAsync(Story story, CancellationToken ct)
+        public async UniTask OnShowStoryPathChoicesAsync(StoryPathChoices storyPathChoices, CancellationToken ct)
         {
-            foreach (var choice in story.currentChoices)
+            foreach (var choice in storyPathChoices.Choices)
             {
                 text.text += $"\n<align=center><link={choice.index}>{choice.text}</link></align>";
             }
             text.ForceMeshUpdate();
             text.maxVisibleCharacters = text.textInfo.characterCount;
             var linkInfo = await _whenLinkClicked.ToUniTask(true);
-            story.ChooseChoiceIndex(int.Parse(linkInfo.GetLinkID()));
+            storyPathChoices.Select(int.Parse(linkInfo.GetLinkID()));
         }
     }
 }

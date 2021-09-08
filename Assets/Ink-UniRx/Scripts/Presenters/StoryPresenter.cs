@@ -3,20 +3,18 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Ink.Runtime;
+using InkUniRx.Presenters.Interfaces;
+using InkUniRx.Settings;
+using InkUniRx.ViewModels;
 using Sirenix.OdinInspector;
 using UniRx;
 using UnityEngine;
-using UnityEngine.Events;
 using Utility.UniRx;
 
-namespace InkUniRx
+namespace InkUniRx.Presenters
 {
     public class StoryPresenter : MonoBehaviour
     {
-        #region Internals
-
-        #endregion
-        
         #region Inspector
 
         [SerializeField] private StoryPresenterSettings settings;
@@ -25,7 +23,8 @@ namespace InkUniRx
         #endregion
 
         #region Properties
-
+        public IReactiveCollection<StoryPathElement> StoryLog => _storyLog;
+        
         #endregion
 
         #region Member Variables
@@ -33,39 +32,31 @@ namespace InkUniRx
         private Story _story;
 
         private bool _continueMaximally;
+        private readonly ReactiveCollection<StoryPathElement> _storyLog = new ReactiveCollection<StoryPathElement>();
 
         private IStoryBeginningPresenter[] _storyBeginningPresenters;
         private IStoryEndingPresenter[] _storyEndingPresenters;
         private IStoryPathBeginningPresenter[] _storyPathBeginningPresenters;
         private IStoryPathEndingPresenter[] _storyPathEndingPresenters;
-        private IStoryTextPresenter[] _storyTextPresenters;
-        private IStoryChoicePresenter[] _storyChoicePresenters;
-        
-        private readonly CompositeDisposable _storyDisposables = new CompositeDisposable();
-        private IObservable<Unit> _whenChoiceSelected;
-        private CancellationTokenSource _curTransitionCts;
+        private IStoryPathContentPresenter[] _storyPathContentPresenters;
+        private IStoryPathChoicesPresenter[] _storyPathChoicesPresenters;
 
+        private CancellationTokenSource _curTransitionCts;
+        
         #endregion
         
         #region Unity Callbacks
 
         private void Awake()
         {
-            _storyBeginningPresenters = GetComponentsInChildren<IStoryBeginningPresenter>();
-            _storyEndingPresenters = GetComponentsInChildren<IStoryEndingPresenter>();
-            _storyPathBeginningPresenters = GetComponentsInChildren<IStoryPathBeginningPresenter>();
-            _storyPathEndingPresenters = GetComponentsInChildren<IStoryPathEndingPresenter>();
-            _storyTextPresenters = GetComponentsInChildren<IStoryTextPresenter>();
-            _storyChoicePresenters = GetComponentsInChildren<IStoryChoicePresenter>();
-            
+            _storyLog.AddTo(this);
+            InitSubPresenters();
             InitSettings();
             InitPlayer();
-            _storyDisposables.AddTo(this);
         }
 
         private void OnDestroy()
         {
-            _storyDisposables.Clear();
             _curTransitionCts?.Dispose();
         }
 
@@ -88,10 +79,12 @@ namespace InkUniRx
         
         public void SkipTransitions() => _curTransitionCts?.Cancel();
 
+        public void ClearLogs() => _storyLog.Clear();
+
         #endregion
         
         #region Private Methods
-        
+
         private async UniTaskVoid RunStoryAsync()
         {
             if (_story == null || !_story.canContinue) return;
@@ -104,10 +97,11 @@ namespace InkUniRx
             {
                 await OnShowStoryPathBeginningAsync();
                 
+                var pathLineCount = 0;
                 do
                 {
                     ContinueNextLine();
-                    await OnShowStoryTextAsync();
+                    await OnShowStoryTextAsync(++pathLineCount);
 
                 } while (_story.canContinue);
                 
@@ -131,9 +125,6 @@ namespace InkUniRx
             if(!storyTextAsset) return;
 
             _story = new Story(storyTextAsset.text);
-            
-            _storyDisposables.Clear();
-            _whenChoiceSelected = _story.OnMakeChoiceAsObservable().AsUnitObservable();
         }
 
         private void InitSettings()
@@ -166,23 +157,31 @@ namespace InkUniRx
         private async UniTask OnShowStoryPathBeginningAsync() =>
             await ShowStoryPresentersAsync(ct => 
                 _storyPathBeginningPresenters.Select(t => 
-                    t.OnShowPathBeginningAsync(_story, ct)));
+                    t.OnShowStoryPathBeginningAsync(_story, ct)));
         
         private async UniTask OnShowStoryPathEndingAsync() => 
             await ShowStoryPresentersAsync(ct => 
                 _storyPathEndingPresenters.Select(t => 
-                    t.OnShowPathEndingAsync(_story, ct)));
+                    t.OnShowStoryPathEndingAsync(_story, ct)));
         
-        private async UniTask OnShowStoryTextAsync() =>
-            await ShowStoryPresentersAsync(ct => 
-                _storyTextPresenters.Select(t => 
-                    t.OnShowStoryTextAsync(_story, ct)));
-        
-        private async UniTask OnShowStoryChoiceAsync() =>
-            await ShowStoryPresentersAsync(ct => 
-                _storyChoicePresenters.Select(t => 
-                    t.OnShowStoryChoiceAsync(_story, ct)));
-        
+        private async UniTask OnShowStoryTextAsync(int lineNumber)
+        {
+            var content = new StoryPathContent(_story, lineNumber, !_continueMaximally);
+            _storyLog.Add(content);
+            await ShowStoryPresentersAsync(ct =>
+                _storyPathContentPresenters.Select(t =>
+                    t.OnShowStoryPathContentAsync(content, ct)));
+        }
+
+        private async UniTask OnShowStoryChoiceAsync()
+        {
+            var choices = new StoryPathChoices(_story);
+            _storyLog.Add(choices);
+            await ShowStoryPresentersAsync(ct =>
+                _storyPathChoicesPresenters.Select(t =>
+                    t.OnShowStoryPathChoicesAsync(choices, ct)));
+        }
+
         private void ContinueNextLine()
         {
             if (_continueMaximally)
@@ -190,15 +189,25 @@ namespace InkUniRx
             else
                 _story.Continue();
         }
+
+        private void InitSubPresenters()
+        {
+            _storyBeginningPresenters = GetComponentsInChildren<IStoryBeginningPresenter>();
+            _storyEndingPresenters = GetComponentsInChildren<IStoryEndingPresenter>();
+            _storyPathBeginningPresenters = GetComponentsInChildren<IStoryPathBeginningPresenter>();
+            _storyPathEndingPresenters = GetComponentsInChildren<IStoryPathEndingPresenter>();
+            _storyPathContentPresenters = GetComponentsInChildren<IStoryPathContentPresenter>();
+            _storyPathChoicesPresenters = GetComponentsInChildren<IStoryPathChoicesPresenter>();
+        }
         
         private void InitStory()
         {
-           
+            ClearLogs();
         }
 
         private void CleanUpStory()
         {
-          
+            ClearLogs();
         }
 
         #endregion

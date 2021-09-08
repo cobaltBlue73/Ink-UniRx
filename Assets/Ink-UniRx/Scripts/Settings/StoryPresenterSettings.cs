@@ -6,7 +6,7 @@ using UnityEngine;
 using Utility.UniRx;
 using ReactivePropertyExtensions = Utility.UniRx.ReactivePropertyExtensions;
 
-namespace InkUniRx
+namespace InkUniRx.Settings
 {
     [CreateAssetMenu(fileName = nameof(StoryPresenterSettings), menuName = "Ink-UniRx/Settings/StoryPresenter", order = 0), InlineEditor]
     public class StoryPresenterSettings : ScriptableObject
