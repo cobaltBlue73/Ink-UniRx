@@ -19,6 +19,8 @@ namespace Utility.UniRx
 
         public static void InitializePool(this GameObject prefab) => Manager.Instance.InitPool(prefab);
 
+        public static void DisposePool(this GameObject prefab) => Manager.Instance.DisposePool(prefab);
+
         private class Manager
         {
             #region Internals
@@ -128,7 +130,16 @@ namespace Utility.UniRx
                 _pools.Add(prefab.GetInstanceID(), pool);
 
                 return pool;
-            } 
+            }
+
+            public void DisposePool(GameObject prefab)
+            {
+                var pool = GetPool(prefab, false);
+                if(pool == null) return;
+
+                _pools.Remove(prefab.GetInstanceID());
+                pool.Dispose();
+            }
 
             #endregion
 
