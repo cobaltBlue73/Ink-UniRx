@@ -49,7 +49,7 @@ namespace Utility.UniRx
                 
                 protected override PooledObject CreateInstance()
                 {
-                    var instance = Object.Instantiate(_prefab);
+                    var instance = Object.Instantiate(_prefab, _parent, true);
                     var pooledObject = instance.GetOrAddComponent<PooledObject>();
                     pooledObject.Pool = this;
                     return pooledObject;
