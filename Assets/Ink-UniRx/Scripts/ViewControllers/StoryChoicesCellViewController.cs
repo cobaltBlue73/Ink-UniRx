@@ -35,7 +35,7 @@ namespace InlUniRx.ViewControllers
         
         [SerializeField] private StoryChoiceViewController choiceViewTemplate;
         [SerializeField] private LayoutGroup choiceViewsLayout;
-        [SerializeField] private RectTransform layoutRectTrans;
+        [SerializeField, HideInInspector] private RectTransform layoutRectTrans;
         
         #endregion
 
@@ -75,8 +75,7 @@ namespace InlUniRx.ViewControllers
         private void OnDisable()
         {
             _disposables.Clear();
-            _choiceViews.ForEach(_choiceViewPool.Return);
-            _choiceViews.Clear();
+            ClearChoiceViews();
         }
 
         #endregion
@@ -84,23 +83,24 @@ namespace InlUniRx.ViewControllers
         public override void SetCell(ScrollViewCell cell)
         {
             var choices = cell.StoryPathElement as StoryPathChoices;
-            
+            _disposables.Clear();
+            ClearChoiceViews();
             if(choices == null) return;
-
+            
             IObservable<Choice> whenSelected = null;
             
             foreach (var choice in choices.Choices)
             {
                 var choiceView = _choiceViewPool.Rent();
                 choiceView.SetChoice(choice);
-
+                _choiceViews.Add(choiceView);
                 switch (whenSelected)
                 {
                     case null:
                         whenSelected = choiceView.WhenChoiceSelected;
                         break;
                     default:
-                        whenSelected.Merge(choiceView.WhenChoiceSelected);
+                        whenSelected = whenSelected.Merge(choiceView.WhenChoiceSelected);
                         break;
                 }
             }
@@ -117,6 +117,12 @@ namespace InlUniRx.ViewControllers
             Canvas.ForceUpdateCanvases();
 
             return layoutRectTrans.rect.height;
+        }
+
+        private void ClearChoiceViews()
+        {
+            _choiceViews.ForEach(_choiceViewPool.Return);
+            _choiceViews.Clear();
         }
     }
 }

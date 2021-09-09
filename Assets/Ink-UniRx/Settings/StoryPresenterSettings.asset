@@ -15,9 +15,9 @@ MonoBehaviour:
   continueMaximally:
     value: 0
   autoContinue:
-    value: 0
+    value: 1
   autoContinueDelay:
-    value: 1.2
+    value: 0.9
   textAnimationEasing: 1
   textAnimationSpeed:
     value: 120

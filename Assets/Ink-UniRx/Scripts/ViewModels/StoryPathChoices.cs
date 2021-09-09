@@ -22,11 +22,12 @@ namespace InkUniRx.ViewModels
 
         public void Select(int choiceIndex)
         {
-            
-            if (SelectedChoice != null && 
-                choiceIndex >= 0 && 
-                choiceIndex < Choices.Length) return;
+            Debug.Log(choiceIndex);
+            if (SelectedChoice != null || 
+                choiceIndex < 0 || 
+                choiceIndex >= Choices.Length) return;
 
+            
             SelectedChoice = Choices[choiceIndex];
             Story.ChooseChoiceIndex(choiceIndex);
         }

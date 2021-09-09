@@ -13,7 +13,8 @@ namespace InlUniRx.ViewControllers
 
         [SerializeField] private TMP_Text textMesh;
         [SerializeField] private Button selectButton;
-        
+        [SerializeField] private string bulletStyleName;
+        [SerializeField] private string choiceStyleName;
         #endregion
 
         #region Propeterties
@@ -56,7 +57,8 @@ namespace InlUniRx.ViewControllers
         public void SetChoice(Choice choice)
         {
             _choice = choice;
-            textMesh.text = choice.text;
+            var bullet = string.IsNullOrEmpty(bulletStyleName)? "": $"<style=\"{bulletStyleName}\">{choice.index + 1}.</style>";
+            textMesh.text = $"{bullet}<style=\"{choiceStyleName}\">{choice.text}</style>";
         }
 
         #endregion

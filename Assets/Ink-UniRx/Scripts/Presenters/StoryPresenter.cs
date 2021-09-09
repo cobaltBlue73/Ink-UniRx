@@ -180,6 +180,8 @@ namespace InkUniRx.Presenters
             await ShowStoryPresentersAsync(ct =>
                 _storyPathChoicesPresenters.Select(t =>
                     t.OnShowStoryPathChoicesAsync(choices, ct)));
+
+            await UniTask.WaitUntil(() => _story.canContinue);
         }
 
         private void ContinueNextLine()
