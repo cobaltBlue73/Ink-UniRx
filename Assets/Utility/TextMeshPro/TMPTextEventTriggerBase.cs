@@ -9,7 +9,7 @@ using Utility.General;
 namespace Utility.TextMeshPro
 {
     [RequireComponent(typeof(TMP_Text)), DisallowMultipleComponent]
-    public abstract class TMPTextEventTriggerBase<T> : MonoBehaviour where T: struct
+    public abstract class TMPTextEventTriggerBase<T> : MonoBehaviour, IPointerClickHandler where T: struct
     {
         #region Inspector
 
@@ -24,11 +24,11 @@ namespace Utility.TextMeshPro
 
         public TMP_Text Text => text ??= this.GetOrAddComponent<TMP_Text>();
 
-        public UnityEvent<T> ONPointerEnter => onPointerEnter;
+        public UnityEvent<T> OnPointerEnter => onPointerEnter;
 
-        public UnityEvent<T> ONPointerExit => onPointerExit;
+        public UnityEvent<T> OnPointerExit => onPointerExit;
 
-        public UnityEvent<T> ONPointerClicked => onPointerClicked;
+        public UnityEvent<T> OnPointerClicked => onPointerClicked;
 
         #endregion
 
@@ -43,7 +43,7 @@ namespace Utility.TextMeshPro
 
         #region Unity Callbacks
 
-        private void OnValidate()
+        private void Reset()
         {
             if (!Text) text = this.GetOrAddComponent<TMP_Text>();
         }
@@ -63,24 +63,15 @@ namespace Utility.TextMeshPro
             {
                 Camera = Camera.main;
             }
-
-            this.LateUpdateAsObservable()
-                .Subscribe(ONLateUpdate)
-                .AddTo(this);
-
-            this.GetOrAddComponent<ObservableEventTrigger>()
-                .OnPointerClickAsObservable()
-                .Subscribe(ONPointerClick)
-                .AddTo(this);
         }
 
-        private void ONLateUpdate(Unit _)
+        private void LateUpdate()
         {
             if (!TMP_TextUtilities.IsIntersectingRectTransform(Text.rectTransform, Input.mousePosition, Camera))
             {
                 if (_lastSelectedIndex != -1)
                 {
-                    ONPointerExit?.Invoke(GetTextElementInfo(_lastSelectedIndex));
+                    OnPointerExit?.Invoke(GetTextElementInfo(_lastSelectedIndex));
                 }
                 _lastSelectedIndex = -1;
                 return;
@@ -107,7 +98,7 @@ namespace Utility.TextMeshPro
 
         protected abstract T GetTextElementInfo(int index);
         
-        private void ONPointerClick(PointerEventData eventData)
+        public void OnPointerClick(PointerEventData eventData)
         {
             var elementIdx = FindIntersectingTextElement();
             

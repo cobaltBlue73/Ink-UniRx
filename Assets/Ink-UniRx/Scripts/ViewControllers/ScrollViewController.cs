@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using EnhancedUI.EnhancedScroller;
 using InkUniRx.ViewModels;
 using UniRx;
@@ -33,7 +31,7 @@ namespace InlUniRx.ViewControllers
 
         #region Unity CallBacks
 
-        private void OnValidate()
+        private void Reset()
         {
             InitScroller();
         }
@@ -110,7 +108,7 @@ namespace InlUniRx.ViewControllers
             var cell = _cells[dataIndex];
             var baseCellView = scroller.GetCellView(cell.CellViewPrefab);
 
-            var storyCellView = baseCellView as CellViewController;
+            var storyCellView = baseCellView as StoryElementCellViewController;
             
             if (!storyCellView) return baseCellView;
            

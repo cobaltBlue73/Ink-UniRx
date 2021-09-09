@@ -9,9 +9,9 @@ namespace Utility.UniRx
 {
     public static class PoolingSystem
     {
-        public static GameObject Rent(this GameObject prefab) => Manager.Instance.Rent(prefab);
+        public static GameObject RentFromPool(this GameObject prefab) => Manager.Instance.Rent(prefab);
 
-        public static void Return(this GameObject instance)
+        public static void ReturnToPool(this GameObject instance)
         {
             if( instance.TryGetComponent(typeof(Manager.PooledObject), out var pooledObject)) 
                 (pooledObject as Manager.PooledObject)?.Return();
@@ -98,8 +98,8 @@ namespace Utility.UniRx
             #endregion
             
             #region Static
-            public static Manager Instance => _instance ??= new Manager();
-            private static Manager _instance;
+            public static Manager Instance => s_instance ??= new Manager();
+            private static Manager s_instance;
 
             #endregion
         
@@ -116,9 +116,11 @@ namespace Utility.UniRx
 
             #region Public
 
-            public GameObject Rent(GameObject prefab) => GetPool(prefab).Rent().gameObject;
+            public GameObject Rent(GameObject prefab) => 
+                GetPool(prefab).Rent().gameObject;
 
-            public void Return(GameObject prefab, PooledObject instance) => GetPool(prefab).Return(instance);
+            public void Return(GameObject prefab, PooledObject instance) => 
+                 GetPool(prefab, false)?.Return(instance);
 
             public Pool InitPool(GameObject prefab)
             {
@@ -132,9 +134,9 @@ namespace Utility.UniRx
 
             #region Private
 
-            private Pool GetPool(GameObject prefab) =>
+            private Pool GetPool(GameObject prefab, bool initIfNotFound = true) =>
                 _pools.TryGetValue(prefab.GetInstanceID(), out var pool) ?
-                    pool : InitPool(prefab);
+                    pool : initIfNotFound? InitPool(prefab): null;
 
             #endregion
 

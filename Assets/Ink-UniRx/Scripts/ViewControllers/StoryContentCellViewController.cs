@@ -1,11 +1,10 @@
-using System;
 using InkUniRx.ViewModels;
 using TMPro;
 using UnityEngine;
 
 namespace InlUniRx.ViewControllers
 {
-    public class StoryContentCellViewController : CellViewController
+    public class StoryContentCellViewController : StoryElementCellViewController
     {
         #region Inspector
 
@@ -15,7 +14,7 @@ namespace InlUniRx.ViewControllers
 
         #region Uniy Callbacks
 
-        private void OnValidate()
+        private void Reset()
         {
             if (!textMesh)
                 textMesh = GetComponentInChildren<TextMeshProUGUI>();
