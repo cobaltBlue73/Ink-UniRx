@@ -538,6 +538,8 @@ GameObject:
   - component: {fileID: 1564840793}
   - component: {fileID: 1564840792}
   - component: {fileID: 1564840796}
+  - component: {fileID: 1564840798}
+  - component: {fileID: 1564840797}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -640,6 +642,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings: {fileID: 11400000, guid: 52a5f4af1fd1fd84db790ded673e2990, type: 2}
   storyTextAsset: {fileID: 4900000, guid: 16478c34f96aeba4789f4140ffdf0d27, type: 3}
+--- !u!114 &1564840797
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1564840791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a205729c41754fc9a17e9951f1e8ce2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scrollViewController: {fileID: 988271542}
+  choicesCellViewPrefab: {fileID: 0}
+--- !u!114 &1564840798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1564840791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d23136959be64526a083d1971bd0fd93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scrollViewController: {fileID: 988271542}
+  contentCellViewPrefab: {fileID: 0}
 --- !u!1 &1628201856
 GameObject:
   m_ObjectHideFlags: 0

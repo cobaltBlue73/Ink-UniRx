@@ -9,17 +9,20 @@ namespace Utility.UniRx
 {
     public static class PoolingSystem
     {
-        public static GameObject RentFromPool(this GameObject prefab) => Manager.Instance.Rent(prefab);
+        public static GameObject RentFromPool(this GameObject prefab) => 
+            Manager.Instance.Rent(prefab);
 
         public static void ReturnToPool(this GameObject instance)
         {
-            if( instance.TryGetComponent(typeof(Manager.PooledObject), out var pooledObject)) 
+            if(instance.TryGetComponent(typeof(Manager.PooledObject), out var pooledObject)) 
                 (pooledObject as Manager.PooledObject)?.Return();
         }
 
-        public static void InitializePool(this GameObject prefab) => Manager.Instance.InitPool(prefab);
+        public static void InitializePool(this GameObject prefab) => 
+            Manager.Instance.InitPool(prefab);
 
-        public static void DisposePool(this GameObject prefab) => Manager.Instance.DisposePool(prefab);
+        public static void DisposePool(this GameObject prefab) => 
+            Manager.Instance.DisposePool(prefab);
 
         private class Manager
         {
