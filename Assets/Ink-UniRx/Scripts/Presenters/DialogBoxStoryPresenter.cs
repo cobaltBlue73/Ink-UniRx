@@ -16,7 +16,7 @@ using Utility.UniRx;
 
 namespace InkUniRx.Presenters
 {
-    public class DialogBoxStoryPresenter : MonoBehaviour, IStoryPathBeginningPresenter, IStoryPathContentPresenter, IStoryPathEndingPresenter, IStoryPathChoicesPresenter
+    public class DialogBoxStoryPresenter : MonoBehaviour, IStoryPathPreStartPresenter, IStoryContentPresenter, IStoryPathPostEndPresenter, IStoryChoicesPresenter
     {
         [SerializeField] private StoryPresenterSettings settings;
         [SerializeField] private TextMeshProUGUI text;
@@ -67,15 +67,15 @@ namespace InkUniRx.Presenters
             }
         }
         
-        public UniTask OnShowStoryPathBeginningAsync(Story story, CancellationToken ct)
+        public UniTask OnShowStoryPathPreStartAsync(Story story, CancellationToken ct)
         {
             continueButton.gameObject.SetActive(true);
             return UniTask.CompletedTask;
         }
 
-        public async UniTask OnShowStoryPathContentAsync(StoryPathContent storyPathContent, CancellationToken ct)
+        public async UniTask OnShowStoryContentAsync(StoryContent storyContent, CancellationToken ct)
         {
-            text.text = trim? storyPathContent.Text.Trim(): storyPathContent.Text;
+            text.text = trim? storyContent.Text.Trim(): storyContent.Text;
             text.ForceMeshUpdate();
 
             for (int page = 1; page <= text.textInfo.pageCount && !ct.IsCancellationRequested; page++)
@@ -83,7 +83,7 @@ namespace InkUniRx.Presenters
                 text.pageToDisplay = page;
                 await AnimateTextAsync(ct);
                 
-                if (!storyPathContent.IsEnding && text.pageToDisplay >= text.textInfo.pageCount) break;
+                if (!storyContent.IsEnding && text.pageToDisplay >= text.textInfo.pageCount) break;
 
                 if (!_autoContinue)
                 {
@@ -98,22 +98,23 @@ namespace InkUniRx.Presenters
             }
         }
 
-        public UniTask OnShowStoryPathEndingAsync(Story story, CancellationToken ct)
+        public UniTask OnShowStoryPathPostEndAsync(Story story, CancellationToken ct)
         {
             continueButton.gameObject.SetActive(false);
             return UniTask.CompletedTask;
         }
 
-        public async UniTask OnShowStoryPathChoicesAsync(StoryPathChoices storyPathChoices, CancellationToken ct)
+        public async UniTask OnShowStoryChoicesAsync(StoryChoice[] storyChoices, CancellationToken ct)
         {
-            foreach (var choice in storyPathChoices.Choices)
+            foreach (var choice in storyChoices)
             {
-                text.text += $"\n<align=center><link={choice.index}>{choice.text}</link></align>";
+                text.text += $"\n<align=center><link={choice.Index}>{choice.Text}</link></align>";
             }
             text.ForceMeshUpdate();
             text.maxVisibleCharacters = text.textInfo.characterCount;
             var linkInfo = await _whenLinkClicked.ToUniTask(true);
-            storyPathChoices.Select(int.Parse(linkInfo.GetLinkID()));
+            var choiceIdx = int.Parse(linkInfo.GetLinkID());
+            storyChoices[choiceIdx].Select();
         }
     }
 }

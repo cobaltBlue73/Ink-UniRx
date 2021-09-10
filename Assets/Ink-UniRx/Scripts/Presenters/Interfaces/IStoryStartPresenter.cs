@@ -4,8 +4,8 @@ using Ink.Runtime;
 
 namespace InkUniRx.Presenters.Interfaces
 {
-    public interface IStoryBeginningPresenter
+    public interface IStoryStartPresenter
     {
-        UniTask OnShowStoryBeginningAsync(Story story, CancellationToken ct);
+        UniTask OnShowStoryStartAsync(Story story, CancellationToken ct);
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Ink.Runtime;
@@ -23,7 +24,8 @@ namespace InkUniRx.Presenters
         #endregion
 
         #region Properties
-        public IReactiveCollection<StoryPathElement> StoryLog => _storyLog;
+        
+        
         
         #endregion
 
@@ -32,14 +34,13 @@ namespace InkUniRx.Presenters
         private Story _story;
 
         private bool _continueMaximally;
-        private readonly ReactiveCollection<StoryPathElement> _storyLog = new ReactiveCollection<StoryPathElement>();
 
-        private IStoryBeginningPresenter[] _storyBeginningPresenters;
-        private IStoryEndingPresenter[] _storyEndingPresenters;
-        private IStoryPathBeginningPresenter[] _storyPathBeginningPresenters;
-        private IStoryPathEndingPresenter[] _storyPathEndingPresenters;
-        private IStoryPathContentPresenter[] _storyPathContentPresenters;
-        private IStoryPathChoicesPresenter[] _storyPathChoicesPresenters;
+        private IStoryStartPresenter[] _storyStartPresenters;
+        private IStoryEndPresenter[] _storyEndPresenters;
+        private IStoryPathPreStartPresenter[] _storyPathPreStartPresenters;
+        private IStoryPathPostEndPresenter[] _storyPathPostEndPresenters;
+        private IStoryContentPresenter[] _storyContentPresenters;
+        private IStoryChoicesPresenter[] _storyChoicesPresenters;
 
         private CancellationTokenSource _curTransitionCts;
         
@@ -49,7 +50,6 @@ namespace InkUniRx.Presenters
 
         private void Awake()
         {
-            _storyLog.AddTo(this);
             InitSubPresenters();
             InitSettings();
             InitPlayer();
@@ -78,9 +78,7 @@ namespace InkUniRx.Presenters
         }
         
         public void SkipTransitions() => _curTransitionCts?.Cancel();
-
-        public void ClearLogs() => _storyLog.Clear();
-
+        
         #endregion
         
         #region Private Methods
@@ -91,29 +89,29 @@ namespace InkUniRx.Presenters
             
             InitStory();
             
-            await OnShowStoryBeginningAsync();
+            await OnShowStoryStartAsync();
             
             do
             {
-                await OnShowStoryPathBeginningAsync();
+                await OnShowStoryPathPreStartAsync();
                 
                 var pathLineCount = 0;
                 do
                 {
                     ContinueNextLine();
-                    await OnShowStoryTextAsync(++pathLineCount);
+                    await OnShowStoryContentAsync(++pathLineCount);
 
                 } while (_story.canContinue);
                 
-                await OnShowStoryPathEndingAsync();
+                await OnShowStoryPathPostEndAsync();
 
                 if (!_story.HasChoices()) continue;
 
-                await OnShowStoryChoiceAsync();
+                await OnShowStoryChoicesAsync();
 
             } while (_story.canContinue);
 
-            await OnShowStoryEndingAsync();
+            await OnShowStoryEndAsync();
 
             CleanUpStory();
         }
@@ -144,42 +142,44 @@ namespace InkUniRx.Presenters
             _curTransitionCts = null;
         }
         
-        private async UniTask OnShowStoryBeginningAsync() =>
+        private async UniTask OnShowStoryStartAsync() =>
             await ShowStoryPresentersAsync(ct => 
-                _storyBeginningPresenters.Select(t => 
-                    t.OnShowStoryBeginningAsync(_story, ct)));
+                _storyStartPresenters.Select(t => 
+                    t.OnShowStoryStartAsync(_story, ct)));
         
-        private async UniTask OnShowStoryEndingAsync() =>
+        private async UniTask OnShowStoryEndAsync() =>
             await ShowStoryPresentersAsync(ct => 
-                _storyEndingPresenters.Select(t => 
-                    t.OnShowStoryEndingAsync(_story, ct)));
+                _storyEndPresenters.Select(t => 
+                    t.OnShowStoryEndAsync(_story, ct)));
         
-        private async UniTask OnShowStoryPathBeginningAsync() =>
+        private async UniTask OnShowStoryPathPreStartAsync() =>
             await ShowStoryPresentersAsync(ct => 
-                _storyPathBeginningPresenters.Select(t => 
-                    t.OnShowStoryPathBeginningAsync(_story, ct)));
+                _storyPathPreStartPresenters.Select(t => 
+                    t.OnShowStoryPathPreStartAsync(_story, ct)));
         
-        private async UniTask OnShowStoryPathEndingAsync() => 
+        private async UniTask OnShowStoryPathPostEndAsync() => 
             await ShowStoryPresentersAsync(ct => 
-                _storyPathEndingPresenters.Select(t => 
-                    t.OnShowStoryPathEndingAsync(_story, ct)));
+                _storyPathPostEndPresenters.Select(t => 
+                    t.OnShowStoryPathPostEndAsync(_story, ct)));
         
-        private async UniTask OnShowStoryTextAsync(int lineNumber)
+        private async UniTask OnShowStoryContentAsync(int lineNumber)
         {
-            var content = new StoryPathContent(_story, lineNumber, !_continueMaximally);
-            _storyLog.Add(content);
+            var content = new StoryContent(_story, lineNumber, !_continueMaximally);
+           
             await ShowStoryPresentersAsync(ct =>
-                _storyPathContentPresenters.Select(t =>
-                    t.OnShowStoryPathContentAsync(content, ct)));
+                _storyContentPresenters.Select(t =>
+                    t.OnShowStoryContentAsync(content, ct)));
         }
 
-        private async UniTask OnShowStoryChoiceAsync()
+        private async UniTask OnShowStoryChoicesAsync()
         {
-            var choices = new StoryPathChoices(_story);
-            _storyLog.Add(choices);
+            var choices = _story.currentChoices
+                .Select(c => new StoryChoice(_story, c))
+                .ToArray();
+            
             await ShowStoryPresentersAsync(ct =>
-                _storyPathChoicesPresenters.Select(t =>
-                    t.OnShowStoryPathChoicesAsync(choices, ct)));
+                _storyChoicesPresenters.Select(t =>
+                    t.OnShowStoryChoicesAsync(choices, ct)));
 
             await UniTask.WaitUntil(() => _story.canContinue);
         }
@@ -194,22 +194,22 @@ namespace InkUniRx.Presenters
 
         private void InitSubPresenters()
         {
-            _storyBeginningPresenters = GetComponentsInChildren<IStoryBeginningPresenter>();
-            _storyEndingPresenters = GetComponentsInChildren<IStoryEndingPresenter>();
-            _storyPathBeginningPresenters = GetComponentsInChildren<IStoryPathBeginningPresenter>();
-            _storyPathEndingPresenters = GetComponentsInChildren<IStoryPathEndingPresenter>();
-            _storyPathContentPresenters = GetComponentsInChildren<IStoryPathContentPresenter>();
-            _storyPathChoicesPresenters = GetComponentsInChildren<IStoryPathChoicesPresenter>();
+            _storyStartPresenters = GetComponentsInChildren<IStoryStartPresenter>();
+            _storyEndPresenters = GetComponentsInChildren<IStoryEndPresenter>();
+            _storyPathPreStartPresenters = GetComponentsInChildren<IStoryPathPreStartPresenter>();
+            _storyPathPostEndPresenters = GetComponentsInChildren<IStoryPathPostEndPresenter>();
+            _storyContentPresenters = GetComponentsInChildren<IStoryContentPresenter>();
+            _storyChoicesPresenters = GetComponentsInChildren<IStoryChoicesPresenter>();
         }
         
         private void InitStory()
         {
-            ClearLogs();
+            
         }
 
         private void CleanUpStory()
         {
-            ClearLogs();
+            
         }
 
         #endregion

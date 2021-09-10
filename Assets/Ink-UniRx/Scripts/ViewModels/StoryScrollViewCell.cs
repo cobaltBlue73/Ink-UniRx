@@ -2,17 +2,17 @@ using EnhancedUI.EnhancedScroller;
 
 namespace InkUniRx.ViewModels
 {
-    public class ScrollViewCell
+    public class StoryScrollViewCell
     {
         public float CellViewSize = 0;
         
-        public ScrollViewCell(StoryPathElement storyPathElement, EnhancedScrollerCellView cellViewPrefab)
+        public StoryScrollViewCell(StoryElement storyElement, EnhancedScrollerCellView cellViewPrefab)
         {
-            StoryPathElement = storyPathElement;
+            StoryElement = storyElement;
             CellViewPrefab = cellViewPrefab;
         }
 
-        public StoryPathElement StoryPathElement { get; private set; }
+        public StoryElement StoryElement { get; private set; }
         public EnhancedScrollerCellView CellViewPrefab { get; private set; }
     }
 }

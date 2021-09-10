@@ -2,9 +2,9 @@ using Ink.Runtime;
 
 namespace InkUniRx.ViewModels
 {
-    public abstract class StoryPathElement
+    public abstract class StoryElement
     {
-        public StoryPathElement(Story story)
+        public StoryElement(Story story)
         {
             Story = story;
             PathName = story.GetCurrentPathName();
@@ -12,5 +12,7 @@ namespace InkUniRx.ViewModels
         
         public Story Story { get; private set; }
         public string PathName { get; private set; }
+
+        public abstract string Text { get; protected set; }
     }
 }
