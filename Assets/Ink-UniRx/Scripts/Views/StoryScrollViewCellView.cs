@@ -11,7 +11,7 @@ namespace InlUniRx.Views
         #region Inspector
 
         [SerializeField] private StoryElementViewBase storyElementView;
-        [SerializeField, HideInInspector] private RectTransform contentFitterRect;
+        [SerializeField, HideInInspector] private RectTransform storyElementRect;
         
         #endregion
 
@@ -22,31 +22,22 @@ namespace InlUniRx.Views
             if (!storyElementView)
                 storyElementView = GetComponentInChildren<StoryElementViewBase>();
 
-            if (!contentFitterRect)
-            {
-                var sizeFitter = GetComponentInChildren<ContentSizeFitter>();
-                contentFitterRect = sizeFitter.transform as RectTransform;
-            }
-                
+            if (!storyElementRect && storyElementView)
+                storyElementRect = storyElementView.transform as RectTransform;
         }
 
         #endregion
         
         
-        public void SetCell(StoryScrollViewCell cell)
+        public void SetCell(StoryScrollViewCell cell, bool updateSize)
         {
             if (storyElementView)
                 storyElementView.SetStoryElement(cell.StoryElement);
-        }
 
-        public float GetCellViewSize()
-        {
-            if (!contentFitterRect) return 0;
+            if (!updateSize || !storyElementRect) return;
             
             Canvas.ForceUpdateCanvases();
-
-            return contentFitterRect.rect.height;
+            cell.CellViewSize = storyElementRect.rect.height;
         }
-
     }
 }

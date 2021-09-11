@@ -115,10 +115,7 @@ namespace InlUniRx.Views
             
             if (!storyCellView) return baseCellView;
            
-            storyCellView.SetCell(cell);
-
-            if (_resize)
-                cell.CellViewSize = storyCellView.GetCellViewSize();
+            storyCellView.SetCell(cell, _resize);
 
             return storyCellView;
         }

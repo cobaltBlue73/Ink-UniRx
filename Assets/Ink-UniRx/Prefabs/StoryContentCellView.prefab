@@ -32,10 +32,10 @@ RectTransform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: -50}
+  m_SizeDelta: {x: 0, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &5623408127993146038
 MonoBehaviour:
@@ -51,7 +51,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cellIdentifier: Content
   storyElementView: {fileID: 2419484757887306535}
-  contentFitterRect: {fileID: 5925040100798855676}
+  storyElementRect: {fileID: 3510673194376402037}
 --- !u!1001 &8611835927285225119
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -59,10 +59,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3976682231247085988}
     m_Modifications:
-    - target: {fileID: 2718656512364326755, guid: 8a06d41d37c735843bcdead75c1a2d0b, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5132706707897762538, guid: 8a06d41d37c735843bcdead75c1a2d0b, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -169,8 +165,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9046d2199d3247119ca9c54043bd63f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!224 &5925040100798855676 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 2718656512364326755, guid: 8a06d41d37c735843bcdead75c1a2d0b, type: 3}
-  m_PrefabInstance: {fileID: 8611835927285225119}
-  m_PrefabAsset: {fileID: 0}

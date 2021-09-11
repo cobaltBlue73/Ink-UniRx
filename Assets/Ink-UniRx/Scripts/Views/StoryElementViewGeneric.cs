@@ -9,12 +9,8 @@ namespace InlUniRx.Views
     {
         #region Properties
 
-        public new T StoryElement => _element ??= base.StoryElement as T;
+        public new T StoryElement => base.StoryElement as T;
 
         #endregion
-
-        private T _element;
-        
-        
     }
 }
