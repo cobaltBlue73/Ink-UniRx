@@ -4,16 +4,16 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using InkUniRx.Presenters.Interfaces;
 using InkUniRx.ViewModels;
-using InlUniRx.Views;
+using InkUniRx.Views;
 using UnityEngine;
 
 namespace InkUniRx.Presenters
 {
-    public class StoryScrollViewChoicesPresenter : MonoBehaviour, IStoryChoicesPresenter
+    public class ScrollViewStoryChoicesPresenter : MonoBehaviour, IStoryChoicesPresenter
     {
         #region Inspector
 
-        [SerializeField] private StoryScrollView scrollView;
+        [SerializeField] private ScrollView scrollView;
 
         #endregion
 
@@ -22,23 +22,23 @@ namespace InkUniRx.Presenters
         private void Reset()
         {
             if (!scrollView)
-                scrollView = GetComponentInChildren<StoryScrollView>();
+                scrollView = GetComponentInChildren<ScrollView>();
         }
 
         #endregion
         public async UniTask OnShowStoryChoicesAsync(StoryChoice[] storyChoices, CancellationToken ct)
         {
-            var cells = new List<StoryScrollViewCell>();
+            var cells = new List<ScrollViewCell>();
             
             for (int i = 0; i < storyChoices.Length; i++)
             {
-                cells.Add(scrollView.AddStoryElement(storyChoices[i], i >= storyChoices.Length - 1));
+                await scrollView.AddStoryElementAsync(storyChoices[i]);
             }
            
             await storyChoices.First().Story.OnMakeChoiceAsObservable().ToUniTask(true);
             for (int i = 0; i < storyChoices.Length; i++)
             {
-                scrollView.RemoveLastCell(false);
+                await scrollView.RemoveLastCellAsync(false);
             }
         }
     }

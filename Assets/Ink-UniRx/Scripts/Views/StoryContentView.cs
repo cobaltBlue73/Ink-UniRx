@@ -2,7 +2,7 @@ using InkUniRx.ViewModels;
 using TMPro;
 using UnityEngine;
 
-namespace InlUniRx.Views
+namespace InkUniRx.Views
 {
     public class StoryContentView : StoryElementViewGeneric<StoryContent>
     {

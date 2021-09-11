@@ -6,7 +6,7 @@ using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace InlUniRx.Views
+namespace InkUniRx.Views
 {
     public class StoryChoiceView : StoryElementViewGeneric<StoryChoice>
     {

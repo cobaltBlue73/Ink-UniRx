@@ -4,7 +4,7 @@ namespace InkUniRx.ViewModels
 {
     public abstract class StoryElement
     {
-        public StoryElement(Story story)
+        protected StoryElement(Story story)
         {
             Story = story;
             PathName = story.GetCurrentPathName();
