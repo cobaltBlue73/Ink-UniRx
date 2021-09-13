@@ -10,9 +10,7 @@ namespace InkUniRx.ViewModels
             PathName = story.GetCurrentPathName();
         }
         
-        public Story Story { get; private set; }
-        public string PathName { get; private set; }
-
-        public abstract string Text { get; protected set; }
+        public Story Story { get; }
+        public string PathName { get; }
     }
 }

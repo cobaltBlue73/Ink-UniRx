@@ -26,20 +26,11 @@ namespace InkUniRx.Presenters
         }
 
         #endregion
-        public async UniTask OnShowStoryChoicesAsync(StoryChoice[] storyChoices, CancellationToken ct)
+        public async UniTask OnShowStoryChoicesAsync(StoryChoices storyChoices, CancellationToken ct)
         {
-            var cells = new List<ScrollViewCell>();
-            
-            for (int i = 0; i < storyChoices.Length; i++)
-            {
-                await scrollView.AddStoryElementAsync(storyChoices[i]);
-            }
-           
-            await storyChoices.First().Story.OnMakeChoiceAsObservable().ToUniTask(true);
-            for (int i = 0; i < storyChoices.Length; i++)
-            {
-                await scrollView.RemoveLastCellAsync(false);
-            }
+            await scrollView.AddStoryElementAsync(storyChoices);
+            await storyChoices.WhenChoiceSelected.ToUniTask(true);
+            await scrollView.RemoveLastCellAsync(false);
         }
     }
 }

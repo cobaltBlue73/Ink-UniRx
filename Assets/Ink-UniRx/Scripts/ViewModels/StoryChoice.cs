@@ -12,7 +12,7 @@ namespace InkUniRx.ViewModels
             IsSelected = false;
         }
 
-        public sealed override string Text { get; protected set; }
+        public string Text { get; protected set; }
         
         public int Index { get; private set; }
 

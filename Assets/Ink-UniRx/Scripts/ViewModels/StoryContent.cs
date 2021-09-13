@@ -16,13 +16,12 @@ namespace InkUniRx.ViewModels
             IsEnding = !isPartial || !story.canContinue;
         }
 
-        public sealed override string Text { get; protected set; }
-
-        public bool IsPartial { get; private set; }
-        public HashSet<string> Tags { get; private set; }
-        public int LineNumber { get; private set; }
-        public bool IsBeginning { get; private set; } 
-        public bool IsEnding { get; private set; }
+        public string Text { get; }
+        public bool IsPartial { get; }
+        public HashSet<string> Tags { get; }
+        public int LineNumber { get; }
+        public bool IsBeginning { get; } 
+        public bool IsEnding { get; }
         
     }
 }

@@ -104,17 +104,20 @@ namespace InkUniRx.Presenters
             return UniTask.CompletedTask;
         }
 
-        public async UniTask OnShowStoryChoicesAsync(StoryChoice[] storyChoices, CancellationToken ct)
+        public async UniTask OnShowStoryChoicesAsync(StoryChoices storyChoices, CancellationToken ct)
         {
-            foreach (var choice in storyChoices)
+            for (int i = 0; i < storyChoices.Count; i++)
             {
-                text.text += $"\n<align=center><link={choice.Index}>{choice.Text}</link></align>";
+                var choice = storyChoices[i];
+                text.text += $"\n<align=center><link={choice.index}>{choice.text}</link></align>";
+
             }
+         
             text.ForceMeshUpdate();
             text.maxVisibleCharacters = text.textInfo.characterCount;
             var linkInfo = await _whenLinkClicked.ToUniTask(true);
             var choiceIdx = int.Parse(linkInfo.GetLinkID());
-            storyChoices[choiceIdx].Select();
+            storyChoices.SelectChoice(choiceIdx);
         }
     }
 }

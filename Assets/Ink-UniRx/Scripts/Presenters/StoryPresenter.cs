@@ -173,9 +173,7 @@ namespace InkUniRx.Presenters
 
         private async UniTask OnShowStoryChoicesAsync()
         {
-            var choices = _story.currentChoices
-                .Select(c => new StoryChoice(_story, c))
-                .ToArray();
+            var choices = new StoryChoices(_story);
             
             await ShowStoryPresentersAsync(ct =>
                 _storyChoicesPresenters.Select(t =>

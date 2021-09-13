@@ -6,6 +6,7 @@ namespace InkUniRx
 {
     public static class Extensions
     {
+        public static void ChooseChoice(this Story story, Choice choice) => story.ChooseChoiceIndex(choice.index);
         public static bool HasChoices(this Story story) => story.currentChoices.Count > 0;
         
         public static bool HasEnded(this Story story) => !story.canContinue && !story.HasChoices();

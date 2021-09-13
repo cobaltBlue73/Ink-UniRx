@@ -7,6 +7,6 @@ namespace InkUniRx.Presenters.Interfaces
 {
     public interface IStoryChoicesPresenter
     {
-        public UniTask OnShowStoryChoicesAsync(StoryChoice[] storyChoices, CancellationToken ct);
+        public UniTask OnShowStoryChoicesAsync(StoryChoices storyChoices, CancellationToken ct);
     }
 }

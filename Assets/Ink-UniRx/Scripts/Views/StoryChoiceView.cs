@@ -1,6 +1,7 @@
 using System;
 using Ink.Runtime;
 using InkUniRx.ViewModels;
+using Sirenix.OdinInspector;
 using TMPro;
 using UniRx;
 using UnityEngine;
@@ -8,17 +9,22 @@ using UnityEngine.UI;
 
 namespace InkUniRx.Views
 {
-    public class StoryChoiceView : StoryElementViewGeneric<StoryChoice>
+    public class StoryChoiceView : MonoBehaviour
     {
         #region Inspector
-        
+
+        [SerializeField] private TMP_Text textMesh;
         [SerializeField] private Button selectButton;
+        [SerializeField] private string choiceStyleTag = "Choice";
+        //[SerializeField] private bool enumerate;
         [SerializeField] private string numberingStyleTag = "ChoiceNo";
 
         #endregion
 
         #region Propeterties
 
+        public Choice Choice { get; private set; }
+        public IObservable<int> WhenSelected => selectButton.OnClickAsObservable().Select(_=> Choice.index);
         
         #endregion
 
@@ -35,19 +41,18 @@ namespace InkUniRx.Views
             _disposables.AddTo(this);
         }
 
-        protected override void Reset()
+        private void Reset()
         {
-            base.Reset();
-            
-            styleTag = "Choice";
+            if (!textMesh)
+                textMesh = GetComponentInChildren<TMP_Text>();
             
             if (!selectButton)
                 selectButton = GetComponentInChildren<Button>();
         }
 
-        protected override void OnDisable()
+        protected void OnDisable()
         {
-            base.OnDisable();
+            Choice = null;
             _disposables.Clear();
         }
 
@@ -57,21 +62,16 @@ namespace InkUniRx.Views
 
         #region Public
 
-        public override void SetStoryElement(StoryElement element)
+        public void SetChoice(Choice choice)
         {
-            base.SetStoryElement(element);
-            selectButton.OnClickAsObservable()
-                .Subscribe(_ => StoryElement?.Select())
-                .AddTo(_disposables);
+            Choice = choice;
+            textMesh.text = $"<style=\"{numberingStyleTag}\">{choice.index + 1}.</style><style=\"{choiceStyleTag}\">{choice.text}</style>";
         }
 
         #endregion
 
-        #region Protected
-
-        protected override string GetStyledText() => 
-            $"<style=\"{numberingStyleTag}\">{StoryElement.Index + 1}.</style>{base.GetStyledText()}";
-
+        #region Private
+        
         #endregion
 
         #endregion

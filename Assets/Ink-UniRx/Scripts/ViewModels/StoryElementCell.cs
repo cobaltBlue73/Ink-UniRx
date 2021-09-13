@@ -6,6 +6,6 @@ namespace InkUniRx.ViewModels
     {
         public StoryElementCell(StoryElement storyElement, EnhancedScrollerCellView viewPrefab)
             : base(viewPrefab) => StoryElement = storyElement;
-        public StoryElement StoryElement { get; private set; }
+        public StoryElement StoryElement { get; }
     }
 }

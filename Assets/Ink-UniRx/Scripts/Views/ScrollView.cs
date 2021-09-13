@@ -70,9 +70,9 @@ namespace InkUniRx.Views
             await AddCellAsync(cell, resize);
         }
         
-        public async UniTask AddStoryElementAsync(StoryChoice storyChoice, bool resize = true)
+        public async UniTask AddStoryElementAsync(StoryChoices storyChoices, bool resize = true)
         {
-            var cell = new StoryElementCell(storyChoice, storyChoicePrefab);
+            var cell = new StoryElementCell(storyChoices, storyChoicePrefab);
             await AddCellAsync(cell, resize);
         }
         
