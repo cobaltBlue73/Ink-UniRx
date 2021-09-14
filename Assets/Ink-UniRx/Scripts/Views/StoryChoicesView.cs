@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Cysharp.Threading.Tasks;
 using Ink.Runtime;
 using InkUniRx.ViewModels;
 using UniRx;
@@ -31,6 +33,18 @@ namespace InkUniRx.Views
             
             protected override StoryChoiceView CreateInstance() => 
                 Instantiate(_template, _root);
+
+            protected override void OnBeforeRent(StoryChoiceView instance)
+            {
+                base.OnBeforeRent(instance);
+                _owner._choiceViews.Add(instance);
+            }
+
+            public void ReturnAll()
+            {
+                _owner._choiceViews.ForEach(Return);
+                _owner._choiceViews.Clear();
+            }
         }
 
         #endregion
@@ -101,24 +115,26 @@ namespace InkUniRx.Views
         {
             ClearAll();
             if(!(element is StoryChoices choices)) return;
-
-            _storyChoices = choices;
-            IObservable<int> whenSelected = null;
             
-            for (int i = 0; i < choices.Count; i++)
+            _storyChoices = choices;
+            canvasGroup.interactable = true;
+            for (var i = 0; i < choices.Count; i++)
             {
                 var view = _choiceViewPool.Rent();
-                
                 view.SetChoice(choices[i]);
-                _choiceViews.Add(view);
-                
-                whenSelected = whenSelected != null ? 
-                    whenSelected.Merge(view.WhenSelected) : 
-                    view.WhenSelected;
+            }
+
+            if (choices.SelectedChoice != null)
+            {
+                canvasGroup.interactable = false;
+                return;
             }
             
-            whenSelected.First().Subscribe(choices.SelectChoice)
-                .AddTo(_disposables);
+            _choiceViews.Select(v=> v.WhenSelected)
+                .Merge().First().Subscribe(index=> {
+                    canvasGroup.interactable = false;
+                    choices.SelectChoice(index);
+                }).AddTo(_disposables);
         }
 
         #endregion
@@ -129,8 +145,7 @@ namespace InkUniRx.Views
         {
             _storyChoices = null;
             _disposables.Clear();
-            _choiceViews.ForEach(_choiceViewPool.Return);
-            _choiceViews.Clear();
+            _choiceViewPool.ReturnAll();
         }
 
         #endregion

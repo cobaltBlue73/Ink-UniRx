@@ -26,7 +26,11 @@ namespace InkUniRx.Presenters
         #endregion
         public async UniTask OnShowStoryContentAsync(StoryContent storyContent, CancellationToken ct)
         {
-            await scrollView.AddStoryElementAsync(storyContent);
+            var cell = scrollView.AddStoryElement(storyContent);
+            if (storyContent.IsBeginning)
+                await scrollView.JumpToCellAsync(cell.Index);
+            else
+                await scrollView.JumpToCellAsync(cell.Index, 1, 1);
         }
     }
 }

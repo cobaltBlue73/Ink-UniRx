@@ -4,8 +4,8 @@ namespace InkUniRx.ViewModels
 {
     public class StoryElementCell: ScrollViewCell
     {
-        public StoryElementCell(StoryElement storyElement, EnhancedScrollerCellView viewPrefab)
-            : base(viewPrefab) => StoryElement = storyElement;
+        public StoryElementCell(int index, StoryElement storyElement, EnhancedScrollerCellView viewPrefab)
+            : base(index, viewPrefab) => StoryElement = storyElement;
         public StoryElement StoryElement { get; }
     }
 }
