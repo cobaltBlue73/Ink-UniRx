@@ -31,7 +31,7 @@ namespace InkUniRx.Presenters
             var cell = scrollView.AddStoryElement(storyChoices);
             await scrollView.JumpToCellAsync(cell.Index, 1, 1);
             await storyChoices.WhenChoiceSelected.ToUniTask(true);
-            //scrollView.RemoveLastCell();
+            scrollView.RemoveLastCell(false);
         }
     }
 }

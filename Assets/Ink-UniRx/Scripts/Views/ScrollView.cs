@@ -218,10 +218,10 @@ namespace InkUniRx.Views
             enhancedScroller.ScrollPosition = 0;
 
             // second, reset the data's cell view sizes
-            foreach (var cell in _cells)
-            {
-                cell.CellSize = 0;
-            }
+            // for (var index = 0; index < _cells.Count; index++)
+            // {
+            //     _cells[index].CellSize = 0;
+            // }
         }
 
         private void ResizeScroller()
@@ -268,7 +268,7 @@ namespace InkUniRx.Views
 
             // set the scroll position to the previous cell (plus the offset of where the scroller currently is) so that we can jump to the new cell.
             if(addSpacer)
-                enhancedScroller.ScrollPosition = _totalCellSize - _cells[_cells.Count - 1].CellSize;
+                enhancedScroller.ScrollPosition = _totalCellSize - _cells[_cells.Count - 1].CellSize + offset;
             else
                 JumpToCell(_cells.Count - 1, 1);    
         }

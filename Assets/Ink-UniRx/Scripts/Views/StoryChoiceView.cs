@@ -24,6 +24,7 @@ namespace InkUniRx.Views
         #region Propeterties
 
         public Choice Choice { get; private set; }
+
         public IObservable<int> WhenSelected => selectButton.OnClickAsObservable().Select(_=> Choice.index);
         
         #endregion

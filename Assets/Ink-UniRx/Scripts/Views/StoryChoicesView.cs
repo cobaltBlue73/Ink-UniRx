@@ -4,6 +4,7 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using Ink.Runtime;
 using InkUniRx.ViewModels;
+using TMPro;
 using UniRx;
 using UniRx.Toolkit;
 using UnityEngine;
@@ -117,7 +118,7 @@ namespace InkUniRx.Views
             if(!(element is StoryChoices choices)) return;
             
             _storyChoices = choices;
-            canvasGroup.interactable = true;
+           
             for (var i = 0; i < choices.Count; i++)
             {
                 var view = _choiceViewPool.Rent();
@@ -130,6 +131,7 @@ namespace InkUniRx.Views
                 return;
             }
             
+            canvasGroup.interactable = true;
             _choiceViews.Select(v=> v.WhenSelected)
                 .Merge().First().Subscribe(index=> {
                     canvasGroup.interactable = false;
