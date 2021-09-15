@@ -1,8 +1,9 @@
 using System;
 using Ink.Runtime;
+using InkUniRx.ViewModels;
+using Sirenix.OdinInspector;
 using TMPro;
 using UniRx;
-using UniRx.Triggers;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,7 +14,7 @@ namespace InkUniRx.Views
         #region Inspector
 
         [SerializeField] private TMP_Text textMesh;
-        [SerializeField] private Toggle selectToggle;
+        [SerializeField] private Button selectButton;
         [SerializeField] private string choiceStyleTag = "Choice";
         //[SerializeField] private bool enumerate;
         [SerializeField] private string numberingStyleTag = "ChoiceNo";
@@ -23,15 +24,8 @@ namespace InkUniRx.Views
         #region Propeterties
 
         public Choice Choice { get; private set; }
-        public IObservable<int> WhenSelected => selectToggle.OnPointerClickAsObservable()
-            .Where(_=> selectToggle.isOn).Select(_=> Choice.index);
-
-        public bool IsSelected
-        {
-            get => selectToggle.isOn;
-            set => selectToggle.isOn = value;
-        }
-
+        public IObservable<int> WhenSelected => selectButton.OnClickAsObservable().Select(_=> Choice.index);
+        
         #endregion
 
         #region Member Variables
@@ -52,8 +46,8 @@ namespace InkUniRx.Views
             if (!textMesh)
                 textMesh = GetComponentInChildren<TMP_Text>();
             
-            if (!selectToggle)
-                selectToggle = GetComponentInChildren<Toggle>();
+            if (!selectButton)
+                selectButton = GetComponentInChildren<Button>();
         }
 
         protected void OnDisable()

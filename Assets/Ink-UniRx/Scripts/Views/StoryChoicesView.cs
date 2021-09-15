@@ -11,7 +11,7 @@ using UnityEngine.UI;
 
 namespace InkUniRx.Views
 {
-    [RequireComponent(typeof(CanvasGroup), typeof(ToggleGroup))]
+    [RequireComponent(typeof(CanvasGroup))]
     public class StoryChoicesView : StoryElementViewBase
     {
        #region Internals
@@ -54,7 +54,6 @@ namespace InkUniRx.Views
         [SerializeField] private StoryChoiceView choiceViewTemplate;
         [SerializeField] private Transform childRoot;
         [SerializeField] private CanvasGroup canvasGroup;
-        [SerializeField] private ToggleGroup toggleGroup;
         
         #endregion
 
@@ -93,9 +92,6 @@ namespace InkUniRx.Views
                 if(layout) 
                     childRoot = layout.transform;
             }
-
-            if (!toggleGroup)
-                toggleGroup = GetComponent<ToggleGroup>();
         }
 
         private void Awake()
@@ -121,13 +117,12 @@ namespace InkUniRx.Views
             if(!(element is StoryChoices choices)) return;
             
             _storyChoices = choices;
+            canvasGroup.interactable = true;
             for (var i = 0; i < choices.Count; i++)
             {
                 var view = _choiceViewPool.Rent();
                 view.SetChoice(choices[i]);
-                view.IsSelected = choices.SelectedChoice == view.Choice;
             }
-            canvasGroup.interactable = true;
 
             if (choices.SelectedChoice != null)
             {
@@ -148,8 +143,6 @@ namespace InkUniRx.Views
 
         private void ClearAll()
         {
-            toggleGroup.SetAllTogglesOff(false);
-            //canvasGroup.interactable = false;
             _storyChoices = null;
             _disposables.Clear();
             _choiceViewPool.ReturnAll();
