@@ -48,4 +48,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddaf878bc54a43b487ab793187afa2ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cellIdentifier: Spacer
+  cellIdentifier: SP

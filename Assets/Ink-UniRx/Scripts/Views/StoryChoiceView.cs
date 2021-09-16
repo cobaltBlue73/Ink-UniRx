@@ -54,6 +54,7 @@ namespace InkUniRx.Views
         protected void OnDisable()
         {
             Choice = null;
+            selectButton.interactable = false;
             _disposables.Clear();
         }
 
@@ -66,6 +67,7 @@ namespace InkUniRx.Views
         public void SetChoice(Choice choice)
         {
             Choice = choice;
+            selectButton.interactable = true;
             textMesh.text = $"<style=\"{numberingStyleTag}\">{choice.index + 1}.</style><style=\"{choiceStyleTag}\">{choice.text}</style>";
         }
 

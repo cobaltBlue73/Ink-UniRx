@@ -1,11 +1,10 @@
-using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using EnhancedUI.EnhancedScroller;
 using InkUniRx.ViewModels;
 using Sirenix.OdinInspector;
-using UniRx;
 using UnityEngine;
+using UnityEngine.UI;
 using Utility.EnhancedScrollerV2;
 
 namespace InkUniRx.Views
@@ -14,9 +13,9 @@ namespace InkUniRx.Views
     {
         #region Inspector
 
-        [SerializeField] private EnhancedScroller enhancedScroller;
-        [SerializeField] private StoryElementCellView storyContentPrefab;
-        [SerializeField] private StoryElementCellView storyChoicePrefab;
+        [SerializeField] private EnhancedScroller eScroller;
+        [SerializeField] private StoryContentCellView storyContentCellPrefab;
+        [SerializeField] private StoryChoicesCellView storyChoiceCellPrefab;
         [SerializeField, HideInInspector] private RectTransform scrollerRect;
         
         #region Jump Settings
@@ -63,6 +62,7 @@ namespace InkUniRx.Views
         
         private float _totalCellSize;
         private float _oldScrollPosition;
+        private RectTransform _scrollerLayoutRect;
         
         #endregion
         #region Unity CallBacks
@@ -87,16 +87,16 @@ namespace InkUniRx.Views
 
         #region Public Methods
 
-        public StoryElementCell AddStoryElement(StoryContent storyContent, bool resize = true)
+        public StoryContentCell AddStoryElement(StoryContent storyContent, bool resize = true)
         {
-            var cell = new StoryElementCell(_cells.Count,storyContent, storyContentPrefab);
+            var cell = new StoryContentCell(_cells.Count, storyContentCellPrefab, storyContent);
             AddCell(cell, resize);
             return cell;
         }
         
-        public StoryElementCell AddStoryElement(StoryChoices storyChoices, bool resize = true)
+        public StoryChoicesCell AddStoryElement(StoryChoices storyChoices, bool resize = true)
         {
-            var cell = new StoryElementCell(_cells.Count, storyChoices, storyChoicePrefab);
+            var cell = new StoryChoicesCell(_cells.Count, storyChoiceCellPrefab, storyChoices);
             AddCell(cell, resize);
             return cell;
         }
@@ -127,17 +127,17 @@ namespace InkUniRx.Views
                 ResizeScroller();
         }
         
-        public void RemoveLastCell(bool resize = true) => RemoveAtIndex(_cells.Count - 1);
+        public void RemoveLastCell(bool resize = true) => RemoveAtIndex(_cells.Count - 1, resize);
 
         public void JumpToCell(int cellIndex, float scrollerOffset = 0, float cellOffset = 0)
         {
-            enhancedScroller.JumpToDataIndex(cellIndex, scrollerOffset, cellOffset, includeSpacing,
+            eScroller.JumpToDataIndex(cellIndex, scrollerOffset, cellOffset, includeSpacing,
                 EnhancedScroller.TweenType.immediate, jumpDuration, ResetSpacer);
         }
 
         public async UniTask JumpToCellAsync(int cellIndex, float scrollerOffset = 0, float cellOffset = 0)
         {
-            await enhancedScroller.JumpToIndexAsync(cellIndex, scrollerOffset, cellOffset,
+            await eScroller.JumpToIndexAsync(cellIndex, scrollerOffset, cellOffset,
                 includeSpacing, jumpEasing, tweenTime: jumpDuration);
             ResetSpacer();
         }
@@ -155,13 +155,13 @@ namespace InkUniRx.Views
             var cell = _cells[dataIndex];
             var baseCellView = scroller.GetCellView(cell.ViewPrefab);
 
-            var storyCellView = baseCellView as ScrollViewCellView;
+            var cellView = baseCellView as ScrollViewCellView;
             
-            if (!storyCellView) return baseCellView;
+            if (!cellView) return baseCellView;
            
-            storyCellView.SetCell(cell);
+            cellView.SetCell(cell);
 
-            return storyCellView;
+            return cellView;
         }
 
         #endregion
@@ -182,16 +182,16 @@ namespace InkUniRx.Views
 
         private void InitScroller()
         {
-            if (!enhancedScroller)
-                enhancedScroller = GetComponentInChildren<EnhancedScroller>();
+            if (!eScroller)
+                eScroller = GetComponentInChildren<EnhancedScroller>();
             
-            if(!enhancedScroller) return;
+            if(!eScroller) return;
 
             if (Application.isPlaying)
-                enhancedScroller.Delegate = this;
+                eScroller.Delegate = this;
             
             if(!scrollerRect)
-                scrollerRect = enhancedScroller.transform as RectTransform;
+                scrollerRect = eScroller.transform as RectTransform;
         }
 
         private void InitCollection()
@@ -211,11 +211,11 @@ namespace InkUniRx.Views
         private void ResetScroller()
         {
             // first, clear out the cells in the enhancedScroller so the new text transforms will be reset
-            enhancedScroller.ClearAll();
+            //eScroller.ClearAll();
 
             // reset the enhancedScroller's position so that it is not outside of the new bounds
-            _oldScrollPosition = enhancedScroller.ScrollPosition;
-            enhancedScroller.ScrollPosition = 0;
+            _oldScrollPosition = eScroller.ScrollPosition;
+            eScroller.ScrollPosition = 0;
 
             // second, reset the data's cell view sizes
             // for (var index = 0; index < _cells.Count; index++)
@@ -228,10 +228,10 @@ namespace InkUniRx.Views
         {
             // capture the scroll rect size.
             // this will be used at the end of this method to determine the final scroll position
-            var scrollRectSize = enhancedScroller.ScrollRectSize;
+            var scrollRectSize = eScroller.ScrollRectSize;
 
             // capture the scroller's position so we can smoothly scroll from it to the new cell
-            var offset = _oldScrollPosition - enhancedScroller.ScrollSize;
+            var offset = _oldScrollPosition - eScroller.ScrollSize;
 
             // capture the scroller dimensions so that we can reset them when we are done;
             var size = scrollerRect.sizeDelta;
@@ -241,8 +241,8 @@ namespace InkUniRx.Views
 
             // First Pass: reload the scroller so that it can populate the text UI elements in the cell view.
             // The content size fitter will determine how big the cells need to be on subsequent passes.
-            enhancedScroller.ReloadData();
-
+            eScroller.ReloadData();
+            
             // reset the scroller size back to what it was originally
             scrollerRect.sizeDelta = size;
 
@@ -250,8 +250,8 @@ namespace InkUniRx.Views
             {
                 // calculate the total size required by all cells. This will be used when we determine
                 // where to end up at after we reload the data on the second pass.
-                _totalCellSize = enhancedScroller.padding.top + enhancedScroller.padding.bottom + 
-                                 enhancedScroller.spacing * (_cells.Count - 1);
+                _totalCellSize = eScroller.padding.top + eScroller.padding.bottom + 
+                                 eScroller.spacing * (_cells.Count - 1);
             
                 for (var i = addSpacer? 1: 0; i < _cells.Count; i++)
                 {
@@ -263,26 +263,26 @@ namespace InkUniRx.Views
                 _spacer.CellSize = scrollRectSize;
             }
             
-            // Second Pass: reload the data once more with the newly set cell view sizes and scroller content size.
-            enhancedScroller.ReloadData();
+            // // Second Pass: reload the data once more with the newly set cell view sizes and scroller content size.
+            eScroller.ReloadData();
 
             // set the scroll position to the previous cell (plus the offset of where the scroller currently is) so that we can jump to the new cell.
             if(addSpacer)
-                enhancedScroller.ScrollPosition = _totalCellSize - _cells[_cells.Count - 1].CellSize + offset;
+                eScroller.ScrollPosition = _totalCellSize - _cells[_cells.Count - 1].CellSize + offset;
             else
                 JumpToCell(_cells.Count - 1, 1);    
         }
-        
+
         private void ResetSpacer()
         {
             if(!addSpacer) return;
             
             // reset the spacer's cell size to the scroller's size minus the rest of the cell sizes
             // (or zero if the spacer is no longer needed)
-            _spacer.CellSize = Mathf.Max(enhancedScroller.ScrollRectSize - _totalCellSize, 0);
+            _spacer.CellSize = Mathf.Max(eScroller.ScrollRectSize - _totalCellSize, 0);
 
             // reload the data to set the new cell size
-            enhancedScroller.ReloadData(1.0f);
+            eScroller.ReloadData(1.0f);
         }
         
         #endregion

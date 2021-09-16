@@ -13,7 +13,7 @@ using UnityEngine.UI;
 namespace InkUniRx.Views
 {
     [RequireComponent(typeof(CanvasGroup))]
-    public class StoryChoicesView : StoryElementViewBase
+    public class StoryChoicesView : StoryElementView<StoryChoices>
     {
        #region Internals
 
@@ -37,6 +37,7 @@ namespace InkUniRx.Views
 
             protected override void OnBeforeRent(StoryChoiceView instance)
             {
+                instance.transform.SetAsLastSibling();
                 base.OnBeforeRent(instance);
                 _owner._choiceViews.Add(instance);
             }
@@ -60,7 +61,7 @@ namespace InkUniRx.Views
 
         #region Properties
 
-        public override StoryElement StoryElement => _storyChoices;
+        public override StoryChoices StoryElement => _storyChoices;
 
         #endregion
 
@@ -112,30 +113,24 @@ namespace InkUniRx.Views
 
         #region Public
 
-        public override void SetStoryElement(StoryElement element)
+        public override void SetStoryElement(StoryChoices element)
         {
             ClearAll();
-            if(!(element is StoryChoices choices)) return;
-            
-            _storyChoices = choices;
+            _storyChoices = element;
            
-            for (var i = 0; i < choices.Count; i++)
+            for (var i = 0; i < _storyChoices.Count; i++)
             {
                 var view = _choiceViewPool.Rent();
-                view.SetChoice(choices[i]);
+                view.SetChoice(_storyChoices[i]);
             }
 
-            if (choices.SelectedChoice != null)
-            {
-                canvasGroup.interactable = false;
-                return;
-            }
-            
+            if (_storyChoices.SelectedChoice != null) return;
+
             canvasGroup.interactable = true;
-            _choiceViews.Select(v=> v.WhenSelected)
+            _choiceViews.Select(view=> view.WhenSelected)
                 .Merge().First().Subscribe(index=> {
                     canvasGroup.interactable = false;
-                    choices.SelectChoice(index);
+                    _storyChoices.SelectChoice(index);
                 }).AddTo(_disposables);
         }
 
@@ -145,6 +140,7 @@ namespace InkUniRx.Views
 
         private void ClearAll()
         {
+            canvasGroup.interactable = false;
             _storyChoices = null;
             _disposables.Clear();
             _choiceViewPool.ReturnAll();

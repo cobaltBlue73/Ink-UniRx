@@ -6,5 +6,6 @@ namespace InkUniRx.ViewModels
     {
         public SpacerCell(int index, EnhancedScrollerCellView viewPrefab) 
             : base(index, viewPrefab) { }
+        
     }
 }

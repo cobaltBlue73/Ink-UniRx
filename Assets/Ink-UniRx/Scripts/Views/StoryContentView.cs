@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace InkUniRx.Views
 {
-    public class StoryContentView : StoryElementViewBase
+    public class StoryContentView : StoryElementView<StoryContent>
     {
         #region Inspector
 
@@ -14,7 +14,7 @@ namespace InkUniRx.Views
 
         #region Properties
 
-        public override StoryElement StoryElement => _storyContent; 
+        public override StoryContent StoryElement => _storyContent; 
 
         #endregion
 
@@ -42,10 +42,10 @@ namespace InkUniRx.Views
 
         #region Methods
         
-        public override void SetStoryElement(StoryElement element)
+        public override void SetStoryElement(StoryContent element)
         {
-            _storyContent = element as StoryContent;
-            textMesh.text = _storyContent?.Text;
+            _storyContent = element;
+            textMesh.text = _storyContent.Text;
         }
         
         #endregion

@@ -635,11 +635,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10ebf2092f46426291d355d9a859c20c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enhancedScroller: {fileID: 1048795233}
-  storyContentPrefab: {fileID: 5623408127993146038, guid: d878f750f706acb4da66ba5480cb67be, type: 3}
-  storyChoicePrefab: {fileID: 6249531908006038465, guid: 9eaf4bb746f17e044a71b96e03070d21, type: 3}
+  eScroller: {fileID: 1048795233}
+  storyContentCellPrefab: {fileID: 5623408127993146038, guid: d878f750f706acb4da66ba5480cb67be, type: 3}
+  storyChoiceCellPrefab: {fileID: 6249531908006038465, guid: 9eaf4bb746f17e044a71b96e03070d21, type: 3}
   scrollerRect: {fileID: 0}
-  jumpEasing: 17
+  jumpEasing: 0
   jumpDuration: 0.6
   includeSpacing: 1
   addSpacer: 1

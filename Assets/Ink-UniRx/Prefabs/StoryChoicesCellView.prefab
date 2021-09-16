@@ -46,12 +46,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 7546095607431311321}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6dbf8aeeaa8d495c8b486b4f0b51246d, type: 3}
+  m_Script: {fileID: 11500000, guid: 5a1b5795e55848a4b6d06e717005c2c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cellIdentifier: Choices
-  storyElementView: {fileID: 8815582042883856165}
-  storyElementRect: {fileID: 6363679778704929522}
+  cellIdentifier: CH
+  subView: {fileID: 8815582042883856165}
+  subViewRect: {fileID: 6363679778704929522}
+  hasLayout: 1
 --- !u!1001 &4099403681724399726
 PrefabInstance:
   m_ObjectHideFlags: 0
