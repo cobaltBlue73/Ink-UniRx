@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 98955846}
   - component: {fileID: 98955845}
   - component: {fileID: 98955844}
+  - component: {fileID: 98955847}
   m_Layer: 5
   m_Name: Scroll View
   m_TagString: Untagged
@@ -231,6 +232,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 98955842}
   m_CullTransparentMesh: 1
+--- !u!114 &98955847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 98955842}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56e5ce0173bd46f486e559101198d787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scrollRect: {fileID: 98955844}
+  textMesh: {fileID: 1477497212}
+  textLayoutElement: {fileID: 1477497215}
 --- !u!1 &425639852
 GameObject:
   m_ObjectHideFlags: 0
@@ -261,6 +277,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1477497211}
+  - {fileID: 1728803912}
   m_Father: {fileID: 462357642}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -298,8 +315,8 @@ MonoBehaviour:
   m_Padding:
     m_Left: 15
     m_Right: 15
-    m_Top: 20
-    m_Bottom: 20
+    m_Top: 0
+    m_Bottom: 0
   m_ChildAlignment: 0
   m_Spacing: 0
   m_ChildForceExpandWidth: 1
@@ -521,120 +538,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vestibulum
-    ornare mauris. Etiam tempor neque augue, id ultrices lacus eleifend a. Pellentesque
-    habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
-    Sed iaculis ornare volutpat. In a metus dolor. Fusce a leo at lacus aliquam porttitor.
-    Proin quis quam sed augue mollis varius in vel nisl. Fusce urna enim, tristique
-    quis vestibulum quis, ornare eu leo. Suspendisse auctor at neque nec finibus.
-    Duis laoreet rhoncus dui, at facilisis nisi sodales non. Fusce feugiat accumsan
-    neque et sollicitudin. Praesent eu turpis eleifend, ullamcorper augue sed, fermentum
-    ante. Mauris efficitur ante quis mauris dictum, vel dignissim ligula tincidunt.
-
-    
-
-    Morbi
-    maximus magna elit, vitae elementum mauris viverra id. Nam at nisl ipsum. Etiam
-    sit amet placerat arcu, eget pharetra velit. Aliquam venenatis nulla id dui dictum
-    mollis. Praesent justo est, molestie a eleifend id, placerat ut neque. Pellentesque
-    ac augue vitae sem interdum auctor. Etiam vitae turpis in leo ultrices tempus.
-    Morbi dictum sapien bibendum ex feugiat sagittis. Curabitur vestibulum tempor
-    sem, eget eleifend erat bibendum sed. Donec id mi at ex suscipit rhoncus sed
-    vitae elit. Vestibulum vulputate est eu varius mattis. Vestibulum id nulla ut
-    quam malesuada ullamcorper quis sit amet elit. Nunc cursus nisi ac ante luctus,
-    sit amet lobortis dolor congue.
-
-    
-
-    Vivamus viverra odio sed tincidunt
-    tincidunt. Curabitur sit amet augue augue. Morbi elementum tellus id aliquet
-    imperdiet. Morbi purus dui, facilisis id gravida a, hendrerit eu nunc. Suspendisse
-    pretium lectus quis leo accumsan posuere. Quisque non erat nec libero facilisis
-    mollis. Quisque eu orci a odio condimentum pulvinar. Nulla ac lectus vitae lectus
-    bibendum tristique. Suspendisse pulvinar malesuada magna. Nunc pharetra rutrum
-    leo ut cursus. Nulla et mollis sem. Praesent lacinia consectetur tortor rutrum
-    varius. Proin vitae nulla est. Sed eget lacinia neque, vitae accumsan justo.
-    Fusce eget ultricies arcu. Quisque ac velit nisl.
-
-    
-
-    Maecenas sit amet
-    erat ex. Etiam ut facilisis purus. Vivamus ut diam id est tincidunt posuere.
-    Ut in metus in nisi pulvinar blandit. Sed hendrerit tortor et quam placerat tincidunt.
-    Nullam eget pharetra metus, id efficitur dui. Etiam cursus tortor est, ut tristique
-    enim tincidunt ut. Sed lacinia purus eget massa fringilla placerat. Fusce at
-    sem a nisl fermentum facilisis ac nec sapien. Aenean vitae orci ligula. In sed
-    consectetur risus, ac convallis libero.
-
-    
-
-    In fermentum nibh vitae
-    euismod laoreet. Fusce id urna at purus tempor tempus quis et lacus. Fusce finibus
-    aliquet congue. Pellentesque sed purus libero. Pellentesque congue semper dolor.
-    Sed ullamcorper pulvinar sapien, nec elementum sapien condimentum at. Vivamus
-    a rhoncus arcu. Morbi hendrerit ultrices nulla, ac facilisis mauris faucibus
-    sit amet.
-
-    
-
-    Ut laoreet sapien ut arcu dignissim, vitae egestas nulla
-    pulvinar. Nam sit amet nulla posuere, viverra nunc quis, ornare nunc. Ut fringilla
-    efficitur accumsan. Nullam congue viverra posuere. Duis venenatis euismod quam
-    id pharetra. Aenean et tortor posuere, laoreet ex ac, laoreet nunc. Donec placerat
-    massa a finibus cursus. Nunc viverra, velit non consectetur eleifend, ipsum justo
-    tempor justo, sit amet pharetra arcu nisl non ligula. Nam urna mi, iaculis a
-    tortor sed, feugiat tempus arcu. Nulla pharetra urna et dictum scelerisque. Quisque
-    mollis commodo nunc, sed suscipit nulla vestibulum quis. Mauris euismod, urna
-    et tincidunt varius, risus mi varius lacus, a tristique neque felis quis metus.
-    Donec sed rutrum mauris, sit amet vestibulum odio. Integer et erat vitae sapien
-    interdum gravida sit amet et dui.
-
-    
-
-    Etiam in lobortis ipsum. Interdum
-    et malesuada fames ac ante ipsum primis in faucibus. Proin ac nunc luctus sapien
-    vestibulum pharetra eu eget nunc. Nulla pulvinar, sapien ac feugiat aliquet,
-    sem orci tempor nibh, ac vulputate dui felis vitae sapien. Curabitur ut orci
-    a lectus mollis gravida vitae eget libero. Vestibulum blandit nibh vel accumsan
-    porta. Nunc egestas tellus et nibh fermentum, eu ullamcorper erat auctor. Mauris
-    convallis arcu nec mi elementum tempus. Interdum et malesuada fames ac ante ipsum
-    primis in faucibus. Pellentesque elementum dui nec massa hendrerit, eu condimentum
-    neque mattis. Integer molestie eros et elit condimentum, nec blandit neque luctus.
-    Maecenas interdum convallis orci, quis tristique est ultricies quis. Quisque
-    pretium semper nibh ullamcorper ultricies.
-
-    
-
-    Duis vehicula, sem eu
-    hendrerit viverra, nisi purus vestibulum augue, quis facilisis nisi quam quis
-    diam. Etiam eu metus magna. Integer non tellus non libero lobortis auctor vitae
-    ut nunc. In hac habitasse platea dictumst. Suspendisse id laoreet diam. Sed imperdiet
-    id magna vel ultrices. Proin varius massa vitae ligula rhoncus blandit. Quisque
-    lacinia vestibulum lacus, eu accumsan massa aliquet non. Proin ornare sed sem
-    eu pellentesque. Sed gravida velit sed aliquet aliquet.
-
-    
-
-    Suspendisse
-    potenti. Etiam pellentesque blandit dapibus. Aliquam eu orci scelerisque, consequat
-    augue quis, placerat elit. Suspendisse sed maximus elit. Nunc a maximus orci.
-    Curabitur vitae vehicula augue. Suspendisse porta luctus leo eu porta. Vestibulum
-    non mattis ligula. Proin risus libero, vulputate in luctus quis, aliquet id elit.
-
-    
-
-    Donec
-    consequat rhoncus lorem, eu semper diam congue vitae. Nam rhoncus eros ac orci
-    tempor, vitae congue metus volutpat. Vestibulum porttitor sem id convallis accumsan.
-    In hac habitasse platea dictumst. Vivamus dignissim turpis sed rhoncus efficitur.
-    Donec imperdiet facilisis dui. Class aptent taciti sociosqu ad litora torquent
-    per conubia nostra, per inceptos himenaeos. Ut mollis sit amet arcu quis ullamcorper.
-    Morbi porttitor sodales augue, et condimentum purus vehicula id. Sed sodales
-    neque ut tincidunt volutpat. Cras tortor quam, ultricies a pulvinar et, ornare
-    non enim. Aenean sollicitudin enim non felis hendrerit, in facilisis enim placerat.
-    Aliquam aliquam nulla at ultricies laoreet. Integer a arcu consequat dui ornare
-    mattis accumsan at nunc. Sed non turpis nec magna pharetra imperdiet eleifend
-    ut dui. Curabitur sed ligula at ex dignissim euismod nec sit amet augue.'
+  m_text: ' Content'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -661,15 +565,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 32
+  m_fontSizeBase: 32
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 8
-  m_VerticalAlignment: 1024
+  m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -697,7 +601,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 5, y: 20, z: 5, w: 20}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -720,9 +624,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1477497210}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 43bcd35a1c0c40ccb6d472893fe2093f, type: 3}
+  m_Script: {fileID: 11500000, guid: 9046d2199d3247119ca9c54043bd63f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  textMesh: {fileID: 1477497212}
 --- !u!114 &1477497215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -737,7 +642,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
   m_MinWidth: -1
-  m_MinHeight: 4000
+  m_MinHeight: 0
   m_PreferredWidth: -1
   m_PreferredHeight: -1
   m_FlexibleWidth: -1
@@ -825,8 +730,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1691167526}
   m_HandleRect: {fileID: 1691167525}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.24554455
+  m_Value: 0
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -944,6 +849,157 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1691167524}
   m_CullTransparentMesh: 1
+--- !u!1001 &1728803911
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 425639853}
+    m_Modifications:
+    - target: {fileID: 5130835932742335496, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5130835932742335496, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5130835932742335496, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5130835932742335496, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5130835932742335496, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5130835932742335496, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5130835933672454392, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5130835933672454392, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5130835933672454392, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5130835933672454392, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5130835933672454392, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5130835933672454392, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968287875403592348, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968287875403592348, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_Pivot.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968287875403592348, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968287875403592348, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968287875403592348, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968287875403592348, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968287875403592348, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968287875403592348, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968287875403592348, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968287875403592348, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968287875403592348, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968287875403592348, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968287875403592348, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968287875403592348, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968287875403592348, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968287875403592348, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968287875403592348, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968287875403592348, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968287875403592348, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968287875403592348, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968287875403592348, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6968287875403592351, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+      propertyPath: m_Name
+      value: StoryChoicesView
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 7850596427070543789, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+--- !u!224 &1728803912 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 6968287875403592348, guid: 9fe8a5c3bf86cc4409063592f9199839, type: 3}
+  m_PrefabInstance: {fileID: 1728803911}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1896911334
 GameObject:
   m_ObjectHideFlags: 0
