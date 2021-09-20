@@ -7,6 +7,41 @@ namespace Utility.TextMeshPro
 {
     public static class TextInfoExtensions
     {
+        public static void GetFirstAndLastWordIndexFromCharacterIndexRange(this TMP_TextInfo textInfo, int fromCharIndex,  int toCharIndex, out int firstWordIndex, out int lastWordIndex)
+        {
+            for (firstWordIndex = 0; firstWordIndex < textInfo.wordCount; ++firstWordIndex)
+            {
+                var wordInfo = textInfo.wordInfo[firstWordIndex];
+                
+                if(wordInfo.firstCharacterIndex >= fromCharIndex) break;
+            }
+            
+            for (lastWordIndex = firstWordIndex; lastWordIndex < textInfo.wordCount; ++lastWordIndex)
+            {
+                var wordInfo = textInfo.wordInfo[lastWordIndex];
+                
+                if(wordInfo.lastCharacterIndex >= toCharIndex) break;
+            }
+        }
+        
+        public static void GetFirstAndLastLineIndexFromCharacterIndexRange(this TMP_TextInfo textInfo, int fromCharIndex,  int toCharIndex, out int firstLineIndex, out int lastLineIndex)
+        {
+            for (firstLineIndex = 0; firstLineIndex < textInfo.lineCount; ++firstLineIndex)
+            {
+                var lineInfo = textInfo.lineInfo[firstLineIndex];
+                
+                if(lineInfo.firstCharacterIndex >= fromCharIndex) break;
+            }
+            
+            for (lastLineIndex = firstLineIndex; lastLineIndex < textInfo.lineCount; ++lastLineIndex)
+            {
+                var lineInfo = textInfo.wordInfo[lastLineIndex];
+                
+                if(lineInfo.lastCharacterIndex >= toCharIndex) break;
+            }
+        }
+        
+        
         public static void GetFirstAndLastWordIndexOnLine(this TMP_TextInfo textInfo, int lineIndex, out int firstWordIndex, out int lastWordIndex)
         {
             var lineInfo = textInfo.lineInfo[lineIndex];

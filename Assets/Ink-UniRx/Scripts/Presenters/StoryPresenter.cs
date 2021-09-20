@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Ink.Runtime;
 using InkUniRx.Presenters.Events;
-using InkUniRx.Presenters.Interfaces;
 using InkUniRx.Settings;
-using InkUniRx.ViewModels;
 using Sirenix.OdinInspector;
 using UniRx;
 using UnityEngine;
@@ -26,25 +21,14 @@ namespace InkUniRx.Presenters
 
         #region Properties
         
-        
-        
         #endregion
 
         #region Member Variables
 
         private Story _story;
-
         private bool _continueMaximally;
-
-        private IStoryStartPresenter[] _storyStartPresenters;
-        private IStoryEndPresenter[] _storyEndPresenters;
-        private IStoryPathPreStartPresenter[] _storyPathPreStartPresenters;
-        private IStoryPathPostEndPresenter[] _storyPathPostEndPresenters;
-        private IStoryContentPresenter[] _storyContentPresenters;
-        private IStoryChoicesPresenter[] _storyChoicesPresenters;
-
-        private CancellationTokenSource _animationSkipCTS;
-        private CancellationTokenSource _storyCancelCTS;
+        private CancellationTokenSource _animationSkipCts;
+        private CancellationTokenSource _storyCancelCts;
         
         #endregion
         
@@ -52,15 +36,14 @@ namespace InkUniRx.Presenters
 
         private void Awake()
         {
-            InitSubPresenters();
             InitSettings();
             InitPlayer();
         }
 
         private void OnDestroy()
         {
-            _animationSkipCTS?.Dispose();
-            _storyCancelCTS?.Dispose();
+            _animationSkipCts?.Dispose();
+            _storyCancelCts?.Dispose();
         }
 
         #endregion
@@ -80,9 +63,9 @@ namespace InkUniRx.Presenters
             RunStoryAsync().Forget();
         }
 
-        public void CancelStory() => _storyCancelCTS?.Cancel();
+        public void CancelStory() => _storyCancelCts?.Cancel();
         
-        public void SkipTransitions() => _animationSkipCTS?.Cancel();
+        public void SkipTransitions() => _animationSkipCts?.Cancel();
         
         #endregion
         
@@ -94,9 +77,9 @@ namespace InkUniRx.Presenters
             
             InitStory();
 
-            using (_storyCancelCTS = new CancellationTokenSource())
+            using (_storyCancelCts = new CancellationTokenSource())
             {
-                var cancelStoryToken = _storyCancelCTS.Token;
+                var cancelStoryToken = _storyCancelCts.Token;
                 
                 await WaitForStoryStartAsync(cancelStoryToken);
             
@@ -109,7 +92,7 @@ namespace InkUniRx.Presenters
                         ContinueNextLine();
                        
                         await WaitForStoryPathContinueAsync(cancelStoryToken);
-
+                            
                     } while (_story.canContinue && !cancelStoryToken.IsCancellationRequested);
                 
                     await WaitForStoryPathEndAsync(cancelStoryToken);
@@ -121,10 +104,9 @@ namespace InkUniRx.Presenters
                 } while (_story.canContinue && !cancelStoryToken.IsCancellationRequested);
 
                 await WaitForStoryEndAsync(cancelStoryToken);
-    
             }
 
-            _storyCancelCTS = null;
+            _storyCancelCts = null;
             
             CleanUpStory();
         }
@@ -148,68 +130,68 @@ namespace InkUniRx.Presenters
         
         private async UniTask WaitForStoryStartAsync(CancellationToken cancelStoryToken)
         {
-            using (_animationSkipCTS = new CancellationTokenSource())
+            using (_animationSkipCts = new CancellationTokenSource())
             {
                 await AsyncMessageBroker.Default
                     .PublishAsync(new StoryStart(_story, 
-                        cancelStoryToken, _animationSkipCTS.Token));
+                        cancelStoryToken, _animationSkipCts.Token));
             }
-            _animationSkipCTS = null;
+            _animationSkipCts = null;
         }
 
         private async UniTask WaitForStoryEndAsync(CancellationToken cancelStoryToken)
         {
-            using (_animationSkipCTS = new CancellationTokenSource())
+            using (_animationSkipCts = new CancellationTokenSource())
             {
                 await AsyncMessageBroker.Default
                     .PublishAsync(new StoryEnd(_story, 
-                        cancelStoryToken, _animationSkipCTS.Token));
+                        cancelStoryToken, _animationSkipCts.Token));
             }
-            _animationSkipCTS = null;
+            _animationSkipCts = null;
         }
 
         private async UniTask WaitForStoryPathStartAsync(CancellationToken cancelStoryToken)
         {
-            using (_animationSkipCTS = new CancellationTokenSource())
+            using (_animationSkipCts = new CancellationTokenSource())
             {
                 await AsyncMessageBroker.Default
                     .PublishAsync(new StoryPathStart(_story, 
-                        cancelStoryToken, _animationSkipCTS.Token));
+                        cancelStoryToken, _animationSkipCts.Token));
             }
-            _animationSkipCTS = null;
+            _animationSkipCts = null;
         }
 
         private async UniTask WaitForStoryPathEndAsync(CancellationToken cancelStoryToken)
         {
-            using (_animationSkipCTS = new CancellationTokenSource())
+            using (_animationSkipCts = new CancellationTokenSource())
             {
                 await AsyncMessageBroker.Default
                     .PublishAsync(new StoryPathEnd(_story, 
-                        cancelStoryToken, _animationSkipCTS.Token));
+                        cancelStoryToken, _animationSkipCts.Token));
             }
-            _animationSkipCTS = null;
+            _animationSkipCts = null;
         }
 
         private async UniTask WaitForStoryPathContinueAsync(CancellationToken cancelStoryToken)
         {
-            using (_animationSkipCTS = new CancellationTokenSource())
+            using (_animationSkipCts = new CancellationTokenSource())
             {
                 await AsyncMessageBroker.Default
                     .PublishAsync(new StoryPathContinue(_story, 
-                        cancelStoryToken, _animationSkipCTS.Token));
+                        cancelStoryToken, _animationSkipCts.Token));
             }
-            _animationSkipCTS = null;
+            _animationSkipCts = null;
         }
 
         private async UniTask WaitForStoryPathChoiceSelectionAsync(CancellationToken cancelStoryToken)
         {
-            using (_animationSkipCTS = new CancellationTokenSource())
+            using (_animationSkipCts = new CancellationTokenSource())
             {
                 await AsyncMessageBroker.Default
                     .PublishAsync(new StoryPathChoiceSelection(_story, 
-                        cancelStoryToken, _animationSkipCTS.Token));
+                        cancelStoryToken, _animationSkipCts.Token));
             }
-            _animationSkipCTS = null;
+            _animationSkipCts = null;
 
             await UniTask.WhenAll(_story.OnMakeChoiceAsObservable().ToUniTask(true, cancelStoryToken),
                 UniTask.WaitUntil(() => _story.canContinue, cancellationToken: cancelStoryToken))
@@ -222,16 +204,6 @@ namespace InkUniRx.Presenters
                 _story.ContinueMaximally();
             else
                 _story.Continue();
-        }
-
-        private void InitSubPresenters()
-        {
-            _storyStartPresenters = GetComponentsInChildren<IStoryStartPresenter>();
-            _storyEndPresenters = GetComponentsInChildren<IStoryEndPresenter>();
-            _storyPathPreStartPresenters = GetComponentsInChildren<IStoryPathPreStartPresenter>();
-            _storyPathPostEndPresenters = GetComponentsInChildren<IStoryPathPostEndPresenter>();
-            _storyContentPresenters = GetComponentsInChildren<IStoryContentPresenter>();
-            _storyChoicesPresenters = GetComponentsInChildren<IStoryChoicesPresenter>();
         }
         
         private void InitStory()
