@@ -10,27 +10,14 @@ namespace InkUniRx.Animators
 {
     public abstract class TextAnimator : MonoBehaviour
     {
-        #region Internals
-
-        public enum TextAnimationType
-        {
-            Characters,
-            Words,
-            Lines
-        }
-
-        #endregion
-        
         #region Inspector
 
         [SerializeField, InlineEditor] private TMP_Text text;
-        public TextAnimationType animationType;
-        public float speed;
+        [SerializeField, InlineButton(nameof(SyncSpeed))] protected float speed;
         
         #endregion
 
         #region Properties
-
         public TMP_Text Text => text;
 
         #endregion
@@ -49,41 +36,26 @@ namespace InkUniRx.Animators
 
         #region Public
 
-        public UniTask PlayTextAnimationAsync(TMP_Text textMesh, int fromCharIndex, int toCharIndex, CancellationToken cancelAnimationToken)
-        {
-            switch (animationType)
-            {
-                case TextAnimationType.Words:
-                    textMesh.textInfo.GetFirstAndLastWordIndexFromCharacterIndexRange(fromCharIndex, toCharIndex, out var firstWordIndex, out var lastWordIndex);
-                    return PlayWordAnimationAsync(textMesh, firstWordIndex, lastWordIndex, cancelAnimationToken);
-                case TextAnimationType.Lines:
-                    textMesh.textInfo.GetFirstAndLastLineIndexFromCharacterIndexRange(fromCharIndex, toCharIndex, out var firstLineIndex, out var lastLineIndex);
-                    return PlayLineAnimationAsync(textMesh, firstLineIndex, lastLineIndex, cancelAnimationToken);
-                case TextAnimationType.Characters:
-                default:
-                    return PlayCharAnimationAsync(textMesh, fromCharIndex, toCharIndex, cancelAnimationToken);
-            }
-        }
-
+        public abstract UniTask PlayTextAnimationAsync(TMP_Text textMesh, int fromCharIndex, int toCharIndex,
+            CancellationToken cancelAnimationToken);
+        
         public UniTask PlayTextAnimationAsync(int fromCharIndex, int toCharIndex, CancellationToken cancelAnimationToken) => 
             PlayTextAnimationAsync(text, fromCharIndex, toCharIndex, cancelAnimationToken);
 
         #endregion
 
-        #region Private
-
-        protected abstract UniTask PlayCharAnimationAsync(TMP_Text textMesh, int fromCharIndex, int toCharIndex,
-            CancellationToken cancelAnimationToken);
-        
-        protected abstract UniTask PlayWordAnimationAsync(TMP_Text textMesh, int fromWordIndex, int toWordIndex,
-            CancellationToken cancelAnimationToken);
-        
-        protected abstract UniTask PlayLineAnimationAsync(TMP_Text textMesh, int fromLineIndex, int toLineIndex,
-            CancellationToken cancelAnimationToken);
-
+        #region Editor Only
+#if UNITY_EDITOR
+        private void SyncSpeed()
+        {
+            foreach (var animator in GetComponents<TextAnimator>())
+            {
+                animator.speed = speed;
+            }
+        }
+#endif
         #endregion
-      
-
+        
         #endregion
     }
 }
