@@ -26,6 +26,12 @@ namespace InkUniRx.Presenters
         #region Member Variables
 
         private Story _story;
+        private StoryStart _storyStart;
+        private StoryEnd _storyEnd;
+        private StoryPathStart _storyPathStart;
+        private StoryPathEnd _storyPathEnd;
+        private StoryPathNewText _storyPathNewText;
+        private StoryPathSelectChoice _storyPathSelectChoice;
         private bool _continueMaximally;
         private CancellationTokenSource _animationSkipCts;
         private CancellationTokenSource _storyCancelCts;
@@ -63,9 +69,13 @@ namespace InkUniRx.Presenters
             RunStoryAsync().Forget();
         }
 
-        public void CancelStory() => _storyCancelCts?.Cancel();
-        
-        public void SkipTransitions() => _animationSkipCts?.Cancel();
+        public void CancelStory()
+        {
+            _animationSkipCts?.Cancel();
+            _storyCancelCts?.Cancel();
+        }
+
+        public void SkipAnimation() => _animationSkipCts?.Cancel();
         
         #endregion
         
@@ -75,38 +85,36 @@ namespace InkUniRx.Presenters
         {
             if (_story == null || !_story.canContinue) return;
             
-            InitStory();
-
             using (_storyCancelCts = new CancellationTokenSource())
             {
                 var cancelStoryToken = _storyCancelCts.Token;
                 
-                await WaitForStoryStartAsync(cancelStoryToken);
+                InitStory(cancelStoryToken);
+                
+                await WaitForStoryStartAsync();
             
                 do
                 {
-                    await WaitForStoryPathStartAsync(cancelStoryToken);
+                    await WaitForStoryPathStartAsync();
                     
                     do
                     {
                         ContinueNextLine();
                        
-                        await WaitForStoryPathContinueAsync(cancelStoryToken);
+                        await WaitForStoryPathContinueAsync();
                             
                     } while (_story.canContinue && !cancelStoryToken.IsCancellationRequested);
                 
-                    await WaitForStoryPathEndAsync(cancelStoryToken);
+                    await WaitForStoryPathEndAsync();
 
                     if (!_story.HasChoices()) continue;
 
-                    await WaitForStoryPathChoiceSelectionAsync(cancelStoryToken);
+                    await WaitForStoryPathSelectChoiceAsync(cancelStoryToken);
 
                 } while (_story.canContinue && !cancelStoryToken.IsCancellationRequested);
 
-                await WaitForStoryEndAsync(cancelStoryToken);
+                await WaitForStoryEndAsync();
             }
-
-            _storyCancelCts = null;
             
             CleanUpStory();
         }
@@ -128,73 +136,67 @@ namespace InkUniRx.Presenters
                 val => _continueMaximally = val);
         }
         
-        private async UniTask WaitForStoryStartAsync(CancellationToken cancelStoryToken)
+        private async UniTask WaitForStoryStartAsync()
         {
             using (_animationSkipCts = new CancellationTokenSource())
             {
-                await AsyncMessageBroker.Default
-                    .PublishAsync(new StoryStart(_story, 
-                        cancelStoryToken, _animationSkipCts.Token));
+                _storyStart.SetCancelAnimationToken(_animationSkipCts.Token);
+                await AsyncMessageBroker.Default.PublishAsync(_storyStart);
             }
             _animationSkipCts = null;
         }
 
-        private async UniTask WaitForStoryEndAsync(CancellationToken cancelStoryToken)
+        private async UniTask WaitForStoryEndAsync()
         {
             using (_animationSkipCts = new CancellationTokenSource())
             {
-                await AsyncMessageBroker.Default
-                    .PublishAsync(new StoryEnd(_story, 
-                        cancelStoryToken, _animationSkipCts.Token));
+                _storyEnd.SetCancelAnimationToken(_animationSkipCts.Token);
+                await AsyncMessageBroker.Default.PublishAsync(_storyEnd);
             }
             _animationSkipCts = null;
         }
 
-        private async UniTask WaitForStoryPathStartAsync(CancellationToken cancelStoryToken)
+        private async UniTask WaitForStoryPathStartAsync()
         {
             using (_animationSkipCts = new CancellationTokenSource())
             {
+                _storyPathStart.SetCancelAnimationToken(_animationSkipCts.Token);
                 await AsyncMessageBroker.Default
-                    .PublishAsync(new StoryPathStart(_story, 
-                        cancelStoryToken, _animationSkipCts.Token));
+                    .PublishAsync(_storyPathStart);
             }
             _animationSkipCts = null;
         }
 
-        private async UniTask WaitForStoryPathEndAsync(CancellationToken cancelStoryToken)
+        private async UniTask WaitForStoryPathEndAsync()
         {
             using (_animationSkipCts = new CancellationTokenSource())
             {
-                await AsyncMessageBroker.Default
-                    .PublishAsync(new StoryPathEnd(_story, 
-                        cancelStoryToken, _animationSkipCts.Token));
+                _storyPathEnd.SetCancelAnimationToken(_animationSkipCts.Token);
+                await AsyncMessageBroker.Default.PublishAsync(_storyPathEnd);
             }
             _animationSkipCts = null;
         }
 
-        private async UniTask WaitForStoryPathContinueAsync(CancellationToken cancelStoryToken)
+        private async UniTask WaitForStoryPathContinueAsync()
         {
             using (_animationSkipCts = new CancellationTokenSource())
             {
-                await AsyncMessageBroker.Default
-                    .PublishAsync(new StoryPathContinue(_story, 
-                        cancelStoryToken, _animationSkipCts.Token));
+                _storyPathNewText.SetCancelAnimationToken(_animationSkipCts.Token);
+                await AsyncMessageBroker.Default.PublishAsync(_storyPathNewText);
             }
             _animationSkipCts = null;
         }
 
-        private async UniTask WaitForStoryPathChoiceSelectionAsync(CancellationToken cancelStoryToken)
+        private async UniTask WaitForStoryPathSelectChoiceAsync(CancellationToken cancelStoryToken)
         {
             using (_animationSkipCts = new CancellationTokenSource())
             {
-                await AsyncMessageBroker.Default
-                    .PublishAsync(new StoryPathChoiceSelection(_story, 
-                        cancelStoryToken, _animationSkipCts.Token));
+                _storyPathSelectChoice.SetCancelAnimationToken(_animationSkipCts.Token);
+                await AsyncMessageBroker.Default.PublishAsync(_storyPathSelectChoice);
             }
             _animationSkipCts = null;
 
-            await UniTask.WhenAll(_story.OnMakeChoiceAsObservable().ToUniTask(true, cancelStoryToken),
-                UniTask.WaitUntil(() => _story.canContinue, cancellationToken: cancelStoryToken))
+            await _story.WaitUntilCanContinue(cancelStoryToken)
                 .SuppressCancellationThrow();
         }
 
@@ -206,14 +208,26 @@ namespace InkUniRx.Presenters
                 _story.Continue();
         }
         
-        private void InitStory()
+        private void InitStory(CancellationToken cancelStoryToken)
         {
-            
+            _storyStart = new StoryStart(_story, cancelStoryToken);
+            _storyEnd = new StoryEnd(_story, cancelStoryToken);
+            _storyPathStart = new StoryPathStart(_story, cancelStoryToken);
+            _storyPathEnd = new StoryPathEnd(_story, cancelStoryToken);
+            _storyPathNewText = new StoryPathNewText(_story, cancelStoryToken);
+            _storyPathSelectChoice = new StoryPathSelectChoice(_story, cancelStoryToken);
         }
 
         private void CleanUpStory()
         {
-            
+            _storyCancelCts = null;
+            _animationSkipCts = null;
+            _storyStart = null;
+            _storyEnd = null;
+            _storyPathStart = null;
+            _storyPathEnd = null;
+            _storyPathNewText = null;
+            _storyPathSelectChoice = null;
         }
 
         #endregion

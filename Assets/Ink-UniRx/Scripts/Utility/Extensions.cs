@@ -1,4 +1,6 @@
 using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using Ink.Runtime;
 using UniRx;
 
@@ -6,7 +8,13 @@ namespace InkUniRx
 {
     public static class Extensions
     {
+        public static UniTask WaitUntilCanContinue(this Story story) => 
+            UniTask.WaitUntil(() => story.canContinue);
+        public static UniTask WaitUntilCanContinue(this Story story, CancellationToken ct) => 
+            UniTask.WaitUntil(() => story.canContinue, cancellationToken: ct);
+        
         public static void ChooseChoice(this Story story, Choice choice) => story.ChooseChoiceIndex(choice.index);
+        
         public static bool HasChoices(this Story story) => story.currentChoices.Count > 0;
         
         public static bool HasEnded(this Story story) => !story.canContinue && !story.HasChoices();

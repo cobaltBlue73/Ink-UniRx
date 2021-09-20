@@ -3,9 +3,9 @@ using Ink.Runtime;
 
 namespace InkUniRx.Presenters.Events
 {
-    public class StoryStart: StoryEvent
+    public class StoryPathNewText: StoryEvent
     {
-        public StoryStart(Story story, CancellationToken cancelStoryToken) 
+        public StoryPathNewText(Story story, CancellationToken cancelStoryToken) 
             : base(story, cancelStoryToken) { }
     }
 }
