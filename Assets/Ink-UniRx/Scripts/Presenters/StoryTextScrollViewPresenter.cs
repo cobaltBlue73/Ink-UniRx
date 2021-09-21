@@ -12,7 +12,18 @@ namespace InkUniRx.Presenters
     {
         protected override async UniTask<Unit> OnNewStoryTextAsync(StoryPathNewText newStoryText)
         {
-            await textView.AddTextAsync(newStoryText.Story.currentText, newStoryText.CancelAnimationToken);
+            if (newStoryText.Story.CurrentTextIsWhiteSpace())
+            {
+                if(!ignoreWhiteSpaceText)
+                    textView.AddText(newStoryText.Story.currentText);
+                
+                return Unit.Default;
+            }
+             
+            textView.AddText(trim? newStoryText.Story.currentText.Trim(): 
+                newStoryText.Story.currentText);
+
+            await textView.ShowNewTextAsync(newStoryText.CancelStoryToken);
 
             var whenContinue = MessageBroker.Default.Receive<ContinueStory>().AsUnitObservable();
 

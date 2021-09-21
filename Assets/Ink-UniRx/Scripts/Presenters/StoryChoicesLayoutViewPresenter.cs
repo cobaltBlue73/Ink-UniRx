@@ -10,22 +10,26 @@ namespace InkUniRx.Presenters
         #region Story Callback
         protected override async UniTask<Unit> OnChoiceSelectionAsync(StoryPathSelectChoice selectChoice)
         {
-            choicesView.gameObject.SetActive(true);
             choicesView.SetChoices(selectChoice.Story.currentChoices);
 
-            var (isCanceled, choice) = await choicesView.WhenChoiceSelected
-                .Merge(selectChoice.Story.OnMakeChoiceAsObservable())
+            await choicesView.ShowAsync(selectChoice.CancelAnimationToken);
+
+            var (isCanceled, choice) = await WhenChoiceSelected
                 .ToUniTask(true, selectChoice.CancelStoryToken)
                 .SuppressCancellationThrow();
+
+            if (!selectChoice.CancelStoryToken.IsCancellationRequested)
+            {
+                await choicesView.HideAsync(selectChoice.CancelAnimationToken);
             
-            if(selectChoice.CancelStoryToken.IsCancellationRequested)
-                return Unit.Default;
-            
-            choicesView.gameObject.SetActive(false);
-            
-            if(selectChoice.Story.HasChoices())
-                selectChoice.Story.ChooseChoice(choice);
-            
+                if(selectChoice.Story.HasChoices())
+                    selectChoice.Story.ChooseChoice(choice);
+            }
+            else
+            {
+                choicesView.HideAsync(selectChoice.CancelAnimationToken, false);
+            }
+
             return Unit.Default;
         }
         #endregion

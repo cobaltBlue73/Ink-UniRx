@@ -52,6 +52,12 @@ namespace InkUniRx.Views
 
         #endregion
 
+        #region Public
+
+        public abstract UniTask ShowNewTextAsync(CancellationToken cancelAnimationToken);
+
+        #endregion
+
         #region Protected
 
         protected async UniTask ScrollToAsync(float scrollPosition, CancellationToken cancelAnimationToken)

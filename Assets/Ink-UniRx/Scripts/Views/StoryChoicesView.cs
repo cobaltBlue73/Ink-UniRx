@@ -15,6 +15,8 @@ namespace InkUniRx.Views
         #endregion
         
         #region Methods
+        public abstract UniTask ShowAsync(CancellationToken cancelAnimationToken, bool animate = true);
+        public abstract UniTask HideAsync(CancellationToken cancelAnimationToken, bool animate = true);
         public abstract void SetChoices(IEnumerable<Choice> choices);
         #endregion
         

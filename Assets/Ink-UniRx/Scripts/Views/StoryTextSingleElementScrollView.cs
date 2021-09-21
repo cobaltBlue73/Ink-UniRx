@@ -9,7 +9,7 @@ using Utility.General;
 
 namespace InkUniRx.Views
 {
-    public class StoryTextSingleTextScrollView: StoryTextScrollView
+    public class StoryTextSingleElementScrollView: StoryTextScrollView
     {
         #region Inspector
 
@@ -27,7 +27,7 @@ namespace InkUniRx.Views
 
         #region Variables
 
-        
+        private int _prevCharCount;
 
         #endregion
 
@@ -45,10 +45,10 @@ namespace InkUniRx.Views
             if (textMesh && !textLayoutElement)
                 textLayoutElement = textMesh.GetOrAddComponent<LayoutElement>();
         }
-
+        
         private void Awake()
         {
-            
+            ClearText();
         }
 
         private void Start()
@@ -60,21 +60,30 @@ namespace InkUniRx.Views
 
         #region Public
 
-        public override void ClearText() => textMesh.text = string.Empty;
-
-        public override async UniTask AddTextAsync(string text, CancellationToken cancelAnimationToken)
+        public override void ClearText()
         {
-            var prevCharCount = textMesh.textInfo.characterCount;
-            textMesh.text += $"{text}\n";
-            //textMesh.ForceMeshUpdate();
-            var curCharCount = textMesh.textInfo.characterCount;
+            _prevCharCount = 0;
+            textMesh.text = string.Empty;
+        }
 
-            var textAnimationTask = UniTask.WhenAll(textAnimators.Select(animator =>
-                animator.PlayTextAnimationAsync(prevCharCount, curCharCount - 1,
+        public override void AddText(string text)
+        {
+            _prevCharCount = textMesh.textInfo.characterCount;
+            textMesh.text += IsEmpty? text: $"\n{text}";
+            textMesh.ForceMeshUpdate();
+            textMesh.maxVisibleCharacters = _prevCharCount;
+        }
+        
+        public override async UniTask ShowNewTextAsync(CancellationToken cancelAnimationToken)
+        {
+            var animationTasks = UniTask.WhenAll(textAnimators.Select(animator =>
+                animator.PlayTextAnimationAsync(textMesh, _prevCharCount, 
+                    textMesh.textInfo.characterCount - 1,
                     cancelAnimationToken)));
 
-            await UniTask.WhenAll(textAnimationTask, ScrollToBottomAsync(cancelAnimationToken));
+            await UniTask.WhenAll(animationTasks, ScrollToBottomAsync(cancelAnimationToken));
         }
+
 
         #endregion
 

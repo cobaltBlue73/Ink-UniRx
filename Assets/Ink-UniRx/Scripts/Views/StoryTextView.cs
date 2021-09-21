@@ -9,21 +9,9 @@ namespace InkUniRx.Views
 {
     public abstract class StoryTextView : MonoBehaviour
     {
-        #region Internals
-
-        public enum WhiteSpaceHandling
-        {
-            Skip,
-            SkipAnimation
-        }
-
-        #endregion
         #region Inspector
-
-        [SerializeField] protected bool trim;
-        [SerializeField] protected WhiteSpaceHandling handleWhiteSpace;
-        [SerializeField, InlineEditor, PropertyOrder(99)] 
-        protected TextAnimator[] textAnimators;
+        
+        [SerializeField] protected TextAnimator[] textAnimators;
         
         #endregion
         #region Properties
@@ -45,7 +33,7 @@ namespace InkUniRx.Views
 
         #region Public
         public abstract void ClearText();
-        public abstract UniTask AddTextAsync(string text, CancellationToken cancelAnimationToken);
+        public abstract void AddText(string text);
         #endregion
       
         #endregion

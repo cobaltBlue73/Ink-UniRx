@@ -17,6 +17,8 @@ namespace InkUniRx.Presenters
         #region Inspector
         
         [SerializeField, Required] protected TTextView textView;
+        [SerializeField] protected bool trim;
+        [SerializeField] protected bool ignoreWhiteSpaceText;
         [SerializeField, Required] protected StoryPresenterSettings settings;
         #endregion
 

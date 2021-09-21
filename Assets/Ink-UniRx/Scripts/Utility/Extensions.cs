@@ -8,6 +8,8 @@ namespace InkUniRx
 {
     public static class Extensions
     {
+        public static bool CurrentTextIsWhiteSpace(this Story story) =>
+            string.IsNullOrWhiteSpace(story.currentText);
         public static UniTask WaitUntilCanContinue(this Story story) => 
             UniTask.WaitUntil(() => story.canContinue);
         public static UniTask WaitUntilCanContinue(this Story story, CancellationToken ct) => 

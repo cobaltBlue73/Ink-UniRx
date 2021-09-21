@@ -32,8 +32,14 @@ namespace InkUniRx.Views
                 _parent = _owner.choiceViewsLayout.transform;
             }
             
-            protected override StoryChoiceView CreateInstance() => 
-                Instantiate(_template, _parent);
+            protected override StoryChoiceView CreateInstance()
+            {
+                var view = Instantiate(_template, _parent);
+                view.WhenSelected
+                    .Subscribe(_owner._choiceSelection)
+                    .AddTo(_owner);
+                return view;
+            }
 
             protected override void OnBeforeRent(StoryChoiceView instance)
             {
@@ -68,8 +74,7 @@ namespace InkUniRx.Views
         }
 
         public override IObservable<Choice> WhenChoiceSelected => 
-            _choiceViews.Select(cv => cv.WhenSelected)
-                .Merge().First();
+            _choiceSelection;
 
         #endregion
 
@@ -78,6 +83,7 @@ namespace InkUniRx.Views
         #region Private
         
         private ChoiceViewPool _choiceViewPool;
+        private readonly Subject<Choice> _choiceSelection = new Subject<Choice>();
         private readonly List<StoryChoiceView> _choiceViews = new List<StoryChoiceView>();
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
@@ -101,8 +107,9 @@ namespace InkUniRx.Views
 
         private void Awake()
         {
-            _choiceViewPool = new ChoiceViewPool(this);
+            _choiceSelection.AddTo(this);
             _disposables.AddTo(this);
+            _choiceViewPool = new ChoiceViewPool(this);
         }
 
         private void OnDisable() => ClearAll();
@@ -112,7 +119,19 @@ namespace InkUniRx.Views
         #region Methods
 
         #region Public
-        
+
+        public override UniTask ShowAsync(CancellationToken cancelAnimationToken, bool animate = true)
+        {
+            gameObject.SetActive(true);
+            return UniTask.CompletedTask;
+        }
+
+        public override UniTask HideAsync(CancellationToken cancelAnimationToken, bool animate = true)
+        {
+            gameObject.SetActive(false);
+            return UniTask.CompletedTask;
+        }
+
         public override void SetChoices(IEnumerable<Choice> choices)
         {
             ClearAll();
