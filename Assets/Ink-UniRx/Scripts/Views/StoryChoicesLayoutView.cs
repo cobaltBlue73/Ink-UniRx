@@ -123,11 +123,13 @@ namespace InkUniRx.Views
         public override UniTask ShowAsync(CancellationToken cancelAnimationToken, bool animate = true)
         {
             gameObject.SetActive(true);
+            Interactable = true;
             return UniTask.CompletedTask;
         }
 
         public override UniTask HideAsync(CancellationToken cancelAnimationToken, bool animate = true)
         {
+            Interactable = false;
             gameObject.SetActive(false);
             return UniTask.CompletedTask;
         }
@@ -148,7 +150,7 @@ namespace InkUniRx.Views
 
         private void ClearAll()
         {
-            canvasGroup.interactable = false;
+            Interactable = false;
             _disposables.Clear();
             _choiceViewPool.ReturnAll();
         }

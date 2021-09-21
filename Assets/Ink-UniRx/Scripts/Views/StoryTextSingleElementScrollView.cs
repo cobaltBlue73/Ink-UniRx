@@ -1,8 +1,10 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using Sirenix.OdinInspector;
 using TMPro;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 using Utility.General;
@@ -28,6 +30,8 @@ namespace InkUniRx.Views
         #region Variables
 
         private int _prevCharCount;
+        private IReadOnlyReactiveProperty<float> _textHeightProp;
+        private Tweener _scrollTween;
 
         #endregion
 
@@ -49,13 +53,12 @@ namespace InkUniRx.Views
         private void Awake()
         {
             ClearText();
+            textMesh.rectTransform
+                .ObserveEveryValueChanged(rt => rt.rect.height)
+                .Subscribe(OnContentHeightChanged)
+                .AddTo(this);
         }
-
-        private void Start()
-        {
-            
-        }
-
+        
         #endregion
 
         #region Public
@@ -76,12 +79,20 @@ namespace InkUniRx.Views
         
         public override async UniTask ShowNewTextAsync(CancellationToken cancelAnimationToken)
         {
+            // textMesh.maxVisibleCharacters = textMesh.textInfo.characterCount;
+            // textMesh.ForceMeshUpdate();
+            // var newHeight = await _textHeightProp.First();
+            // textLayoutElement.minHeight = newHeight;
+            
             var animationTasks = UniTask.WhenAll(textAnimators.Select(animator =>
                 animator.PlayTextAnimationAsync(textMesh, _prevCharCount, 
                     textMesh.textInfo.characterCount - 1,
                     cancelAnimationToken)));
 
-            await UniTask.WhenAll(animationTasks, ScrollToBottomAsync(cancelAnimationToken));
+            await animationTasks;
+
+            if (_scrollTween != null)
+                await _scrollTween;
         }
 
 
@@ -89,14 +100,20 @@ namespace InkUniRx.Views
 
         #region Private
 
-        
+        private void OnContentHeightChanged(float height)
+        {
+            textLayoutElement.minHeight = height;
+
+            if(scrollRect.verticalNormalizedPosition <= 0) return;
+            _scrollTween?.Kill();
+            _scrollTween = scrollRect.DOVerticalNormalizedPos(0, scrollSpeed)
+                .SetEase(scrollEase).SetRecyclable()
+                .OnKill(()=> _scrollTween = null);
+        }
 
         #endregion
 
         #endregion
         
-        
-     
-      
     }
 }

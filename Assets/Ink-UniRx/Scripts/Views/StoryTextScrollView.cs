@@ -3,6 +3,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Sirenix.OdinInspector;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -49,7 +50,7 @@ namespace InkUniRx.Views
 
             scrollEase = Ease.InOutSine;
         }
-
+        
         #endregion
 
         #region Public
@@ -64,7 +65,7 @@ namespace InkUniRx.Views
         {
             scrollPosition = Mathf.Clamp01(scrollPosition);
             
-            if (!animateScrolling)
+            if (!animateScrolling || Math.Abs(scrollRect.verticalNormalizedPosition - scrollPosition) <= Mathf.Epsilon)
             {
                 scrollRect.verticalNormalizedPosition = scrollPosition;
                 return;
@@ -80,7 +81,7 @@ namespace InkUniRx.Views
         }
 
         protected async UniTask ScrollToBottomAsync(CancellationToken cancelAnimationToken) => 
-            await ScrollToAsync(1f, cancelAnimationToken);
+            await ScrollToAsync(0, cancelAnimationToken);
 
         #endregion
         

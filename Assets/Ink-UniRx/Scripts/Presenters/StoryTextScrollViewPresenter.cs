@@ -17,6 +17,7 @@ namespace InkUniRx.Presenters
                 if(!ignoreWhiteSpaceText)
                     textView.AddText(newStoryText.Story.currentText);
                 
+                Debug.Log("Whitespace content");
                 return Unit.Default;
             }
              
@@ -25,6 +26,9 @@ namespace InkUniRx.Presenters
 
             await textView.ShowNewTextAsync(newStoryText.CancelStoryToken);
 
+            if (!newStoryText.Story.canContinue)
+                return Unit.Default;
+            
             var whenContinue = MessageBroker.Default.Receive<ContinueStory>().AsUnitObservable();
 
             if (autoContinue)
