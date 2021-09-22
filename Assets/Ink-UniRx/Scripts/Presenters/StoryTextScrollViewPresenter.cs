@@ -17,7 +17,6 @@ namespace InkUniRx.Presenters
                 if(!ignoreWhiteSpaceText)
                     textView.AddText(newStoryText.Story.currentText);
                 
-                Debug.Log("Whitespace content");
                 return Unit.Default;
             }
              
@@ -28,12 +27,12 @@ namespace InkUniRx.Presenters
 
             if (!newStoryText.Story.canContinue)
                 return Unit.Default;
-            
-            var whenContinue = MessageBroker.Default.Receive<ContinueStory>().AsUnitObservable();
 
-            if (autoContinue)
+            var whenContinue = WhenContinue;
+
+            if (AutoContinue)
             {
-                whenContinue = whenContinue.Merge(Observable.Timer(TimeSpan.FromSeconds(autoContinueDelay))
+                whenContinue = whenContinue.Merge(Observable.Timer(TimeSpan.FromSeconds(AutoContinueDelay))
                     .AsUnitObservable());
             }
 

@@ -24,8 +24,9 @@ namespace InkUniRx.Presenters
 
         #region Variables
 
-        protected bool autoContinue = true;
-        protected float autoContinueDelay = 0;
+        protected bool AutoContinue = true;
+        protected float AutoContinueDelay = 0;
+        protected IObservable<Unit> WhenContinue;
 
         #endregion
 
@@ -48,15 +49,17 @@ namespace InkUniRx.Presenters
             if (settings)
             {
                 settings.AutoContinue
-                    .SetAndSubscribe(ref autoContinue, 
-                        val => autoContinue = val)
+                    .SetAndSubscribe(ref AutoContinue, 
+                        val => AutoContinue = val)
                     .AddTo(this);
 
                 settings.AutoContinueDelay
-                    .SetAndSubscribe(ref autoContinueDelay, 
-                        val => autoContinueDelay = val)
+                    .SetAndSubscribe(ref AutoContinueDelay, 
+                        val => AutoContinueDelay = val)
                     .AddTo(this);
             }
+
+            WhenContinue = MessageBroker.Default.Receive<ContinueStory>().AsUnitObservable();
         }
 
         #endregion
