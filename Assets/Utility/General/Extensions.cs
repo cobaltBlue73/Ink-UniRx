@@ -23,5 +23,15 @@ namespace Utility.General
 
             return component as T;
         }
+        
+        public static T GetOrAddComponent<T>(this Component thisComponent) where T: Component
+        {
+            if (!thisComponent.TryGetComponent(typeof(T), out var component))
+            {
+                component = thisComponent.gameObject.AddComponent<T>();
+            }
+
+            return component as T;
+        }
     }
 }

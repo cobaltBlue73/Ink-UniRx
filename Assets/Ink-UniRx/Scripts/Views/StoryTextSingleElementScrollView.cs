@@ -50,13 +50,10 @@ namespace InkUniRx.Views
                 textLayoutElement = textMesh.GetOrAddComponent<LayoutElement>();
         }
         
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             ClearText();
-            textMesh.rectTransform
-                .ObserveEveryValueChanged(rt => rt.rect.height)
-                .Subscribe(OnContentHeightChanged)
-                .AddTo(this);
         }
         
         #endregion
@@ -76,40 +73,17 @@ namespace InkUniRx.Views
             textMesh.ForceMeshUpdate();
             textMesh.maxVisibleCharacters = _prevCharCount;
         }
-        
-        public override async UniTask ShowNewTextAsync(CancellationToken cancelAnimationToken)
-        {
-            // textMesh.maxVisibleCharacters = textMesh.textInfo.characterCount;
-            // textMesh.ForceMeshUpdate();
-            // var newHeight = await _textHeightProp.First();
-            // textLayoutElement.minHeight = newHeight;
-            
-            var animationTasks = UniTask.WhenAll(textAnimators.Select(animator =>
+
+        protected override async UniTask PlayTextAnimation(CancellationToken cancelAnimationToken) =>
+            await UniTask.WhenAll(textAnimators.Select(animator =>
                 animator.PlayTextAnimationAsync(textMesh, _prevCharCount, 
                     textMesh.textInfo.characterCount - 1,
                     cancelAnimationToken)));
 
-            await animationTasks;
-
-            if (_scrollTween != null)
-                await _scrollTween;
-        }
-
-
         #endregion
 
         #region Private
-
-        private void OnContentHeightChanged(float height)
-        {
-            textLayoutElement.minHeight = height;
-
-            if(scrollRect.verticalNormalizedPosition <= 0) return;
-            _scrollTween?.Kill();
-            _scrollTween = scrollRect.DOVerticalNormalizedPos(0, scrollSpeed)
-                .SetEase(scrollEase).SetRecyclable()
-                .OnKill(()=> _scrollTween = null);
-        }
+        
 
         #endregion
 

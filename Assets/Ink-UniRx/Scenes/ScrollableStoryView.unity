@@ -250,9 +250,10 @@ MonoBehaviour:
   textAnimators:
   - {fileID: 98955849}
   scrollRect: {fileID: 98955844}
+  scrollRectContentRectTrigger: {fileID: 425639856}
   startTextDirection: 0
   animateScrolling: 1
-  scrollSpeed: 0.3
+  scrollDuration: 0.3
   scrollEase: 4
   textMesh: {fileID: 1477497212}
   textLayoutElement: {fileID: 1477497215}
@@ -318,6 +319,7 @@ GameObject:
   - component: {fileID: 425639853}
   - component: {fileID: 425639855}
   - component: {fileID: 425639854}
+  - component: {fileID: 425639856}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -385,6 +387,18 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &425639856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 425639852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20b97bcdd98f27346851c3a690ec7faf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &462357641
 GameObject:
   m_ObjectHideFlags: 0
