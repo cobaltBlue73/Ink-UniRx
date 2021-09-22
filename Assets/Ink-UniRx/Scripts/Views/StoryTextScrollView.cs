@@ -1,14 +1,11 @@
-using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Cysharp.Threading.Tasks.Triggers;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
 using UnityEngine.UI;
-using Utility.General;
 
 namespace InkUniRx.Views
 {
@@ -24,11 +21,13 @@ namespace InkUniRx.Views
         }
 
         #endregion
+        
         #region Inspector
         
         [SerializeField, Required] protected ScrollRect scrollRect;
-        [SerializeField, ReadOnly] private ObservableRectTransformTrigger scrollRectContentRectTrigger;
         [SerializeField] protected StartingTextDirection startTextDirection;
+        [SerializeField, ShowIf("startTextDirection", StartingTextDirection.BottomUp)] 
+        protected LayoutElement spacerElement;
         [SerializeField, ToggleGroup(nameof(animateScrolling))] protected bool animateScrolling;
         [SerializeField, ToggleGroup(nameof(animateScrolling))] protected float scrollDuration;
         [SerializeField, ToggleGroup(nameof(animateScrolling))] protected Ease scrollEase = Ease.InOutSine;
@@ -44,7 +43,7 @@ namespace InkUniRx.Views
         #region Variables
 
         private Tween _scrollTween;
-
+        
         #endregion
         
         #region Methods
@@ -58,10 +57,12 @@ namespace InkUniRx.Views
             if (!scrollRect)
                 scrollRect = GetComponent<ScrollRect>();
 
-            if (scrollRect && !scrollRectContentRectTrigger)
-                scrollRectContentRectTrigger = scrollRect.content
-                    .GetOrAddComponent<ObservableRectTransformTrigger>();
-
+            if (scrollRect && !spacerElement)
+            {
+                spacerElement = scrollRect.content.Find("Spacer")
+                    .GetComponent<LayoutElement>();
+            }
+            
             animateScrolling = true;
             scrollEase = Ease.InOutSine;
             scrollDuration = .3f;
@@ -69,8 +70,18 @@ namespace InkUniRx.Views
 
         protected virtual void Awake()
         {
-            scrollRectContentRectTrigger.OnRectTransformDimensionsChangeAsObservable()
-                .Select(_ => scrollRect.content).Subscribe(OnContentSizeChanged).AddTo(this);
+            scrollRect.content.OnRectTransformDimensionsChangeAsObservable()
+                .Select(_ => scrollRect.content).Subscribe(OnContentSizeChanged)
+                .AddTo(this);
+            
+            spacerElement.gameObject.SetActive(false);
+
+            if (startTextDirection == StartingTextDirection.BottomUp)
+            {
+                scrollRect.viewport.OnRectTransformDimensionsChangeAsObservable()
+                    .First().Select(_=> scrollRect.viewport).Subscribe(InitSpacer)
+                    .AddTo(this);
+            }
         }
         
         #endregion
@@ -81,6 +92,9 @@ namespace InkUniRx.Views
         {
             await PlayTextAnimation(cancelAnimationToken);
             await WaitForEndScrollAsync(cancelAnimationToken);
+            
+            if(startTextDirection == StartingTextDirection.BottomUp)
+                ResizeSpacer();
         }
 
         #endregion
@@ -89,10 +103,11 @@ namespace InkUniRx.Views
 
         protected abstract UniTask PlayTextAnimation(CancellationToken cancelAnimationToken);
 
-        protected virtual async UniTask WaitForEndScrollAsync(CancellationToken cancelAnimationToken)
+        private async UniTask WaitForEndScrollAsync(CancellationToken cancelAnimationToken)
         {
             if (_scrollTween != null)
-                await _scrollTween.WithCancellation(cancelAnimationToken);
+                await _scrollTween.WithCancellation(cancelAnimationToken)
+                    .SuppressCancellationThrow();
             
             if (!cancelAnimationToken.IsCancellationRequested) return;
             
@@ -112,15 +127,38 @@ namespace InkUniRx.Views
                 return;
             }
             
-            _scrollTween?.Kill();  
+            _scrollTween?.Kill();
             _scrollTween = scrollRect.DOVerticalNormalizedPos(0, scrollDuration)
                 .SetEase(scrollEase).SetRecyclable().OnKill(() => _scrollTween = null);
+            
         }
         
-        #endregion
-        
+        protected virtual void InitSpacer(RectTransform viewport)
+        {
+            spacerElement.minHeight = viewport.rect.height;
+            spacerElement.transform.SetAsFirstSibling();
+            spacerElement.gameObject.SetActive(true);
+        }
+
+        protected virtual void ResizeSpacer()
+        {
+            if (!spacerElement || spacerElement.minHeight <= 0) return;
+
+            spacerElement.minHeight -= scrollRect.content.rect.height - 
+                                       scrollRect.viewport.rect.height;
+            
+            if (spacerElement.minHeight <= 0)
+                spacerElement.gameObject.SetActive(false);
+        }
 
         #endregion
-       
+
+        #region Private
+
+        
+        #endregion
+
+        #endregion
+
     }
 }

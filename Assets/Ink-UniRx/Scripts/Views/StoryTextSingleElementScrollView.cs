@@ -1,10 +1,8 @@
-using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using TMPro;
-using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 using Utility.General;
@@ -30,7 +28,6 @@ namespace InkUniRx.Views
         #region Variables
 
         private int _prevCharCount;
-        private IReadOnlyReactiveProperty<float> _textHeightProp;
         private Tweener _scrollTween;
 
         #endregion
@@ -74,12 +71,12 @@ namespace InkUniRx.Views
             textMesh.maxVisibleCharacters = _prevCharCount;
         }
 
-        protected override async UniTask PlayTextAnimation(CancellationToken cancelAnimationToken) =>
-            await UniTask.WhenAll(textAnimators.Select(animator =>
+        protected override UniTask PlayTextAnimation(CancellationToken cancelAnimationToken) => 
+            UniTask.WhenAll(textAnimators.Select(animator =>
                 animator.PlayTextAnimationAsync(textMesh, _prevCharCount, 
                     textMesh.textInfo.characterCount - 1,
                     cancelAnimationToken)));
-
+        
         #endregion
 
         #region Private
