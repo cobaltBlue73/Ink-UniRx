@@ -137,7 +137,6 @@ GameObject:
   - component: {fileID: 98955844}
   - component: {fileID: 98955850}
   - component: {fileID: 98955847}
-  - component: {fileID: 98955849}
   - component: {fileID: 98955848}
   m_Layer: 5
   m_Name: Scroll View
@@ -247,16 +246,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dc3aae068074a3abb20b30ba071c72c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textAnimators:
-  - {fileID: 98955849}
+  textAnimators: []
   scrollRect: {fileID: 98955844}
   startTextDirection: 1
   spacerElement: {fileID: 790312899}
   animateScrolling: 1
   scrollDuration: 0.3
   scrollEase: 4
-  textMesh: {fileID: 1477497212}
-  textLayoutElement: {fileID: 1477497215}
+  elementView: {fileID: 1477497216}
 --- !u!114 &98955848
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -277,21 +274,6 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
---- !u!114 &98955849
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 98955842}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93653bc7c564435f98ca7c837039275f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  text: {fileID: 0}
-  speed: 60
-  textAnimationEase: 1
 --- !u!114 &98955850
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -888,10 +870,12 @@ GameObject:
   m_Component:
   - component: {fileID: 1477497211}
   - component: {fileID: 1477497213}
+  - component: {fileID: 1477497216}
   - component: {fileID: 1477497212}
   - component: {fileID: 1477497215}
+  - component: {fileID: 1477497214}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: TextElementView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1013,6 +997,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1477497210}
   m_CullTransparentMesh: 1
+--- !u!114 &1477497214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1477497210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93653bc7c564435f98ca7c837039275f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  text: {fileID: 1477497212}
+  speed: 60
+  textAnimationEase: 1
 --- !u!114 &1477497215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1033,6 +1032,22 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &1477497216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1477497210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b1ba5eb9118494e80881da2d9f10b5e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textAnimators:
+  - {fileID: 1477497214}
+  textMesh: {fileID: 1477497212}
+  layoutElement: {fileID: 1477497215}
 --- !u!1 &1654626872
 GameObject:
   m_ObjectHideFlags: 0

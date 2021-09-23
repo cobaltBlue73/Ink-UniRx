@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using InkUniRx.Presenters.Events;
 using InkUniRx.Settings;
@@ -24,9 +25,9 @@ namespace InkUniRx.Presenters
 
         #region Variables
 
-        protected bool AutoContinue = true;
-        protected float AutoContinueDelay = 0;
-        protected IObservable<Unit> WhenContinue;
+        private bool _autoContinue = true;
+        private float _autoContinueDelay = 0;
+        private IObservable<Unit> _whenContinue;
 
         #endregion
 
@@ -49,17 +50,17 @@ namespace InkUniRx.Presenters
             if (settings)
             {
                 settings.AutoContinue
-                    .SetAndSubscribe(ref AutoContinue, 
-                        val => AutoContinue = val)
+                    .SetAndSubscribe(ref _autoContinue, 
+                        val => _autoContinue = val)
                     .AddTo(this);
 
                 settings.AutoContinueDelay
-                    .SetAndSubscribe(ref AutoContinueDelay, 
-                        val => AutoContinueDelay = val)
+                    .SetAndSubscribe(ref _autoContinueDelay, 
+                        val => _autoContinueDelay = val)
                     .AddTo(this);
             }
 
-            WhenContinue = MessageBroker.Default.Receive<ContinueStory>().AsUnitObservable();
+            _whenContinue = MessageBroker.Default.Receive<ContinueStory>().AsUnitObservable();
         }
 
         #endregion
@@ -67,6 +68,23 @@ namespace InkUniRx.Presenters
         #region Story Callback
 
         protected abstract UniTask<Unit> OnNewStoryTextAsync(StoryPathNewText newStoryText);
+
+        protected virtual async UniTask WaitForContinueAsync(StoryPathNewText newStoryText)
+        {
+            if (!newStoryText.Story.canContinue)
+                return;
+
+            var whenContinue = _whenContinue;
+
+            if (_autoContinue)
+            {
+                whenContinue = whenContinue.Merge(Observable.Timer(TimeSpan.FromSeconds(_autoContinueDelay))
+                    .AsUnitObservable());
+            }
+
+            await whenContinue.ToUniTask(true, newStoryText.CancelStoryToken)
+                .SuppressCancellationThrow();
+        }
 
         #endregion
 

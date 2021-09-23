@@ -23,21 +23,9 @@ namespace InkUniRx.Presenters
             textView.AddText(trim? newStoryText.Story.currentText.Trim(): 
                 newStoryText.Story.currentText);
 
-            await textView.ShowNewTextAsync(newStoryText.CancelStoryToken);
+            await textView.ShowNewTextAsync(newStoryText.CancelAnimationToken);
 
-            if (!newStoryText.Story.canContinue)
-                return Unit.Default;
-
-            var whenContinue = WhenContinue;
-
-            if (AutoContinue)
-            {
-                whenContinue = whenContinue.Merge(Observable.Timer(TimeSpan.FromSeconds(AutoContinueDelay))
-                    .AsUnitObservable());
-            }
-
-            await whenContinue.ToUniTask(true, newStoryText.CancelStoryToken)
-                .SuppressCancellationThrow();
+            await WaitForContinueAsync(newStoryText);
             
             return Unit.Default;
         }

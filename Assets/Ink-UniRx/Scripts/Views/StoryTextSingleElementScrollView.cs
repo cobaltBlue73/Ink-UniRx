@@ -1,12 +1,8 @@
-using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Sirenix.OdinInspector;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
-using Utility.General;
 
 namespace InkUniRx.Views
 {
@@ -14,15 +10,15 @@ namespace InkUniRx.Views
     {
         #region Inspector
 
-        [SerializeField, InlineEditor] private TMP_Text textMesh;
-        [SerializeField, InlineEditor] private LayoutElement textLayoutElement;
-
+        [SerializeField, Required, InlineEditor] 
+        private StoryTextScrollElementView elementView;
+        
         #endregion
 
         #region Properties
 
-        public override string Text => textMesh.text;
-        public override bool IsEmpty => Text.Length <= 0;
+        public override string Text => elementView.Text;
+        public override bool IsEmpty =>  elementView.IsEmpty;
 
         #endregion
 
@@ -39,12 +35,9 @@ namespace InkUniRx.Views
         protected override void Reset()
         {
             base.Reset();
-
-            if (!textMesh)
-                textMesh = GetComponentInChildren<TMP_Text>();
-
-            if (textMesh && !textLayoutElement)
-                textLayoutElement = textMesh.GetOrAddComponent<LayoutElement>();
+            
+            if (!elementView)
+                elementView = GetComponentInChildren<StoryTextScrollElementView>();
         }
 
         private void Start() => ClearText();
@@ -56,24 +49,21 @@ namespace InkUniRx.Views
         public override void ClearText()
         {
             base.ClearText();
-            textMesh.text = string.Empty;
-            textMesh.maxVisibleCharacters = 0;
+            elementView.ClearText();
+            elementView.VisibleCharacters = 0;
         }
 
-        public override void AddText(string text)
-        {
-            textMesh.text += IsEmpty ? text : $"\n{text}";
-            textMesh.ForceMeshUpdate();
-        }
+        public override void AddText(string text) => elementView.AddText(IsEmpty ? text : $"\n{text}");
 
-        protected override UniTask PlayTextAnimationAsync(CancellationToken cancelAnimationToken)
+        protected override UniTask PlayTextAnimationsAsync(CancellationToken cancelAnimationToken)
         {
-            var from = textMesh.maxVisibleCharacters;
-            var to = textMesh.textInfo.characterCount - 1;
-            textMesh.maxVisibleCharacters = textMesh.textInfo.characterCount;
+            elementView.TextMesh.ForceMeshUpdate();
             
-            return UniTask.WhenAll(textAnimators.Select(animator =>
-                animator.PlayTextAnimationAsync(textMesh, from, to, cancelAnimationToken)));
+            var from = elementView.VisibleCharacters;
+            var to = elementView.CharacterCount - 1;
+            elementView.VisibleCharacters = elementView.CharacterCount;
+            
+            return elementView.PlayTextAnimationsAsync(from, to, cancelAnimationToken);
         }
 
         #endregion

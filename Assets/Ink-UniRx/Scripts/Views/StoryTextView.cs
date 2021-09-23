@@ -9,11 +9,6 @@ namespace InkUniRx.Views
 {
     public abstract class StoryTextView : MonoBehaviour
     {
-        #region Inspector
-        
-        [SerializeField] protected TextAnimator[] textAnimators;
-        
-        #endregion
         #region Properties
         public abstract string Text { get; }
         public abstract bool IsEmpty { get; }
@@ -22,13 +17,7 @@ namespace InkUniRx.Views
         #region Methods
 
         #region Unity Callbacks
-
-        protected virtual void Reset()
-        {
-            if (textAnimators == null || textAnimators.Length <= 0)
-                textAnimators = GetComponents<TextAnimator>();
-        }
-
+        
         #endregion
 
         #region Public

@@ -51,10 +51,8 @@ namespace InkUniRx.Views
         
         #region Unity CallBacks
 
-        protected override void Reset()
+        protected virtual void Reset()
         {
-            base.Reset();
-            
             if (!scrollRect)
                 scrollRect = GetComponent<ScrollRect>();
 
@@ -93,7 +91,7 @@ namespace InkUniRx.Views
 
         public virtual async UniTask ShowNewTextAsync(CancellationToken cancelAnimationToken)
         {
-            await PlayTextAnimationAsync(cancelAnimationToken);
+            await PlayTextAnimationsAsync(cancelAnimationToken);
             await WaitForEndScrollAsync(cancelAnimationToken);
         }
 
@@ -101,7 +99,7 @@ namespace InkUniRx.Views
 
         #region Protected
 
-        protected abstract UniTask PlayTextAnimationAsync(CancellationToken cancelAnimationToken);
+        protected abstract UniTask PlayTextAnimationsAsync(CancellationToken cancelAnimationToken);
 
         private async UniTask WaitForEndScrollAsync(CancellationToken cancelAnimationToken)
         {
@@ -111,6 +109,7 @@ namespace InkUniRx.Views
             
             if (!cancelAnimationToken.IsCancellationRequested) return;
             
+            ResizeSpacer();
             scrollRect.verticalNormalizedPosition = 0;
         }
 
