@@ -48,8 +48,14 @@ namespace InkUniRx.Views
                 button = GetComponentInChildren<Button>();
         }
 
+        private void OnEnable()
+        {
+            button.interactable = true;
+        }
+
         private void OnDisable()
         {
+            button.interactable = false;
             _choice = null;
             label.text = string.Empty;
         }
