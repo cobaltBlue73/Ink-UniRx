@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
@@ -71,7 +72,7 @@ namespace InkUniRx.Views
         protected virtual void Awake()
         {
             scrollRect.content.OnRectTransformDimensionsChangeAsObservable()
-                .Select(_ => scrollRect.content).Subscribe(OnContentSizeChanged)
+                .Subscribe(_ => OnContentSizeChanged())
                 .AddTo(this);
             
             spacerElement.gameObject.SetActive(false);
@@ -79,7 +80,7 @@ namespace InkUniRx.Views
             if (startTextDirection == StartingTextDirection.BottomUp)
             {
                 scrollRect.viewport.OnRectTransformDimensionsChangeAsObservable()
-                    .First().Select(_=> scrollRect.viewport).Subscribe(InitSpacer)
+                    .First().Subscribe(_ => InitSpacer())
                     .AddTo(this);
             }
         }
@@ -88,20 +89,19 @@ namespace InkUniRx.Views
 
         #region Public
 
+        public override void ClearText() => InitSpacer();
+
         public virtual async UniTask ShowNewTextAsync(CancellationToken cancelAnimationToken)
         {
-            await PlayTextAnimation(cancelAnimationToken);
+            await PlayTextAnimationAsync(cancelAnimationToken);
             await WaitForEndScrollAsync(cancelAnimationToken);
-            
-            if(startTextDirection == StartingTextDirection.BottomUp)
-                ResizeSpacer();
         }
 
         #endregion
 
         #region Protected
 
-        protected abstract UniTask PlayTextAnimation(CancellationToken cancelAnimationToken);
+        protected abstract UniTask PlayTextAnimationAsync(CancellationToken cancelAnimationToken);
 
         private async UniTask WaitForEndScrollAsync(CancellationToken cancelAnimationToken)
         {
@@ -114,47 +114,56 @@ namespace InkUniRx.Views
             scrollRect.verticalNormalizedPosition = 0;
         }
 
-        protected virtual void OnContentSizeChanged(RectTransform content)
-        {
-            ScrollToBottom();
-        }
+        protected virtual void OnContentSizeChanged() => ScrollToVerticalPos(0);
 
-        protected virtual void ScrollToBottom()
+        private void ScrollToVerticalPos(float pos)
         {
-            if (!animateScrolling ||  scrollRect.verticalNormalizedPosition <= 0)
+            if (!animateScrolling ||  
+                Math.Abs(scrollRect.verticalNormalizedPosition - pos) <= Mathf.Epsilon)
             {
-                scrollRect.verticalNormalizedPosition = 0;
+                scrollRect.verticalNormalizedPosition = pos;
+                ResizeSpacer();
                 return;
             }
             
             _scrollTween?.Kill();
-            _scrollTween = scrollRect.DOVerticalNormalizedPos(0, scrollDuration)
-                .SetEase(scrollEase).SetRecyclable().OnKill(() => _scrollTween = null);
+            _scrollTween = scrollRect.DOVerticalNormalizedPos(pos, scrollDuration)
+                .SetEase(scrollEase).SetRecyclable().OnComplete(ResizeSpacer)
+                .OnKill(()=> _scrollTween = null);
             
         }
         
-        protected virtual void InitSpacer(RectTransform viewport)
-        {
-            spacerElement.minHeight = viewport.rect.height;
-            spacerElement.transform.SetAsFirstSibling();
-            spacerElement.gameObject.SetActive(true);
-        }
-
-        protected virtual void ResizeSpacer()
-        {
-            if (!spacerElement || spacerElement.minHeight <= 0) return;
-
-            spacerElement.minHeight -= scrollRect.content.rect.height - 
-                                       scrollRect.viewport.rect.height;
-            
-            if (spacerElement.minHeight <= 0)
-                spacerElement.gameObject.SetActive(false);
-        }
-
         #endregion
 
         #region Private
 
+        protected virtual void OnScrollEnd()
+        {
+            _scrollTween = null;
+            if(startTextDirection == StartingTextDirection.BottomUp)
+                ResizeSpacer();
+        }
+        
+        private void InitSpacer()
+        {
+            if (startTextDirection == StartingTextDirection.TopDown) return;
+            
+            spacerElement.minHeight = scrollRect.viewport.rect.height;
+            spacerElement.transform.SetAsFirstSibling();
+            spacerElement.gameObject.SetActive(true);
+        }
+
+        private void ResizeSpacer()
+        {
+            if (startTextDirection == StartingTextDirection.TopDown ||
+                !spacerElement.isActiveAndEnabled) return;
+
+            spacerElement.minHeight -= scrollRect.content.rect.height - 
+                                       scrollRect.viewport.rect.height;
+            
+            spacerElement.gameObject.SetActive(spacerElement.minHeight > 0);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(scrollRect.content);
+        }
         
         #endregion
 

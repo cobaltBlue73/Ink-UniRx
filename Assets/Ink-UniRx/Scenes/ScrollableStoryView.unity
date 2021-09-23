@@ -1535,7 +1535,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3da4de0193a42108ae6781773460cea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  keyCode: 271
+  keyCode: 32
 --- !u!114 &1896911338
 MonoBehaviour:
   m_ObjectHideFlags: 0

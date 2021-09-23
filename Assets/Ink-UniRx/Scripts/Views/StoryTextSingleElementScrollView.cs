@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
@@ -27,7 +28,6 @@ namespace InkUniRx.Views
 
         #region Variables
 
-        private int _prevCharCount;
         private Tweener _scrollTween;
 
         #endregion
@@ -46,37 +46,36 @@ namespace InkUniRx.Views
             if (textMesh && !textLayoutElement)
                 textLayoutElement = textMesh.GetOrAddComponent<LayoutElement>();
         }
-        
-        protected override void Awake()
-        {
-            base.Awake();
-            ClearText();
-        }
-        
+
+        private void Start() => ClearText();
+
         #endregion
 
         #region Public
 
         public override void ClearText()
         {
-            _prevCharCount = 0;
+            base.ClearText();
             textMesh.text = string.Empty;
+            textMesh.maxVisibleCharacters = 0;
         }
 
         public override void AddText(string text)
         {
-            _prevCharCount = textMesh.textInfo.characterCount;
-            textMesh.text += IsEmpty? text: $"\n{text}";
+            textMesh.text += IsEmpty ? text : $"\n{text}";
             textMesh.ForceMeshUpdate();
-            textMesh.maxVisibleCharacters = _prevCharCount;
         }
 
-        protected override UniTask PlayTextAnimation(CancellationToken cancelAnimationToken) => 
-            UniTask.WhenAll(textAnimators.Select(animator =>
-                animator.PlayTextAnimationAsync(textMesh, _prevCharCount, 
-                    textMesh.textInfo.characterCount - 1,
-                    cancelAnimationToken)));
-        
+        protected override UniTask PlayTextAnimationAsync(CancellationToken cancelAnimationToken)
+        {
+            var from = textMesh.maxVisibleCharacters;
+            var to = textMesh.textInfo.characterCount - 1;
+            textMesh.maxVisibleCharacters = textMesh.textInfo.characterCount;
+            
+            return UniTask.WhenAll(textAnimators.Select(animator =>
+                animator.PlayTextAnimationAsync(textMesh, from, to, cancelAnimationToken)));
+        }
+
         #endregion
 
         #region Private
