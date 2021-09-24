@@ -35,7 +35,10 @@ namespace InkUniRx.Views
 
         public IObservable<StoryTextTextMeshView> WhenRectTransformDimensionsChange =>
             _rectTransformDimensionsChange.AsObservable();
-        
+
+        public IObservable<bool> WhenCullStateChanged => 
+            textMesh.onCullStateChanged.AsObservable();
+
         #endregion
 
         #region Variables
@@ -53,7 +56,7 @@ namespace InkUniRx.Views
         {
             if (!textMesh)
                 textMesh = GetComponent<TMP_Text>();
-            
+
             if (textAnimators == null || textAnimators.Length <= 0)
                 textAnimators = GetComponents<TextAnimator>();
         }

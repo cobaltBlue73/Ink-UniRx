@@ -44,11 +44,11 @@ namespace InkUniRx.Views
             protected override StoryTextScrollElementView CreateInstance()
             {
                 var elementViewInstance = Instantiate(_template, _parent);
-                elementViewInstance.WhenBecameVisible
-                    .Subscribe(_owner.OnElementViewBecameVisible)
+                elementViewInstance.WhenVisible
+                    .Subscribe(_owner.OnElementViewVisible)
                     .AddTo(_owner);
-                elementViewInstance.WhenBecameInvisible
-                    .Subscribe(_owner.OnElementViewBecameInvisible)
+                elementViewInstance.WhenCulled
+                    .Subscribe(_owner.OnElementViewCulled)
                     .AddTo(_owner);
                 return elementViewInstance;
             }
@@ -149,14 +149,14 @@ namespace InkUniRx.Views
 
         #region Private
 
-        private void OnElementViewBecameVisible(StoryTextScrollElementView elementView)
+        private void OnElementViewVisible(StoryTextScrollElementView elementView)
         {
-            Debug.Log(nameof(OnElementViewBecameVisible));
+            Debug.Log(elementView.Text + "visible");
         }
 
-        private void OnElementViewBecameInvisible(StoryTextScrollElementView elementView)
+        private void OnElementViewCulled(StoryTextScrollElementView elementView)
         {
-            Debug.Log(nameof(OnElementViewBecameInvisible));
+            Debug.Log(elementView.Text + "culled");
         }
 
         #endregion

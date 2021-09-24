@@ -19,27 +19,21 @@ namespace InkUniRx.Views
         
         #region Properties
         public LayoutElement LayoutElement => layoutElement;
-        
-        public IObservable<StoryTextScrollElementView> WhenBecameVisible => 
-            _becameVisible.AsObservable();
-
-        public IObservable<StoryTextScrollElementView> WhenBecameInvisible =>
-            _becameInvisible.AsObservable();
 
         public int ChildIndex => transform.GetSiblingIndex();
         
-        #endregion
-
-        #region Variables
-
-        private readonly Subject<StoryTextScrollElementView> _becameVisible = 
-            new Subject<StoryTextScrollElementView>();
-
-        private readonly Subject<StoryTextScrollElementView> _becameInvisible = 
-            new Subject<StoryTextScrollElementView>();
-
-        #endregion
+        public IObservable<StoryTextScrollElementView> WhenCulled => 
+            TextMesh.onCullStateChanged.AsObservable()
+                .Where(result=> result).Select(_=> this);
         
+        public IObservable<StoryTextScrollElementView> WhenVisible => 
+            TextMesh.onCullStateChanged.AsObservable()
+                .Where(result=> !result).Select(_=> this);
+
+        public int DataIndex { get; set; }
+
+        #endregion
+
         #region Unity Callbacks
 
         protected override void Reset()
@@ -50,19 +44,6 @@ namespace InkUniRx.Views
                 layoutElement = GetComponent<LayoutElement>();
         }
         
-        private void OnBecameVisible() => _becameVisible.OnNext(this);
-
-        private void OnBecameInvisible() => _becameInvisible.OnNext(this);
-
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-            _becameVisible.OnCompleted();
-            _becameVisible.Dispose();
-            _becameInvisible.OnCompleted();
-            _becameInvisible.Dispose();
-        }
-
         #endregion
 
       
