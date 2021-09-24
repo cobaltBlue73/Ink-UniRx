@@ -82,7 +82,9 @@ namespace InkUniRx.Views
                     .AddTo(this);
             }
         }
-        
+
+        private void Start() => ClearText();
+
         #endregion
 
         #region Public
@@ -136,13 +138,6 @@ namespace InkUniRx.Views
 
         #region Private
 
-        protected virtual void OnScrollEnd()
-        {
-            _scrollTween = null;
-            if(startTextDirection == StartingTextDirection.BottomUp)
-                ResizeSpacer();
-        }
-        
         private void InitSpacer()
         {
             if (startTextDirection == StartingTextDirection.TopDown) return;
@@ -160,7 +155,9 @@ namespace InkUniRx.Views
             spacerElement.minHeight -= scrollRect.content.rect.height - 
                                        scrollRect.viewport.rect.height;
             
-            spacerElement.gameObject.SetActive(spacerElement.minHeight > 0);
+            if (spacerElement.minHeight <= 0)
+                spacerElement.gameObject.SetActive(false);
+            
             LayoutRebuilder.ForceRebuildLayoutImmediate(scrollRect.content);
         }
         

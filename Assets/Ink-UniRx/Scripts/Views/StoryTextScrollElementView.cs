@@ -23,14 +23,10 @@ namespace InkUniRx.Views
         public int ChildIndex => transform.GetSiblingIndex();
         
         public IObservable<StoryTextScrollElementView> WhenCulled => 
-            TextMesh.onCullStateChanged.AsObservable()
-                .Where(result=> result).Select(_=> this);
+          IsCulled.Where(result=> result).Select(_=> this);
         
         public IObservable<StoryTextScrollElementView> WhenVisible => 
-            TextMesh.onCullStateChanged.AsObservable()
-                .Where(result=> !result).Select(_=> this);
-
-        public int DataIndex { get; set; }
+            IsCulled.Where(result=> !result).Select(_=> this);
 
         #endregion
 

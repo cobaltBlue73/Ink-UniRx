@@ -36,8 +36,8 @@ namespace InkUniRx.Views
         public IObservable<StoryTextTextMeshView> WhenRectTransformDimensionsChange =>
             _rectTransformDimensionsChange.AsObservable();
 
-        public IObservable<bool> WhenCullStateChanged => 
-            textMesh.onCullStateChanged.AsObservable();
+        public IReadOnlyReactiveProperty<bool> IsCulled => _isCulled ??= 
+            textMesh.onCullStateChanged.AsObservable().ToReactiveProperty(false);
 
         #endregion
 
@@ -45,7 +45,9 @@ namespace InkUniRx.Views
 
         private readonly Subject<StoryTextTextMeshView> _rectTransformDimensionsChange =
             new Subject<StoryTextTextMeshView>();
-        
+
+        private IReadOnlyReactiveProperty<bool> _isCulled;
+
         #endregion
 
         #region Methods

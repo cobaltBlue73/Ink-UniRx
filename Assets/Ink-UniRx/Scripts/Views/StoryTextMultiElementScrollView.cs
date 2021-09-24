@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
@@ -44,12 +45,6 @@ namespace InkUniRx.Views
             protected override StoryTextScrollElementView CreateInstance()
             {
                 var elementViewInstance = Instantiate(_template, _parent);
-                elementViewInstance.WhenVisible
-                    .Subscribe(_owner.OnElementViewVisible)
-                    .AddTo(_owner);
-                elementViewInstance.WhenCulled
-                    .Subscribe(_owner.OnElementViewCulled)
-                    .AddTo(_owner);
                 return elementViewInstance;
             }
 
@@ -84,7 +79,8 @@ namespace InkUniRx.Views
 
         #region Variables
 
-        private string _text;
+        private string _text = string.Empty;
+        private string _whiteSpaceBuffer = string.Empty;
         private ElementViewPool _elementViewPool;
         private int _visibleElementsCount;
         private readonly List<StoryTextScrollElementView> _activeViews = new List<StoryTextScrollElementView>();
@@ -99,8 +95,8 @@ namespace InkUniRx.Views
 
         protected override void Awake()
         {
-            base.Awake();
             _elementViewPool = new ElementViewPool(this);
+            base.Awake();
         }
 
         #endregion
@@ -110,9 +106,26 @@ namespace InkUniRx.Views
         public override void AddText(string text)
         {
             _text += text;
+
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                _whiteSpaceBuffer += $"\n{text}";
+                return;
+            }
+
+            var newText = string.Empty;
+            
+            if (_whiteSpaceBuffer.Length > 0)
+            {
+                newText = $"{_whiteSpaceBuffer}\n";
+                _whiteSpaceBuffer = string.Empty;
+            }
+
+            newText += text;
+            
             _elements.Add(new ElementViewData
             {
-                Text = text,
+                Text = newText,
                 ViewIndex = -1
             });
         }
@@ -135,8 +148,9 @@ namespace InkUniRx.Views
             _animatingViews.Clear();
             for (; _visibleElementsCount < _elements.Count; ++_visibleElementsCount)
             {
+                var element = _elements[_visibleElementsCount];
                 var view = _elementViewPool.Rent();
-                view.AddText(_elements[_visibleElementsCount].Text);
+                view.AddText(element.Text);
                 view.TextMesh.ForceMeshUpdate();
                 _animatingViews.Add(view);
             }
@@ -146,21 +160,7 @@ namespace InkUniRx.Views
         }
 
         #endregion
-
-        #region Private
-
-        private void OnElementViewVisible(StoryTextScrollElementView elementView)
-        {
-            Debug.Log(elementView.Text + "visible");
-        }
-
-        private void OnElementViewCulled(StoryTextScrollElementView elementView)
-        {
-            Debug.Log(elementView.Text + "culled");
-        }
-
-        #endregion
-
+        
         #endregion
     }
 }
