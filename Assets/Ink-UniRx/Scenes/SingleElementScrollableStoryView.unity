@@ -246,7 +246,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dc3aae068074a3abb20b30ba071c72c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textAnimators: []
   scrollRect: {fileID: 98955844}
   startTextDirection: 1
   spacerElement: {fileID: 790312899}
@@ -1006,12 +1005,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1477497210}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93653bc7c564435f98ca7c837039275f, type: 3}
+  m_Script: {fileID: 11500000, guid: ffc8d84468574128b41e929193183d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: {fileID: 1477497212}
-  speed: 60
-  textAnimationEase: 1
+  textMesh: {fileID: 1477497212}
+  textAnimations:
+  - {fileID: 11400000, guid: ae6997dc696a33d428df02bb0d321863, type: 2}
 --- !u!114 &1477497215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1044,9 +1043,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b1ba5eb9118494e80881da2d9f10b5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textAnimators:
-  - {fileID: 1477497214}
   textMesh: {fileID: 1477497212}
+  textAnimator: {fileID: 1477497214}
   layoutElement: {fileID: 1477497215}
 --- !u!1 &1654626872
 GameObject:

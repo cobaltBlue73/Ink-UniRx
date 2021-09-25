@@ -9,7 +9,7 @@ namespace InkUniRx.Views
 {
     [RequireComponent(typeof(TMP_Text),
         typeof(LayoutElement))]
-    public class StoryTextScrollElementView : StoryTextTextMeshView
+    public class StoryTextElementView : StoryTextView
     {
         #region Inpsector
         
@@ -19,15 +19,7 @@ namespace InkUniRx.Views
         
         #region Properties
         public LayoutElement LayoutElement => layoutElement;
-
-        public int ChildIndex => transform.GetSiblingIndex();
         
-        public IObservable<StoryTextScrollElementView> WhenCulled => 
-          IsCulled.Where(result=> result).Select(_=> this);
-        
-        public IObservable<StoryTextScrollElementView> WhenVisible => 
-            IsCulled.Where(result=> !result).Select(_=> this);
-
         #endregion
 
         #region Unity Callbacks

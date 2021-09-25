@@ -11,9 +11,9 @@ using Utility.UniRx;
 
 namespace InkUniRx.Presenters
 {
-    [RequireComponent(typeof(StoryTextView))]
+    [RequireComponent(typeof(StoryContentView))]
     public abstract class StoryTextViewPresenter<TTextView> : MonoBehaviour 
-        where TTextView: StoryTextView
+        where TTextView: StoryContentView
     {
         #region Inspector
         

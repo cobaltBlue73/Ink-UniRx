@@ -1,30 +1,107 @@
 using System;
+using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using InkUniRx.Animators;
 using Sirenix.OdinInspector;
+using TMPro;
+using UniRx;
 using UnityEngine;
 
 namespace InkUniRx.Views
 {
-    public abstract class StoryTextView : MonoBehaviour
+    [RequireComponent(typeof(TMP_Text))]
+    public class StoryTextView : MonoBehaviour
     {
-        #region Properties
-        public abstract string Text { get; }
-        public abstract bool IsEmpty { get; }
+        #region Inpsector
 
+        [SerializeField, Required, InlineEditor] private TMP_Text textMesh;
+        [SerializeField, InlineEditor] private TextMeshAnimator textAnimator;
         #endregion
-        #region Methods
+        
+        #region Properties
+        public TMP_Text TextMesh => textMesh;
+        
+        public TextMeshAnimator TextAnimator => textAnimator;
 
-        #region Unity Callbacks
+        public string Text
+        {
+            get => textMesh.text;
+            set => textMesh.text = value;
+        }
+
+        public bool IsEmpty => string.IsNullOrEmpty(textMesh.text);
+
+        public int MaxVisibleCharacters
+        {
+            get => textMesh.maxVisibleCharacters;
+            set => textMesh.maxVisibleCharacters = value;
+        }
+
+        public int CharacterCount => textMesh.textInfo.characterCount;
+
+        public IObservable<StoryTextView> WhenRectTransformDimensionsChange =>
+            _rectTransformDimensionsChange.AsObservable();
+
+        public IReadOnlyReactiveProperty<bool> IsTextMeshCulled => _isTextMeshCulled ??= 
+            textMesh.onCullStateChanged.AsObservable().ToReactiveProperty(false);
         
         #endregion
 
+        #region Variables
+
+        private readonly Subject<StoryTextView> _rectTransformDimensionsChange =
+            new Subject<StoryTextView>();
+
+        private IReadOnlyReactiveProperty<bool> _isTextMeshCulled;
+
+        #endregion
+
+        #region Methods
+        
+        #region Unity Callbacks
+
+        protected virtual void Reset()
+        {
+            if (!textMesh)
+                textMesh = GetComponent<TMP_Text>();
+
+            if (!textAnimator)
+                textAnimator = GetComponent<TextMeshAnimator>();
+        }
+
+        private void Awake()
+        {
+            _isTextMeshCulled ??= textMesh.onCullStateChanged
+                .AsObservable().ToReactiveProperty(false);
+        }
+
+        private void OnRectTransformDimensionsChange() => _rectTransformDimensionsChange.OnNext(this);
+
+        protected virtual void OnDisable() => ClearText();
+
+        protected virtual void OnDestroy()
+        {
+            _rectTransformDimensionsChange.OnCompleted();
+            _rectTransformDimensionsChange.Dispose();
+        }
+
+        #endregion
+        
         #region Public
-        public abstract void ClearText();
-        public abstract void AddText(string text);
+        
+        public void ClearText() => textMesh.text = string.Empty;
+
+        public UniTask PlayTextAnimationsAsync(int fromCharIndex, int toCharIndex,
+            CancellationToken cancelAnimationToken) =>
+            textAnimator ? 
+                textAnimator.PlayAsync(fromCharIndex, toCharIndex, cancelAnimationToken) : 
+                UniTask.CompletedTask;
+
         #endregion
-      
+        
         #endregion
+
+
     }
 }

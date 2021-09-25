@@ -11,7 +11,7 @@ using UnityEngine.UI;
 namespace InkUniRx.Views
 {
     [RequireComponent(typeof(ScrollRect))]
-    public abstract class StoryTextScrollView: StoryTextView
+    public abstract class StoryContentScrollView: StoryContentView
     {
         #region Internals
 
@@ -83,13 +83,13 @@ namespace InkUniRx.Views
             }
         }
 
-        private void Start() => ClearText();
+        private void Start() => ClearContent();
 
         #endregion
 
         #region Public
 
-        public override void ClearText() => InitSpacer();
+        public override void ClearContent() => InitSpacer();
 
         public virtual async UniTask ShowNewTextAsync(CancellationToken cancelAnimationToken)
         {
@@ -101,7 +101,7 @@ namespace InkUniRx.Views
 
         #region Protected
 
-        protected abstract UniTask PlayTextAnimationsAsync(CancellationToken cancelAnimationToken);
+        protected abstract UniTask PlayTextAnimationsAsync(CancellationToken animationCancelToken);
 
         private async UniTask WaitForEndScrollAsync(CancellationToken cancelAnimationToken)
         {
