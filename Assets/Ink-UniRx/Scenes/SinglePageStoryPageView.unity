@@ -562,7 +562,7 @@ MonoBehaviour:
   m_charWidthMaxAdj: 0
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
+  m_overflowMode: 5
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
@@ -618,7 +618,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1477497210}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dbdce9627b9e4234b7964b9797428fff, type: 3}
+  m_Script: {fileID: 11500000, guid: d8c1f7f9f1d5498890354f86f1760974, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   textMesh: {fileID: 1477497212}
@@ -1029,6 +1029,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1961163897}
+  - component: {fileID: 1961163899}
+  - component: {fileID: 1961163898}
   m_Layer: 5
   m_Name: Page View
   m_TagString: Untagged
@@ -1056,6 +1058,35 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -250}
   m_SizeDelta: {x: 0, y: 500}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1961163898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1961163896}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b70831453e554e64ae6f549870687f0c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textPagedView: {fileID: 1477497215}
+--- !u!114 &1961163899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1961163896}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09186367871a4546b2c0cbcddfc4b8c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  contentView: {fileID: 1961163898}
+  trim: 0
+  ignoreWhiteSpaceText: 0
+  settings: {fileID: 11400000, guid: 52a5f4af1fd1fd84db790ded673e2990, type: 2}
 --- !u!1 &2023378659
 GameObject:
   m_ObjectHideFlags: 0

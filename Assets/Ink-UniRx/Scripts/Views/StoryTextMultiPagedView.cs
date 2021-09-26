@@ -1,3 +1,6 @@
+using System.Threading;
+using Cysharp.Threading.Tasks;
+
 namespace InkUniRx.Views
 {
     public class StoryTextMultiPagedView: StoryContentPagedView
@@ -13,5 +16,13 @@ namespace InkUniRx.Views
         {
             throw new System.NotImplementedException();
         }
+
+        public override UniTask ShowNewContentAsync(CancellationToken animationCancelToken)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override int PageCount { get; }
+        public override int CurrentPage { get; }
     }
 }

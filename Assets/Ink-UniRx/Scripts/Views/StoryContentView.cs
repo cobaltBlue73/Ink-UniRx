@@ -17,14 +17,16 @@ namespace InkUniRx.Views
         #region Methods
 
         #region Unity Callbacks
-        
+        protected virtual void Start() => ClearContent();
         #endregion
 
         #region Public
         public abstract void ClearContent();
         public abstract void AddContent(string contentText);
+        public abstract UniTask ShowNewContentAsync(CancellationToken animationCancelToken);
+
         #endregion
-      
+
         #endregion
     }
 }

@@ -30,7 +30,7 @@ namespace InkUniRx.Presenters
         private StoryEnd _storyEnd;
         private StoryPathStart _storyPathStart;
         private StoryPathEnd _storyPathEnd;
-        private StoryPathNewText _storyPathNewText;
+        private StoryPathNewContent _storyPathNewContent;
         private StoryPathSelectChoice _storyPathSelectChoice;
         private bool _continueMaximally;
         private CancellationTokenSource _animationSkipCts;
@@ -181,8 +181,8 @@ namespace InkUniRx.Presenters
         {
             using (_animationSkipCts = new CancellationTokenSource())
             {
-                _storyPathNewText.SetCancelAnimationToken(_animationSkipCts.Token);
-                await AsyncMessageBroker.Default.PublishAsync(_storyPathNewText);
+                _storyPathNewContent.SetCancelAnimationToken(_animationSkipCts.Token);
+                await AsyncMessageBroker.Default.PublishAsync(_storyPathNewContent);
             }
             _animationSkipCts = null;
         }
@@ -214,7 +214,7 @@ namespace InkUniRx.Presenters
             _storyEnd = new StoryEnd(_story, cancelStoryToken);
             _storyPathStart = new StoryPathStart(_story, cancelStoryToken);
             _storyPathEnd = new StoryPathEnd(_story, cancelStoryToken);
-            _storyPathNewText = new StoryPathNewText(_story, cancelStoryToken);
+            _storyPathNewContent = new StoryPathNewContent(_story, cancelStoryToken);
             _storyPathSelectChoice = new StoryPathSelectChoice(_story, cancelStoryToken);
         }
 
@@ -226,7 +226,7 @@ namespace InkUniRx.Presenters
             _storyEnd = null;
             _storyPathStart = null;
             _storyPathEnd = null;
-            _storyPathNewText = null;
+            _storyPathNewContent = null;
             _storyPathSelectChoice = null;
         }
 

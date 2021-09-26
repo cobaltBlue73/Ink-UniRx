@@ -11,7 +11,7 @@ namespace InkUniRx.Animators.Animations
     [CreateAssetMenu(fileName = nameof(MaxVisibleWordsTextAnimation), menuName = "Ink-UniRx/Animations/Text/MaxVisibleWords", order = 0)]
     public class MaxVisibleWordsTextAnimation: MaxVisibleTextAnimation
     {
-        public override async UniTask AnimateTextAsync(TextMeshAnimator animator, int fromCharIndex, int toCharIndex,
+        public override async UniTask PlayAsync(TextMeshAnimator animator, int fromCharIndex, int toCharIndex,
             CancellationToken cancelAnimationToken)
         {
             animator.TextMesh.textInfo.GetFirstAndLastWordIndexFromCharacterIndexRange(fromCharIndex, toCharIndex,

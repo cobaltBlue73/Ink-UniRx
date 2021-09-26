@@ -19,6 +19,12 @@ namespace InkUniRx.Views
         
         #region Properties
         public LayoutElement LayoutElement => layoutElement;
+
+        public float MinHeight
+        {
+            get => layoutElement.minHeight;
+            set => layoutElement.minHeight = value;
+        }
         
         #endregion
 

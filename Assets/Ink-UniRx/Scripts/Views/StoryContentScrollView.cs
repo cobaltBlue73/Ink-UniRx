@@ -82,26 +82,24 @@ namespace InkUniRx.Views
                     .AddTo(this);
             }
         }
-
-        private void Start() => ClearContent();
-
+        
         #endregion
 
         #region Public
 
         public override void ClearContent() => InitSpacer();
 
-        public virtual async UniTask ShowNewTextAsync(CancellationToken cancelAnimationToken)
+        public override async UniTask ShowNewContentAsync(CancellationToken animationCancelToken)
         {
-            await PlayTextAnimationsAsync(cancelAnimationToken);
-            await WaitForEndScrollAsync(cancelAnimationToken);
+            await ShowNewTextAsync(animationCancelToken);
+            await WaitForEndScrollAsync(animationCancelToken);
         }
 
         #endregion
 
         #region Protected
 
-        protected abstract UniTask PlayTextAnimationsAsync(CancellationToken animationCancelToken);
+        protected abstract UniTask ShowNewTextAsync(CancellationToken animationCancelToken);
 
         private async UniTask WaitForEndScrollAsync(CancellationToken cancelAnimationToken)
         {
@@ -129,7 +127,8 @@ namespace InkUniRx.Views
             
             _scrollTween?.Kill();
             _scrollTween = scrollRect.DOVerticalNormalizedPos(pos, scrollDuration)
-                .SetEase(scrollEase).SetRecyclable().OnComplete(ResizeSpacer)
+                .SetEase(scrollEase).SetRecyclable()
+                .OnComplete(ResizeSpacer)
                 .OnKill(()=> _scrollTween = null);
             
         }

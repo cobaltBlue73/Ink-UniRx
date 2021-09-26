@@ -48,7 +48,7 @@ namespace InkUniRx.Animators
         
         public UniTask PlayAsync(int fromCharIndex, int toCharIndex, CancellationToken animationCancelToken) => 
             UniTask.WhenAll(textAnimations.Select(textAnimation => 
-                textAnimation.AnimateTextAsync(this, fromCharIndex, toCharIndex, animationCancelToken)));
+                textAnimation.PlayAsync(this, fromCharIndex, toCharIndex, animationCancelToken)));
 
         #endregion
         

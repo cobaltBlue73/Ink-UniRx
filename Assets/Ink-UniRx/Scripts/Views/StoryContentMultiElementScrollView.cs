@@ -33,6 +33,7 @@ namespace InkUniRx.Views
             {
                 _owner._activeViews.Add(instance);
                 instance.ClearText();
+                instance.MaxVisibleCharacters = 0;
                 base.OnBeforeRent(instance);
             }
 
@@ -108,13 +109,15 @@ namespace InkUniRx.Views
 
             if (string.IsNullOrWhiteSpace(contentText))
             {
-                _whiteSpaceBuffer += $"\n{contentText}";
+                
+                _whiteSpaceBuffer += string.IsNullOrEmpty(_whiteSpaceBuffer)? 
+                    contentText: $"\n{contentText}";
                 return;
             }
 
             var newText = string.Empty;
             
-            if (_whiteSpaceBuffer.Length > 0)
+            if (!string.IsNullOrEmpty(_whiteSpaceBuffer))
             {
                 newText = $"{_whiteSpaceBuffer}\n";
                 _whiteSpaceBuffer = string.Empty;
@@ -141,7 +144,7 @@ namespace InkUniRx.Views
 
         #region Protected
 
-        protected override UniTask PlayTextAnimationsAsync(CancellationToken animationCancelToken)
+        protected override UniTask ShowNewTextAsync(CancellationToken animationCancelToken)
         {
             _animatingViews.Clear();
             for (; _visibleElementsCount < _elements.Count; ++_visibleElementsCount)
@@ -149,12 +152,12 @@ namespace InkUniRx.Views
                 var element = _elements[_visibleElementsCount];
                 var view = _elementViewPool.Rent();
                 view.Text = element.Text;
-                view.TextMesh.ForceMeshUpdate();
+                view.ForceTextUpdate();
                 _animatingViews.Add(view);
             }
 
             return UniTask.WhenAll(_animatingViews.Select(view =>
-                view.PlayTextAnimationsAsync(0, view.CharacterCount - 1, animationCancelToken)));
+                view.AnimateTextAsync(0, view.CharacterCount - 1, animationCancelToken)));
         }
 
         #endregion

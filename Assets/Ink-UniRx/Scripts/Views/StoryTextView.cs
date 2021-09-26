@@ -30,6 +30,12 @@ namespace InkUniRx.Views
             set => textMesh.text = value;
         }
 
+        public TextOverflowModes OverflowMode
+        {
+            get => textMesh.overflowMode;
+            set => textMesh.overflowMode = value;
+        }
+
         public bool IsEmpty => string.IsNullOrEmpty(textMesh.text);
 
         public int MaxVisibleCharacters
@@ -39,6 +45,7 @@ namespace InkUniRx.Views
         }
 
         public int CharacterCount => textMesh.textInfo.characterCount;
+        
 
         public IObservable<StoryTextView> WhenRectTransformDimensionsChange =>
             _rectTransformDimensionsChange.AsObservable();
@@ -92,10 +99,12 @@ namespace InkUniRx.Views
         
         public void ClearText() => textMesh.text = string.Empty;
 
-        public UniTask PlayTextAnimationsAsync(int fromCharIndex, int toCharIndex,
-            CancellationToken cancelAnimationToken) =>
+        public void ForceTextUpdate() => textMesh.ForceMeshUpdate(); 
+
+        public UniTask AnimateTextAsync(int fromCharIndex, int toCharIndex,
+            CancellationToken animationCancelToken) =>
             textAnimator ? 
-                textAnimator.PlayAsync(fromCharIndex, toCharIndex, cancelAnimationToken) : 
+                textAnimator.PlayAsync(fromCharIndex, toCharIndex, animationCancelToken) : 
                 UniTask.CompletedTask;
 
         #endregion

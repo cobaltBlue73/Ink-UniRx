@@ -11,7 +11,7 @@ namespace InkUniRx.Animators.Animations
     [CreateAssetMenu(fileName = nameof(MaxVisibleLinesTextAnimation), menuName = "Ink-UniRx/Animations/Text/MaxVisibleLines", order = 0)]
     public class MaxVisibleLinesTextAnimation: MaxVisibleTextAnimation
     {
-        public override async UniTask AnimateTextAsync(TextMeshAnimator animator, int fromCharIndex, int toCharIndex,
+        public override async UniTask PlayAsync(TextMeshAnimator animator, int fromCharIndex, int toCharIndex,
             CancellationToken cancelAnimationToken)
         {
             animator.TextMesh.textInfo.GetFirstAndLastLineIndexFromCharacterIndexRange(fromCharIndex, toCharIndex,

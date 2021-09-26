@@ -22,7 +22,7 @@ namespace InkUniRx.Animators.Animations
 
         #endregion
         
-        public abstract UniTask AnimateTextAsync(TextMeshAnimator animator, int fromCharIndex, int toCharIndex,
+        public abstract UniTask PlayAsync(TextMeshAnimator animator, int fromCharIndex, int toCharIndex,
             CancellationToken cancelAnimationToken);
     }
 }

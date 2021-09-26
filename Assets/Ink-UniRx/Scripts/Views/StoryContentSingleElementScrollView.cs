@@ -34,9 +34,7 @@ namespace InkUniRx.Views
             if (!elementView)
                 elementView = GetComponentInChildren<StoryTextElementView>();
         }
-
-        private void Start() => ClearContent();
-
+        
         #endregion
 
         #region Public
@@ -51,16 +49,16 @@ namespace InkUniRx.Views
         public override void AddContent(string contentText)
         {
             elementView.Text += IsEmpty ? contentText : $"\n{contentText}";
-            elementView.TextMesh.ForceMeshUpdate();
+            elementView.ForceTextUpdate();
         }
 
-        protected override UniTask PlayTextAnimationsAsync(CancellationToken animationCancelToken)
+        protected override UniTask ShowNewTextAsync(CancellationToken animationCancelToken)
         {
             var from = elementView.MaxVisibleCharacters;
             var to = elementView.CharacterCount - 1;
             elementView.MaxVisibleCharacters = elementView.CharacterCount;
 
-            return elementView.PlayTextAnimationsAsync(from, to, animationCancelToken);
+            return elementView.AnimateTextAsync(from, to, animationCancelToken);
         }
 
         #endregion

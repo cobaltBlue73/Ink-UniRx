@@ -10,7 +10,7 @@ namespace InkUniRx.Animators.Animations
     [CreateAssetMenu(fileName = nameof(MaxVisibleCharactersTextAnimation), menuName = "Ink-UniRx/Animations/Text/MaxVisibleCharacters", order = 0)]
     public class MaxVisibleCharactersTextAnimation: MaxVisibleTextAnimation
     {
-        public override async UniTask AnimateTextAsync(TextMeshAnimator animator, int fromCharIndex, int toCharIndex,
+        public override async UniTask PlayAsync(TextMeshAnimator animator, int fromCharIndex, int toCharIndex,
             CancellationToken cancelAnimationToken)
         {
             animator.TextMesh.maxVisibleCharacters = fromCharIndex;

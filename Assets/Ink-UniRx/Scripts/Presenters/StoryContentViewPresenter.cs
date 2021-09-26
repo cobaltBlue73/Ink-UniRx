@@ -12,12 +12,12 @@ using Utility.UniRx;
 namespace InkUniRx.Presenters
 {
     [RequireComponent(typeof(StoryContentView))]
-    public abstract class StoryTextViewPresenter<TTextView> : MonoBehaviour 
-        where TTextView: StoryContentView
+    public abstract class StoryContentViewPresenter<TContentView> : MonoBehaviour 
+        where TContentView: StoryContentView
     {
         #region Inspector
         
-        [SerializeField, Required] protected TTextView textView;
+        [SerializeField, Required] protected TContentView contentView;
         [SerializeField] protected bool trim;
         [SerializeField] protected bool ignoreWhiteSpaceText;
         [SerializeField, Required] protected StoryPresenterSettings settings;
@@ -37,15 +37,15 @@ namespace InkUniRx.Presenters
 
         protected virtual void Reset()
         {
-            if (!textView)
-                textView = GetComponent<TTextView>();
+            if (!contentView)
+                contentView = GetComponent<TContentView>();
         }
 
         protected virtual void Awake()
         {
             AsyncMessageBroker.Default
-                .Subscribe<StoryPathNewText>(pathContinue => 
-                    OnNewStoryTextAsync(pathContinue).ToObservable()).AddTo(this);
+                .Subscribe<StoryPathNewContent>(pathContinue => 
+                    OnNewStoryContentAsync(pathContinue).ToObservable()).AddTo(this);
 
             if (settings)
             {
@@ -67,11 +67,11 @@ namespace InkUniRx.Presenters
 
         #region Story Callback
 
-        protected abstract UniTask<Unit> OnNewStoryTextAsync(StoryPathNewText newStoryText);
+        protected abstract UniTask<Unit> OnNewStoryContentAsync(StoryPathNewContent newStoryContent);
 
-        protected virtual async UniTask WaitForContinueAsync(StoryPathNewText newStoryText)
+        protected virtual async UniTask WaitForContinueAsync(StoryPathNewContent newStoryContent)
         {
-            if (!newStoryText.Story.canContinue)
+            if (!newStoryContent.Story.canContinue)
                 return;
 
             var whenContinue = _whenContinue;
@@ -82,7 +82,7 @@ namespace InkUniRx.Presenters
                     .AsUnitObservable());
             }
 
-            await whenContinue.ToUniTask(true, newStoryText.CancelStoryToken)
+            await whenContinue.ToUniTask(true, newStoryContent.CancelStoryToken)
                 .SuppressCancellationThrow();
         }
 
