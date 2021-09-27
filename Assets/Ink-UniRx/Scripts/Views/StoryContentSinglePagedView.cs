@@ -112,7 +112,7 @@ namespace InkUniRx.Views
 
                 textPagedView.CurrentPage = _displayedPagesCount;
                 
-                if ( textPagedView.CurrentPage < textPagedView.PageCount)
+                if (textPagedView.CurrentPage < textPagedView.PageCount)
                     to = textPagedView.LastCharacterIndexOnPage;
             }
             

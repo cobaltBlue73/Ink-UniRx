@@ -247,10 +247,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scrollRect: {fileID: 98955844}
-  startTextDirection: 1
+  startTextDirection: 0
   spacerElement: {fileID: 790312899}
   animateScrolling: 1
-  scrollDuration: 0.3
+  scrollDuration: 0.6
   scrollEase: 4
   elementView: {fileID: 1477497216}
 --- !u!114 &98955848
@@ -285,7 +285,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ae60908cdfb408bb5deaa701ebf6083, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textView: {fileID: 98955847}
+  contentView: {fileID: 98955847}
   trim: 0
   ignoreWhiteSpaceText: 0
   settings: {fileID: 11400000, guid: 52a5f4af1fd1fd84db790ded673e2990, type: 2}
@@ -1562,7 +1562,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings: {fileID: 11400000, guid: 52a5f4af1fd1fd84db790ded673e2990, type: 2}
-  storyTextAsset: {fileID: 4900000, guid: 9b0b7412dfad8924594f722294d4aa17, type: 3}
+  storyTextAsset: {fileID: 4900000, guid: b8a2de96018ff3b43a692df9c0d18536, type: 3}
 --- !u!114 &1896911339
 MonoBehaviour:
   m_ObjectHideFlags: 0
