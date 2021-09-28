@@ -24,7 +24,7 @@ namespace InkUniRx.Views
         
         public TextMeshAnimator TextAnimator => textAnimator;
 
-        public string Text
+        public virtual string Text
         {
             get => textMesh.text;
             set => textMesh.text = value;
@@ -35,7 +35,7 @@ namespace InkUniRx.Views
             get => textMesh.overflowMode;
             set => textMesh.overflowMode = value;
         }
-
+        
         public bool IsEmpty => string.IsNullOrEmpty(textMesh.text);
 
         public int MaxVisibleCharacters
@@ -45,8 +45,13 @@ namespace InkUniRx.Views
         }
 
         public int CharacterCount => textMesh.textInfo.characterCount;
-        
 
+        public float Alpha
+        {
+            get => textMesh.alpha;
+            set => textMesh.alpha = value;
+        }
+        
         public IObservable<StoryTextView> WhenRectTransformDimensionsChange =>
             _rectTransformDimensionsChange.AsObservable();
 
@@ -77,15 +82,14 @@ namespace InkUniRx.Views
                 textAnimator = GetComponent<TextMeshAnimator>();
         }
 
-        private void Awake()
+        protected virtual void Awake()
         {
             _isTextMeshCulled ??= textMesh.onCullStateChanged
                 .AsObservable().ToReactiveProperty(false);
         }
 
         private void OnRectTransformDimensionsChange() => _rectTransformDimensionsChange.OnNext(this);
-
-        protected virtual void OnDisable() => ClearText();
+        
 
         protected virtual void OnDestroy()
         {
@@ -97,7 +101,7 @@ namespace InkUniRx.Views
         
         #region Public
         
-        public void ClearText() => textMesh.text = string.Empty;
+        public virtual void ClearText() => textMesh.text = string.Empty;
 
         public void ForceTextUpdate() => textMesh.ForceMeshUpdate(); 
 

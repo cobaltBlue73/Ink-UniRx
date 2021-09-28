@@ -54,6 +54,9 @@ namespace InkUniRx.Views
 
         protected override UniTask ShowNewTextAsync(CancellationToken animationCancelToken)
         {
+            if (elementView.MaxVisibleCharacters >= 
+                elementView.CharacterCount) return UniTask.CompletedTask;
+            
             var from = elementView.MaxVisibleCharacters;
             var to = elementView.CharacterCount - 1;
             elementView.MaxVisibleCharacters = elementView.CharacterCount;

@@ -95,9 +95,11 @@ namespace InkUniRx.Views
 
         public override UniTask ShowNewContentAsync(CancellationToken animationCancelToken)
         {
+            if (textPagedView.MaxVisibleCharacters >= 
+                textPagedView.CharacterCount) return UniTask.CompletedTask;
+
             var from = textPagedView.MaxVisibleCharacters;
             var to = textPagedView.CharacterCount - 1;
-            
             
             if (_displayedPagesCount < textPagedView.PageCount)
             {

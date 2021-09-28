@@ -1,45 +1,100 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Ink.Runtime;
+using TMPro;
+using UniRx.Toolkit;
+using UnityEngine;
 
 namespace InkUniRx.Views
 {
     public class StoryContentMultiPagedView: StoryContentPagedView
     {
-        #region Internals
+        #region Internal 
 
-        
+        private class LinkedTextViewPool: ObjectPool<StoryTextLinkedView>
+        {
+            private readonly StoryContentMultiPagedView _owner;
+            private readonly StoryTextLinkedView _template;
+            private readonly Transform _parent;
+
+            public LinkedTextViewPool(StoryContentMultiPagedView owner)
+            {
+                _owner = owner;
+                _template = owner.linkedTextViewTemplate;
+                _template.ClearText();
+                _template.gameObject.SetActive(false);
+                _parent = _template.transform.parent;
+            }
+
+            protected override void OnBeforeRent(StoryTextLinkedView instance)
+            {
+                instance.ClearText();
+                instance.MaxVisibleCharacters = 0;
+                base.OnBeforeRent(instance);
+            }
+
+            protected override void OnBeforeReturn(StoryTextLinkedView instance)
+            {
+                base.OnBeforeReturn(instance);
+                instance.UnlinkAllViews();
+            }
+
+            protected override StoryTextLinkedView CreateInstance()
+            {
+                var instance = Instantiate(_template, _parent);
+                return instance;
+            }
+        }
 
         #endregion
         
         #region Inspector
 
-        
+        [SerializeField] private StoryTextLinkedView linkedTextViewTemplate;
 
         #endregion
 
         #region Properties
 
-        public override string ContentText { get; }
-        
-        public override bool IsEmpty { get; }
-        
-        public override int PageCount { get; }
-        
-        public override int CurrentPage { get; }
+        public override string ContentText => _firstLinkedView.Text;
+        public override bool IsEmpty => _firstLinkedView.IsEmpty;
+
+        public override int PageCount => _linkedViews.Count;
+
+        public override int CurrentPage => _curViewIndex + 1;
 
         #endregion
 
         #region Variables
-
         
+        private StoryTextLinkedView _firstLinkedView;
+        private StoryTextLinkedView _lastLinkedView;
+        private int _curViewIndex = 0;
+        private int _displayedViewCount = 1;
+        private readonly List<StoryTextLinkedView> _linkedViews = new List<StoryTextLinkedView>();
+        private LinkedTextViewPool _textViewPool;
 
         #endregion
 
         #region Methods
-
         #region Unity Callbacks
 
-        
+        private void Reset()
+        {
+            if (!linkedTextViewTemplate)
+                linkedTextViewTemplate = GetComponentInChildren<StoryTextLinkedView>();
+        }
+
+        private void Awake()
+        {
+            _textViewPool = new LinkedTextViewPool(this);
+            _firstLinkedView = _lastLinkedView = _textViewPool.Rent();
+            _linkedViews.Add(_firstLinkedView);
+            _firstLinkedView.name = "Page_1";
+        }
 
         #endregion
 
@@ -47,27 +102,76 @@ namespace InkUniRx.Views
 
         public override void ClearContent()
         {
-            throw new System.NotImplementedException();
+            _displayedViewCount = 1;
+            _curViewIndex = 0;
+            for (int i = 1; i < _textViewPool.Count; i++)
+            {
+                _textViewPool.Return(_linkedViews[i]);
+            }
+            _firstLinkedView.ClearText();
+            _firstLinkedView.ForceTextUpdate();
+            _lastLinkedView = _firstLinkedView;
         }
 
         public override void AddContent(string contentText)
         {
-            throw new System.NotImplementedException();
+            _firstLinkedView.Text += IsEmpty ? contentText : $"\n{contentText}";
+            ExpandLinkedViews();
         }
 
         public override UniTask ShowNewContentAsync(CancellationToken animationCancelToken)
         {
-            throw new System.NotImplementedException();
+            var lastDisplayedView = _linkedViews[_displayedViewCount - 1];
+            lastDisplayedView.ForceTextUpdate();
+
+            if (lastDisplayedView.MaxVisibleCharacters >=
+                lastDisplayedView.CharacterCount)
+            {
+                if (_displayedViewCount >= PageCount)
+                    return UniTask.CompletedTask;
+
+                ++_displayedViewCount;
+            }
+
+            if (_curViewIndex != _displayedViewCount - 1)
+            {
+                _linkedViews[_curViewIndex].Alpha = 0;
+                _curViewIndex = _displayedViewCount - 1;
+            }
+
+            var curView = _linkedViews[_curViewIndex];
+            curView.Alpha = 1;
+            curView.ForceTextUpdate();
+            
+            var from = curView.PrevTextView? 
+                Mathf.Max(curView.PrevTextView.CharacterCount, 
+                    curView.MaxVisibleCharacters):
+                curView.MaxVisibleCharacters;
+            var to = curView.CharacterCount - 1;
+            curView.MaxVisibleCharacters = curView.CharacterCount;
+            
+            return curView.AnimateTextAsync(from, to, animationCancelToken);
         }
 
         #endregion
 
         #region Private
 
+        private void ExpandLinkedViews()
+        {
+            _lastLinkedView.ForceTextUpdate();
+            while (_lastLinkedView.IsTextOverflowing)
+            {
+                _lastLinkedView.LinkNextTextView(_textViewPool.Rent());
+                _linkedViews.Add(_lastLinkedView.NextTextView);
+                _lastLinkedView = _lastLinkedView.NextTextView;
+                _lastLinkedView.name = $"Page_{_linkedViews.Count}";
+                _lastLinkedView.Alpha = 0;
+            }
+        }
         
-
         #endregion
-
+        
         #endregion
     }
 }

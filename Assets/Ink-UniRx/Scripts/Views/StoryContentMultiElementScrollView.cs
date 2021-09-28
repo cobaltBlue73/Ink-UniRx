@@ -146,6 +146,9 @@ namespace InkUniRx.Views
 
         protected override UniTask ShowNewTextAsync(CancellationToken animationCancelToken)
         {
+            if (_visibleElementsCount >= _elements.Count)
+                return UniTask.CompletedTask;
+            
             _animatingViews.Clear();
             for (; _visibleElementsCount < _elements.Count; ++_visibleElementsCount)
             {
