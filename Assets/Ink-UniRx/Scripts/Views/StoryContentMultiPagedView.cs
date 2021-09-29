@@ -5,6 +5,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using Ink.Runtime;
 using TMPro;
+using UniRx;
 using UniRx.Toolkit;
 using UnityEngine;
 
@@ -23,6 +24,7 @@ namespace InkUniRx.Views
             public LinkedTextViewPool(StoryContentMultiPagedView owner)
             {
                 _owner = owner;
+                this.AddTo(owner);
                 _template = owner.linkedTextViewTemplate;
                 _template.ClearText();
                 _template.gameObject.SetActive(false);
