@@ -113,7 +113,7 @@ namespace Utility.General.UI
             
             for (int i = 0; i < pageCount; i++)
             {
-                GetElement(i).SetPageNo(i + 1);    
+                GetElement(i);
             }
 
             for (int i = pageCount; i < _elements.Count; i++)
@@ -121,6 +121,10 @@ namespace Utility.General.UI
                 ReturnElement(i);
             }
         }
+
+        public void SetCurrentPage(int pageNo) => 
+            toggleGroup.NotifyToggleOn(
+                GetElement(pageNo - 1).Toggle);
 
         public void ResetPageCount() => SetPageCount(0);
 
@@ -134,6 +138,7 @@ namespace Utility.General.UI
                 return _elements[index];
 
             var newElement = _elementPool.Rent();
+            newElement.SetPageNo(index + 1);
             newElement.transform.SetAsLastSibling();
             _elements.Add(newElement);
             

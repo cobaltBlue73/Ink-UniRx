@@ -84,14 +84,18 @@ namespace InkUniRx.Views
         #region Methods
         #region Unity Callbacks
 
-        private void Reset()
+        protected override void Reset()
         {
+            base.Reset();
+            
             if (!linkedTextViewTemplate)
                 linkedTextViewTemplate = GetComponentInChildren<StoryTextLinkedView>();
         }
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+            
             _textViewPool = new LinkedTextViewPool(this);
             _firstLinkedView = _lastLinkedView = _textViewPool.Rent();
             _linkedViews.Add(_firstLinkedView);
@@ -158,6 +162,11 @@ namespace InkUniRx.Views
         #endregion
 
         #region Private
+
+        protected override void OnPageSelected(int pageNo)
+        {
+            
+        }
 
         private void ExpandLinkedViews()
         {

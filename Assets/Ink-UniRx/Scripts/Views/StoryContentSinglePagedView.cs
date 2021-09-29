@@ -35,8 +35,10 @@ namespace InkUniRx.Views
 
         #region Unity Callabcks
 
-        private void Reset()
+        protected override void Reset()
         {
+            base.Reset();
+            
             if (!textPagedView)
                 textPagedView = GetComponentInChildren<StoryTextPagedView>();
         }
@@ -52,6 +54,8 @@ namespace InkUniRx.Views
             _whiteSpaceBuffer = string.Empty;
             textPagedView.MaxVisibleCharacters = 0;
             _displayedPagesCount = 1;
+            if (paginationView) 
+                paginationView.SetPageCount(1);
         }
 
         public override void AddContent(string contentText)
@@ -112,8 +116,8 @@ namespace InkUniRx.Views
                     ++_displayedPagesCount;
                 }
 
-                textPagedView.CurrentPage = _displayedPagesCount;
-                
+                SetCurPage(_displayedPagesCount);
+
                 if (textPagedView.CurrentPage < textPagedView.PageCount)
                     to = textPagedView.LastCharacterIndexOnPage;
             }
@@ -121,6 +125,21 @@ namespace InkUniRx.Views
             textPagedView.MaxVisibleCharacters = to + 1;
 
             return textPagedView.AnimateTextAsync(from, to, animationCancelToken);
+        }
+
+        #endregion
+
+        #region Protected
+
+        protected override void SetCurPage(int page)
+        {
+            base.SetCurPage(page);
+            textPagedView.CurrentPage = page;
+        }
+
+        protected override void OnPageSelected(int pageNo)
+        {
+            textPagedView.CurrentPage = pageNo;
         }
 
         #endregion
