@@ -27,7 +27,7 @@ namespace InkUniRx.Views
         #region Variables
 
         private string _whiteSpaceBuffer = string.Empty;
-        private int _displayedPagesCount = 1;
+        private int _lastDisplayedPage = 1;
         
         #endregion
 
@@ -53,9 +53,8 @@ namespace InkUniRx.Views
             textPagedView.ForceTextUpdate();
             _whiteSpaceBuffer = string.Empty;
             textPagedView.MaxVisibleCharacters = 0;
-            _displayedPagesCount = 1;
-            if (paginationView) 
-                paginationView.SetPageCount(1);
+            _lastDisplayedPage = 1;
+            SetCurPage(0);
         }
 
         public override void AddContent(string contentText)
@@ -99,31 +98,27 @@ namespace InkUniRx.Views
 
         public override UniTask ShowNewContentAsync(CancellationToken animationCancelToken)
         {
-            if (textPagedView.MaxVisibleCharacters >= 
-                textPagedView.CharacterCount) return UniTask.CompletedTask;
-
+            SetCurPage(_lastDisplayedPage);
             var from = textPagedView.MaxVisibleCharacters;
-            var to = textPagedView.CharacterCount - 1;
+            var to = CurrentPage < PageCount? 
+                textPagedView.LastCharacterIndexOnPage:
+                textPagedView.CharacterCount - 1;
             
-            if (_displayedPagesCount < textPagedView.PageCount)
+            if (from >= to)
             {
-                var lastDisplayedPageInfo = textPagedView.TextMesh
-                    .textInfo.pageInfo[_displayedPagesCount - 1];
+                 if (_lastDisplayedPage >= PageCount)
+                     return UniTask.CompletedTask;
 
-                if (textPagedView.MaxVisibleCharacters >
-                    lastDisplayedPageInfo.lastCharacterIndex)
-                {
-                    ++_displayedPagesCount;
-                }
-
-                SetCurPage(_displayedPagesCount);
-
-                if (textPagedView.CurrentPage < textPagedView.PageCount)
-                    to = textPagedView.LastCharacterIndexOnPage;
+                 ++_lastDisplayedPage;
+                 SetCurPage(_lastDisplayedPage);
+                 
+                 to = CurrentPage < PageCount? 
+                     textPagedView.LastCharacterIndexOnPage:
+                     textPagedView.CharacterCount - 1;
             }
             
             textPagedView.MaxVisibleCharacters = to + 1;
-
+            
             return textPagedView.AnimateTextAsync(from, to, animationCancelToken);
         }
 
@@ -135,11 +130,14 @@ namespace InkUniRx.Views
         {
             base.SetCurPage(page);
             textPagedView.CurrentPage = page;
+            textPagedView.ForceTextUpdate();
+          
         }
 
         protected override void OnPageSelected(int pageNo)
         {
             textPagedView.CurrentPage = pageNo;
+            textPagedView.ForceTextUpdate();
         }
 
         #endregion

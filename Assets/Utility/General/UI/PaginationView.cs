@@ -92,8 +92,8 @@ namespace Utility.General.UI
 
         private void OnValidate()
         {
-            if (toggleGroup && !toggleGroup.allowSwitchOff)
-                toggleGroup.allowSwitchOff = true;
+            if (toggleGroup && toggleGroup.allowSwitchOff)
+                toggleGroup.allowSwitchOff = false;
         }
 
         private void Awake()
@@ -122,9 +122,14 @@ namespace Utility.General.UI
             }
         }
 
-        public void SetCurrentPage(int pageNo) => 
-            toggleGroup.NotifyToggleOn(
-                GetElement(pageNo - 1).Toggle);
+        public void SetCurrentPage(int pageNo)
+        {
+            if (_elements.Count < pageNo)
+                SetPageCount(pageNo);
+            
+            if (pageNo > 0)
+                GetElement(pageNo - 1).Toggle.isOn = true;
+        }
 
         public void ResetPageCount() => SetPageCount(0);
 
