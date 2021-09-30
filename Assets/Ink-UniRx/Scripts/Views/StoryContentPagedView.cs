@@ -15,6 +15,8 @@ namespace InkUniRx.Views
         #region Properties
         public abstract int PageCount { get; }
         public abstract int CurrentPage { get; }
+        
+        public abstract int LastDisplayedPage { get; }
         #endregion
 
         #region Unity CallBacks
@@ -37,13 +39,13 @@ namespace InkUniRx.Views
 
         #region Methods
 
-        protected virtual void SetCurPage(int page)
+        protected virtual void SetPage(int page)
         {
             if(paginationView)
                 paginationView.SetCurrentPage(page);
         }
 
-        protected abstract void OnPageSelected(int pageNo);
+        protected abstract void OnPageSelected(int page);
 
         #endregion
     }

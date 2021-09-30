@@ -68,6 +68,8 @@ namespace InkUniRx.Views
 
         public override int CurrentPage => _curViewIndex + 1;
 
+        public override int LastDisplayedPage => _displayedPagesCount;
+
         #endregion
 
         #region Variables
@@ -75,7 +77,7 @@ namespace InkUniRx.Views
         private StoryTextLinkedView _firstLinkedView;
         private StoryTextLinkedView _lastLinkedView;
         private int _curViewIndex = 0;
-        private int _displayedViewCount = 1;
+        private int _displayedPagesCount = 1;
         private readonly List<StoryTextLinkedView> _linkedViews = new List<StoryTextLinkedView>();
         private LinkedTextViewPool _textViewPool;
 
@@ -108,7 +110,7 @@ namespace InkUniRx.Views
 
         public override void ClearContent()
         {
-            _displayedViewCount = 1;
+            _displayedPagesCount = 1;
             _curViewIndex = 0;
             for (int i = 1; i < _textViewPool.Count; i++)
             {
@@ -127,22 +129,22 @@ namespace InkUniRx.Views
 
         public override UniTask ShowNewContentAsync(CancellationToken animationCancelToken)
         {
-            var lastDisplayedView = _linkedViews[_displayedViewCount - 1];
+            var lastDisplayedView = _linkedViews[_displayedPagesCount - 1];
             lastDisplayedView.ForceTextUpdate();
 
             if (lastDisplayedView.MaxVisibleCharacters >=
                 lastDisplayedView.CharacterCount)
             {
-                if (_displayedViewCount >= PageCount)
+                if (_displayedPagesCount >= PageCount)
                     return UniTask.CompletedTask;
 
-                ++_displayedViewCount;
+                ++_displayedPagesCount;
             }
 
-            if (_curViewIndex != _displayedViewCount - 1)
+            if (_curViewIndex != _displayedPagesCount - 1)
             {
                 _linkedViews[_curViewIndex].Alpha = 0;
-                _curViewIndex = _displayedViewCount - 1;
+                _curViewIndex = _displayedPagesCount - 1;
             }
 
             var curView = _linkedViews[_curViewIndex];
@@ -163,7 +165,7 @@ namespace InkUniRx.Views
 
         #region Private
 
-        protected override void OnPageSelected(int pageNo)
+        protected override void OnPageSelected(int page)
         {
             
         }

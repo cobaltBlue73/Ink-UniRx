@@ -22,9 +22,9 @@ namespace InkUniRx.Views
             TextMesh.textInfo.pageInfo[CurrentPage - 1]
                 .firstCharacterIndex;
         
-        public int LastCharacterIndexOnPage => 
-            TextMesh.textInfo.pageInfo[CurrentPage - 1]
-                .lastCharacterIndex;
+        public int LastCharacterIndexOnPage => CurrentPage < PageCount?
+            TextMesh.textInfo.pageInfo[CurrentPage - 1].lastCharacterIndex: 
+            CharacterCount - 1;
 
         #endregion
         

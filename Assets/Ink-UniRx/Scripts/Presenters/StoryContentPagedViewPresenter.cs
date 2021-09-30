@@ -26,7 +26,7 @@ namespace InkUniRx.Presenters
                 
                 await WaitForContinueAsync(newStoryContent);
                 
-            } while (contentView.CurrentPage < contentView.PageCount && 
+            } while (contentView.LastDisplayedPage < contentView.PageCount && 
                      !newStoryContent.CancelStoryToken.IsCancellationRequested);
             
             return Unit.Default;
