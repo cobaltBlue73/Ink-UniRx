@@ -1,8 +1,6 @@
-using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
-using TMPro;
 using UnityEngine;
 
 namespace InkUniRx.Views
@@ -28,8 +26,6 @@ namespace InkUniRx.Views
 
         #region Variables
 
-        private string _whiteSpaceBuffer = string.Empty;
-
         private int _lastDisplayedPage;
 
         #endregion
@@ -54,7 +50,6 @@ namespace InkUniRx.Views
         {
             textPagedView.ClearText();
             textPagedView.ForceTextUpdate();
-            _whiteSpaceBuffer = string.Empty;
             textPagedView.MaxVisibleCharacters = 0;
             _lastDisplayedPage = 1;
             SetPage(0);
@@ -62,41 +57,8 @@ namespace InkUniRx.Views
 
         public override void AddContent(string contentText)
         {
-            if (string.IsNullOrWhiteSpace(contentText))
-            {
-                _whiteSpaceBuffer += string.IsNullOrEmpty(_whiteSpaceBuffer)? 
-                    contentText: $"\n{contentText}";
-                return;
-            }
-            
-            var newText = string.Empty;
-            
-            if (!string.IsNullOrEmpty(_whiteSpaceBuffer))
-            {
-                newText = $"{_whiteSpaceBuffer}\n";
-                _whiteSpaceBuffer = string.Empty;
-            }
-
-            newText += contentText;
-            
-            if (textPagedView.IsEmpty)
-            {
-                textPagedView.Text = newText;
-                textPagedView.ForceTextUpdate();
-                return;
-            }
-         
-            var prevTextLength = textPagedView.Text.Length;
-            var prevPageCount = textPagedView.PageCount;
-            textPagedView.Text += $"\n{newText}";
+            textPagedView.Text += contentText;
             textPagedView.ForceTextUpdate();
-
-            if (textPagedView.PageCount > prevPageCount)
-            {
-                textPagedView.Text = textPagedView.Text.Substring(0, prevTextLength);
-                textPagedView.Text += $"<page>{contentText}";
-                textPagedView.ForceTextUpdate();
-            }
         }
 
         public override UniTask ShowNewContentAsync(CancellationToken animationCancelToken)
@@ -104,7 +66,7 @@ namespace InkUniRx.Views
             var from = textPagedView.MaxVisibleCharacters;
             var to = textPagedView.CharacterCount - 1;
 
-            if (PageCount > 0)
+            if (PageCount > 1)
             {
                 SetPage(_lastDisplayedPage);
                 to = textPagedView.LastCharacterIndexOnPage;
@@ -118,7 +80,7 @@ namespace InkUniRx.Views
                     to = textPagedView.LastCharacterIndexOnPage;
                 }
             }
-
+            
             textPagedView.MaxVisibleCharacters = to + 1;
             
             return textPagedView.AnimateTextAsync(from, to, animationCancelToken);
