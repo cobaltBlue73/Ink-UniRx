@@ -68,7 +68,7 @@ namespace InkUniRx.Views
 
         public override int CurrentPage => _curViewIndex + 1;
 
-        public override int LastDisplayedPage => _displayedPagesCount;
+        public override int LastDisplayedPage => _lastDisplayedPage;
 
         #endregion
 
@@ -77,13 +77,14 @@ namespace InkUniRx.Views
         private StoryTextLinkedView _firstLinkedView;
         private StoryTextLinkedView _lastLinkedView;
         private int _curViewIndex = 0;
-        private int _displayedPagesCount = 1;
+        private int _lastDisplayedPage = 1;
         private readonly List<StoryTextLinkedView> _linkedViews = new List<StoryTextLinkedView>();
         private LinkedTextViewPool _textViewPool;
 
         #endregion
 
         #region Methods
+        
         #region Unity Callbacks
 
         protected override void Reset()
@@ -110,7 +111,7 @@ namespace InkUniRx.Views
 
         public override void ClearContent()
         {
-            _displayedPagesCount = 1;
+            _lastDisplayedPage = 1;
             _curViewIndex = 0;
             for (int i = 1; i < _textViewPool.Count; i++)
             {
@@ -129,26 +130,22 @@ namespace InkUniRx.Views
 
         public override UniTask ShowNewContentAsync(CancellationToken animationCancelToken)
         {
-            var lastDisplayedView = _linkedViews[_displayedPagesCount - 1];
+            var lastDisplayedView = _linkedViews[_lastDisplayedPage - 1];
             lastDisplayedView.ForceTextUpdate();
-
+          
             if (lastDisplayedView.MaxVisibleCharacters >=
                 lastDisplayedView.CharacterCount)
             {
-                if (_displayedPagesCount >= PageCount)
+                if (_lastDisplayedPage >= PageCount)
                     return UniTask.CompletedTask;
 
-                ++_displayedPagesCount;
+                ++_lastDisplayedPage;
             }
 
-            if (_curViewIndex != _displayedPagesCount - 1)
-            {
-                _linkedViews[_curViewIndex].Alpha = 0;
-                _curViewIndex = _displayedPagesCount - 1;
-            }
-
+            SetPage(_lastDisplayedPage);
+          
             var curView = _linkedViews[_curViewIndex];
-            curView.Alpha = 1;
+          
             curView.ForceTextUpdate();
             
             var from = curView.PrevTextView? 
@@ -167,12 +164,26 @@ namespace InkUniRx.Views
 
         protected override void OnPageSelected(int page)
         {
+            var newIndex = page - 1;
+            if(newIndex < 0 || 
+               newIndex >= _linkedViews.Count || 
+               newIndex == _curViewIndex) return;
             
+            _linkedViews[_curViewIndex].Alpha = 0;
+            _curViewIndex = newIndex;
+            _linkedViews[_curViewIndex].Alpha = 1;
+        }
+
+        protected override void SetPage(int page)
+        {
+            base.SetPage(page);
+            OnPageSelected(page);
         }
 
         private void ExpandLinkedViews()
         {
-            _lastLinkedView.ForceTextUpdate();
+            _linkedViews.ForEach(view=> view.ForceTextUpdate());
+            
             while (_lastLinkedView.IsTextOverflowing)
             {
                 _lastLinkedView.LinkNextTextView(_textViewPool.Rent());

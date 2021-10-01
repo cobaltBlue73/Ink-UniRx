@@ -131,7 +131,7 @@ namespace InkUniRx.Views
         protected override void SetPage(int page)
         {
             base.SetPage(page);
-            textPagedView.CurrentPage = page;
+            OnPageSelected(page);
         }
 
         protected override void OnPageSelected(int page)

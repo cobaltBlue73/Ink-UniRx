@@ -31,18 +31,12 @@ namespace InkUniRx.Views
 
             protected override void OnBeforeRent(StoryTextElementView instance)
             {
-                _owner._activeViews.Add(instance);
                 instance.ClearText();
                 instance.MaxVisibleCharacters = 0;
                 base.OnBeforeRent(instance);
+                _owner._activeViews.Add(instance);
             }
-
-            protected override void OnBeforeReturn(StoryTextElementView instance)
-            {
-                base.OnBeforeReturn(instance);
-                instance.ClearText();
-            }
-
+            
             protected override StoryTextElementView CreateInstance()
             {
                 var elementViewInstance = Instantiate(_template, _parent);
