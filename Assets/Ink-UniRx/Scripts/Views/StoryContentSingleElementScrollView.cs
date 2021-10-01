@@ -48,7 +48,7 @@ namespace InkUniRx.Views
 
         public override void AddContent(string contentText)
         {
-            elementView.Text += IsEmpty ? contentText : $"\n{contentText}";
+            elementView.Text += contentText;
             elementView.ForceTextUpdate();
         }
 

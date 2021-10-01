@@ -104,8 +104,7 @@ namespace InkUniRx.Views
             if (string.IsNullOrWhiteSpace(contentText))
             {
                 
-                _whiteSpaceBuffer += string.IsNullOrEmpty(_whiteSpaceBuffer)? 
-                    contentText: $"\n{contentText}";
+                _whiteSpaceBuffer += contentText;
                 return;
             }
 
@@ -113,11 +112,11 @@ namespace InkUniRx.Views
             
             if (!string.IsNullOrEmpty(_whiteSpaceBuffer))
             {
-                newText = $"{_whiteSpaceBuffer}\n";
+                newText = _whiteSpaceBuffer;
                 _whiteSpaceBuffer = string.Empty;
             }
 
-            newText += contentText;
+            newText += contentText.TrimEnd();
             
             _elements.Add(new ElementViewData
             {

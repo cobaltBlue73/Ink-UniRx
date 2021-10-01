@@ -61,7 +61,7 @@ namespace InkUniRx.Views
             textPagedView.ForceTextUpdate();
         }
 
-        public override UniTask ShowNewContentAsync(CancellationToken animationCancelToken)
+        public override async UniTask ShowNewContentAsync(CancellationToken animationCancelToken)
         {
             var from = textPagedView.MaxVisibleCharacters;
             var to = textPagedView.CharacterCount - 1;
@@ -74,7 +74,7 @@ namespace InkUniRx.Views
                 if (from >= to)
                 {
                     if (_lastDisplayedPage >= PageCount)
-                        return UniTask.CompletedTask;
+                        return;
                     
                     SetPage(++_lastDisplayedPage);
                     to = textPagedView.LastCharacterIndexOnPage;
@@ -82,8 +82,9 @@ namespace InkUniRx.Views
             }
             
             textPagedView.MaxVisibleCharacters = to + 1;
-            
-            return textPagedView.AnimateTextAsync(from, to, animationCancelToken);
+            paginationView.Interactable = false;
+            await textPagedView.AnimateTextAsync(from, to, animationCancelToken);
+            paginationView.Interactable = false;
         }
 
         #endregion
