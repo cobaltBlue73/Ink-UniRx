@@ -84,7 +84,7 @@ namespace InkUniRx.Views
             textPagedView.MaxVisibleCharacters = to + 1;
             paginationView.Interactable = false;
             await textPagedView.AnimateTextAsync(from, to, animationCancelToken);
-            paginationView.Interactable = false;
+            paginationView.Interactable = true;
         }
 
         #endregion
