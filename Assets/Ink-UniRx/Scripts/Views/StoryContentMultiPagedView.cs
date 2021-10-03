@@ -124,38 +124,39 @@ namespace InkUniRx.Views
 
         public override void AddContent(string contentText)
         {
-            _firstLinkedView.Text += IsEmpty ? contentText : $"\n{contentText}";
+            _firstLinkedView.Text += contentText;
             ExpandLinkedViews();
         }
 
-        public override UniTask ShowNewContentAsync(CancellationToken animationCancelToken)
+        public override async UniTask ShowNewContentAsync(CancellationToken animationCancelToken)
         {
             var lastDisplayedView = _linkedViews[_lastDisplayedPage - 1];
-            lastDisplayedView.ForceTextUpdate();
-          
-            if (lastDisplayedView.MaxVisibleCharacters >=
-                lastDisplayedView.CharacterCount)
+
+            var from = lastDisplayedView.MaxVisibleCharacters;
+            var to = lastDisplayedView.CharacterCount - 1;
+
+            if (PageCount > 1)
             {
-                if (_lastDisplayedPage >= PageCount)
-                    return UniTask.CompletedTask;
+                if (lastDisplayedView.MaxVisibleCharacters >=
+                    lastDisplayedView.CharacterCount)
+                {
+                    if (_lastDisplayedPage >= PageCount)
+                        return;
 
-                ++_lastDisplayedPage;
+                    ++_lastDisplayedPage;
+                    lastDisplayedView = _linkedViews[_lastDisplayedPage - 1];
+                    from = lastDisplayedView.PrevTextView.CharacterCount;
+                    to = lastDisplayedView.CharacterCount - 1;
+                }
+
+                SetPage(_lastDisplayedPage);
             }
+            
+            lastDisplayedView.MaxVisibleCharacters = to + 1;
 
-            SetPage(_lastDisplayedPage);
-          
-            var curView = _linkedViews[_curViewIndex];
-          
-            curView.ForceTextUpdate();
-            
-            var from = curView.PrevTextView? 
-                Mathf.Max(curView.PrevTextView.CharacterCount, 
-                    curView.MaxVisibleCharacters):
-                curView.MaxVisibleCharacters;
-            var to = curView.CharacterCount - 1;
-            curView.MaxVisibleCharacters = curView.CharacterCount;
-            
-            return curView.AnimateTextAsync(from, to, animationCancelToken);
+            paginationView.Interactable = false;
+            await lastDisplayedView.AnimateTextAsync(from, to, animationCancelToken);
+            paginationView.Interactable = true;
         }
 
         #endregion
