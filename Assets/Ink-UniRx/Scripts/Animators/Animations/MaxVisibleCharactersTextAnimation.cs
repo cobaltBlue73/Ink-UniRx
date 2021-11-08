@@ -7,7 +7,7 @@ using Utility.DoTweenPro;
 
 namespace InkUniRx.Animators.Animations
 {
-    [CreateAssetMenu(fileName = nameof(MaxVisibleCharactersTextAnimation), menuName = "Ink-UniRx/Animations/Text/MaxVisibleCharacters", order = 0)]
+    [CreateAssetMenu(menuName = "Ink-UniRx/Animations/Text/MaxVisibleCharacters")]
     public class MaxVisibleCharactersTextAnimation: MaxVisibleTextAnimation
     {
         public override async UniTask PlayAsync(TextMeshAnimator animator, int fromCharIndex, int toCharIndex,

@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace InkUniRx.PresentationModels
 {
-    [CreateAssetMenu(menuName = "Ink-UniRx/Presentation Models/Story", order = 0)]
+    [CreateAssetMenu(menuName = "Ink-UniRx/Presentation Models/Story")]
     public class StoryPresentationModel : ScriptableObject
     {
         #region Inspector

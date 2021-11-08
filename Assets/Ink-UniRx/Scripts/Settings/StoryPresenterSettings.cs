@@ -8,7 +8,7 @@ using ReactivePropertyExtensions = Utility.UniRx.ReactivePropertyExtensions;
 
 namespace InkUniRx.Settings
 {
-    [CreateAssetMenu(menuName = "Ink-UniRx/Settings/StoryPresenter", order = 0), InlineEditor]
+    [CreateAssetMenu(menuName = "Ink-UniRx/Settings/StoryPresenter"), InlineEditor]
     public class StoryPresenterSettings : ScriptableObject
     {
         #region Inspector

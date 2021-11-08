@@ -8,7 +8,7 @@ using Utility.TextMeshPro;
 
 namespace InkUniRx.Animators.Animations
 {
-    [CreateAssetMenu(fileName = nameof(MaxVisibleWordsTextAnimation), menuName = "Ink-UniRx/Animations/Text/MaxVisibleWords", order = 0)]
+    [CreateAssetMenu(menuName = "Ink-UniRx/Animations/Text/MaxVisibleWords")]
     public class MaxVisibleWordsTextAnimation: MaxVisibleTextAnimation
     {
         public override async UniTask PlayAsync(TextMeshAnimator animator, int fromCharIndex, int toCharIndex,
