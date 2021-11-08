@@ -22,12 +22,11 @@
       "url": "https://package.openupm.com"
     },
     "com.unity.2d.animation": {
-      "version": "6.0.5",
+      "version": "7.0.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.2d.common": "5.0.0",
-        "com.unity.mathematics": "1.1.0",
+        "com.unity.2d.common": "6.0.0",
         "com.unity.2d.sprite": "1.0.0",
         "com.unity.modules.animation": "1.0.0",
         "com.unity.modules.uielements": "1.0.0"
@@ -35,17 +34,19 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.2d.common": {
-      "version": "5.0.0",
+      "version": "6.0.0",
       "depth": 1,
       "source": "registry",
       "dependencies": {
         "com.unity.2d.sprite": "1.0.0",
-        "com.unity.modules.uielements": "1.0.0"
+        "com.unity.mathematics": "1.1.0",
+        "com.unity.modules.uielements": "1.0.0",
+        "com.unity.burst": "1.5.1"
       },
       "url": "https://packages.unity.com"
     },
     "com.unity.2d.path": {
-      "version": "5.0.0",
+      "version": "5.0.1",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
@@ -59,12 +60,12 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.2d.psdimporter": {
-      "version": "5.0.4",
+      "version": "6.0.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.2d.common": "5.0.0",
-        "com.unity.2d.animation": "6.0.4",
+        "com.unity.2d.animation": "7.0.1",
+        "com.unity.2d.common": "6.0.0",
         "com.unity.2d.sprite": "1.0.0"
       },
       "url": "https://packages.unity.com"
@@ -76,13 +77,13 @@
       "dependencies": {}
     },
     "com.unity.2d.spriteshape": {
-      "version": "6.0.1",
+      "version": "7.0.2",
       "depth": 0,
       "source": "registry",
       "dependencies": {
         "com.unity.mathematics": "1.1.0",
-        "com.unity.2d.common": "5.0.0",
-        "com.unity.2d.path": "5.0.0",
+        "com.unity.2d.common": "6.0.0",
+        "com.unity.2d.path": "5.0.1",
         "com.unity.modules.physics2d": "1.0.0"
       },
       "url": "https://packages.unity.com"
@@ -93,11 +94,23 @@
       "source": "builtin",
       "dependencies": {}
     },
+    "com.unity.burst": {
+      "version": "1.6.0",
+      "depth": 2,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.mathematics": "1.2.1"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.collab-proxy": {
-      "version": "1.9.0",
+      "version": "1.13.5",
       "depth": 0,
       "source": "registry",
-      "dependencies": {},
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "2.0.0",
+        "com.unity.services.core": "1.0.1"
+      },
       "url": "https://packages.unity.com"
     },
     "com.unity.ext.nunit": {
@@ -133,7 +146,14 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.mathematics": {
-      "version": "1.2.1",
+      "version": "1.2.4",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.nuget.newtonsoft-json": {
+      "version": "2.0.0",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
@@ -145,6 +165,15 @@
       "source": "registry",
       "dependencies": {
         "com.unity.settings-manager": "1.0.2"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.services.core": {
+      "version": "1.0.1",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.modules.unitywebrequest": "1.0.0"
       },
       "url": "https://packages.unity.com"
     },
@@ -172,7 +201,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.test-framework": {
-      "version": "1.1.29",
+      "version": "1.1.30",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -183,7 +212,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.textmeshpro": {
-      "version": "3.2.0-pre.1",
+      "version": "3.0.6",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -192,7 +221,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.timeline": {
-      "version": "1.5.6",
+      "version": "1.6.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {
